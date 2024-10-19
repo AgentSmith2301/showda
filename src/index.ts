@@ -1,7 +1,7 @@
-import {app} from './app'
-import {SETTINGS} from './settings';
+import {app} from './settings';
 
-app.listen(SETTINGS.PORT, () => {
-    console.log(`сервер на запущен , порт ${SETTINGS.PORT}`)
+const port = process.env.PORT || 3999
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
 })
-
