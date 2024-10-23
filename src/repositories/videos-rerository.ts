@@ -32,11 +32,17 @@ export const videosLocalRepository = {
     },
     getById(searchId: number) {
         console.log('video [] -->', videosLibrary)
+        console.log('search element -->', searchId)
+
         
         let findElement = videosLibrary.find((element) => {
-            element.id === searchId;
-            return element;
+            console.log('element.id -->',element.id)
+            if(element.id === searchId) {
+                return element;
+            }
+            
         });
+        console.log('объект после фильтрации', findElement);
         return findElement;
     },
     getAll() {
