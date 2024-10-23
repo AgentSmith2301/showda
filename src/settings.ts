@@ -29,24 +29,27 @@ videosRouter.get('/', (req: Request, res: Response) => {
     const result = videosLocalRepository.getAll();
     res.status(200).type('text/plain').send(result);
 });
-// видео по id
+// получить видео по id
 videosRouter.get('/:id', (req: Request, res: Response) => {
-    console.log('req.params.id --> ',+req.params.id)
-    
     const result = videosLocalRepository.getById(+req.params.id);
     console.log('result -->', result);
+    if(result == 'not find') {
+        res.status(404).end('not find');
+    }
     res.status(200).type('text/plain').send(result);
 });
 
+// создать видео
 videosRouter.post('/', (req: Request , res: Response) => {
+    if(!req.body.title || !req.body.author) {
+        
+    }
     let {title, author, availableResolutions} = req.body;
     let flag = videosLocalRepository.createVideo(title, author, availableResolutions);
-    // console.log(flag)
     if(flag.dan) {
         res.status(201).type('text/plain');
         let newObject = videosLocalRepository.getById(flag.id)
         res.send(newObject);
-        // console.log('hay')
 
     } else {
         res.status(400).send('Bad Request')

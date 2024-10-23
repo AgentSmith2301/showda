@@ -33,15 +33,17 @@ exports.videosLocalRepository = {
         return [];
     },
     getById(searchId) {
-        console.log('video [] -->', videosLibrary);
-        console.log('search element -->', searchId);
         let findElement = videosLibrary.find((element) => {
-            console.log('element.id -->', element.id);
             if (element.id === searchId) {
                 return element;
             }
+            else {
+                return undefined;
+            }
         });
-        console.log('объект после фильтрации', findElement);
+        if (findElement === undefined) {
+            return 'not find';
+        }
         return findElement;
     },
     getAll() {
