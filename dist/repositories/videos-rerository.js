@@ -14,13 +14,28 @@ let videosLibrary = [
     },
 ];
 exports.videosLocalRepository = {
-    createVideo(title, author, resolution) {
+    // createVideo(title: string, author: string, resolution: []) {
+    // время создания и время публикации
+    // let createdAt = new Date().toISOString();
+    // let publicationData = new Date().toISOString();
+    //     let id = Date.now();
+    //     let video = {id:id, title: title, author: author, availableResolutions: resolution};
+    //     let massLength = videosLibrary.length; 
+    //     videosLibrary.push(video);
+    //     if(massLength < videosLibrary.length) {
+    //         return {dan: true, id: id};
+    //     } else {
+    //         return {dan: false, id: id};
+    //     }
+    // },
+    createVideo(data) {
         // время создания и время публикации
         // let createdAt = new Date().toISOString();
         // let publicationData = new Date().toISOString();
         let id = Date.now();
-        let video = { id: id, title: title, author: author, availableResolutions: resolution };
+        let video = Object.assign({ id }, data);
         let massLength = videosLibrary.length;
+        console.log(video);
         videosLibrary.push(video);
         if (massLength < videosLibrary.length) {
             return { dan: true, id: id };
@@ -42,7 +57,7 @@ exports.videosLocalRepository = {
             }
         });
         if (findElement === undefined) {
-            return 'not find';
+            return "not find";
         }
         return findElement;
     },
