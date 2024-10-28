@@ -46,7 +46,7 @@ videosRouter.get('/:id', (req, res) => {
     res.status(200).type('text/plain').send(result);
 });
 // массив разрешенных свойств
-const permissionsProperty = ['title', 'author', 'canBeDownloaded', 'minAgeRestriction', 'availableResolutions'];
+const permissionsProperty = ['title', 'author', 'canBeDownloaded', 'minAgeRestriction', 'availableResolutions', 'createdAt', 'publicationDate'];
 // массив видеоформатов
 const videoFormats = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'];
 //  изменить видео по id
@@ -68,6 +68,29 @@ videosRouter.put('/:id', (req, res) => {
 // создать видео
 videosRouter.post('/', (req, res) => {
     var _a;
+    // автоматически создавать значения свойств createdAt и publicationDate (с разницей в один день)
+    let date = new Date();
+    let day = date.getDate();
+    date.setDate(day - 1);
+    req.body.createdAt = date.toISOString();
+    req.body.publicationDate = new Date().toISOString();
+    // если в запросе нет поля canBeDownloaded , создаем его и даем значение по умолчанию false
+    if (!req.body.canBeDownloaded) {
+        req.body.canBeDownloaded = false;
+    }
+    // если в запросе нет поля minAgeRestriction , создаем его и даем значение по умолчанию null (максим 18 , мин 1)
+    if (!req.body.minAgeRestriction && req.body.minAgeRestriction !== 0) {
+        req.body.minAgeRestriction = null;
+    }
+    else if (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction <= 0) {
+        res.status(400).send({ "errorsMessages": [
+                {
+                    "message": "bad request, minAgeRestriction field is greater or less than the allowed value",
+                    "fieled": "minAgeRestriction minimum 1, maximum 18"
+                }
+            ]
+        });
+    }
     // возвращаем проверенные свойства , для отправки в репозиторий (все разрешенные свойства)
     let property = [];
     // отфильтрованный массив с форматами видео от клиента
