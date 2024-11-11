@@ -1,10 +1,12 @@
 import {agent} from "supertest";
 import {app} from '../src/app';
 import {SETTINGS} from '../src/settings';
-import {methodsDB} from '../src/db/db'
+import {db, methodsDB} from '../src/db/db'
 
 
 const req = agent(app);
+
+let idNewCreatedObject: number;
 
 describe(`request for '/videos'` , () => {
     
@@ -141,13 +143,32 @@ describe(`request for '/videos'` , () => {
                 availableResolutions: ["P144", "P480"],
             }
         )
+        // взять id для тестов 
+        idNewCreatedObject = db.videos[1].id;
         expect(res.statusCode).toBe(201);
     })
 
     it('number of videos created 👉 "GET /videos"', async() => {
         const res = await req.get(SETTINGS.PATH.VIDEOS).expect(200);
-        expect(res.body.length).toBe(3);
+        expect(res.body.length).toBe(4);
     })
+
+    it('get video by id 👉 "GET /videos:id"', async() => {
+        const res = await req.get(`${SETTINGS.PATH.VIDEOS}/${idNewCreatedObject}`).expect(200);
+        console.log('path -->> ',`${SETTINGS.PATH.VIDEOS}/${idNewCreatedObject}`)
+    })
+
+    // it('remove object by id 👉 "DELETE /videos:id"', async() => {
+    //     const res = await req.delete(`${SETTINGS.PATH.VIDEOS}/${idNewCreatedObject}`).expect(204);
+    // })
+
+    it('remove everything from the database 👉 "DELETE /testing/all-data"', async() => {
+        await req.delete(SETTINGS.PATH.DELETEALL).expect(204);
+        // expect(db.videos.length).toBe(3);
+        await req.get(SETTINGS.PATH.VIDEOS).expect([]);
+    })
+
+
 
     // добавить проверку на изменение объекта видео и удаление , а так же создать проверку на удаление всех данных из базы
 

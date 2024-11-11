@@ -1,4 +1,4 @@
-import {Router, Request, Response} from 'express';
+import {Router, Request, Response, NextFunction} from 'express';
 import {methodsDB} from '../db/db';
 import {CastomErrors} from '../errors/castomErrorsObject';
 
@@ -12,7 +12,39 @@ videoRolter.get('/', (req: Request, res: Response) => {
     res.status(200).send(methodsDB.getVideo());
 })
 
-videoRolter.post('/', (req: Request, res: Response) => {
+videoRolter.get('/:id', (req: Request, res: Response) => {
+    const result = methodsDB.getVideoById(+req.params.id);
+    if(result === 'NOT FOUND') res.send(404)
+    res.status(200).type('text/plain').send(result);
+})
+
+videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, allowedProperties, (req: Request, res: Response) => {
+    const result = methodsDB.createVideo(req.body)
+    res.status(201).type('tex/plain').send(result)
+})
+
+videoRolter.delete('/:id', (req: Request, res: Response) => {
+    const result = methodsDB.deleteById(+req.params.id);
+    if(result) {
+        res.send(204)
+    } else {
+        res.send(404)
+    }
+    
+})
+
+videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, (req: Request, res: Response) => {
+    const result = methodsDB.updateDB(+req.params.id, req.body);
+    if(result === 'not found') {
+        res.send(404)
+    } else if(result === 'update') {
+        res.send(204)
+    }
+    
+})
+
+
+function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
     if(!req.body.title || !req.body.author) {
         errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'fild author or title not faund'});
@@ -33,8 +65,11 @@ videoRolter.post('/', (req: Request, res: Response) => {
         res.status(400).type('text/plain').send(errors);
         // errors.errorsMessages = [];
     }
-    
-    // работа с форматом видео
+
+    next();
+}
+
+function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
     let formatFlag: string[] | undefined = req.body.availableResolutions;
 
     if(formatFlag === undefined) {
@@ -74,45 +109,44 @@ videoRolter.post('/', (req: Request, res: Response) => {
             
         }
         req.body.availableResolutions = validateAvailableResolutions;
+    }
+        next();
+}
 
-        // если в запросе нет поля canBeDownloaded , создаем его и даем значение по умолчанию false
-        if(!req.body.canBeDownloaded) {
-            req.body.canBeDownloaded = false;
-        }
-
-        // если в запросе нет поля minAgeRestriction , создаем его и даем значение по умолчанию null (максим 18 , мин 1)
-        if(!req.body.minAgeRestriction && req.body.minAgeRestriction !== 0) {
-            req.body.minAgeRestriction = null;
-        } else if(req.body.minAgeRestriction > 18 || req.body.minAgeRestriction <= 0) {           
-            errors.errorsMessages = [];
-                    errors.errorsMessages.push(
-                        {
-                            message: `bad request, minAgeRestriction field is greater or less than the allowed value`, 
-                            field: 'minAgeRestriction minimum 1, maximum 18'
-                        }
-                    )
-
-            res.status(400).type('tex/plain').send(errors)
-        }
-
-        // проверка на разрешение свойства
-        for(let i in req.body) {
-            let trusty = methodsDB.permissionsProperty.find((element) => element === i);
-            if(!trusty) {
-                delete req.body[i]
-            }   
-        }
-        
-        // отправляем объект в базу
-        const result = methodsDB.createVideo(req.body)
-        
-        
-        // вернуть ответ
-        res.status(201).type('tex/plain').send(result)
+function flagForDownload(req: Request, res: Response, next: NextFunction) {
+    if(!req.body.canBeDownloaded) {
+        req.body.canBeDownloaded = false;
     }
 
-})
+    next()
+}
 
+function minMaxAge(req: Request, res: Response, next: NextFunction) {
+    if(!req.body.minAgeRestriction && req.body.minAgeRestriction !== 0) {
+        req.body.minAgeRestriction = null;
+    } else if(req.body.minAgeRestriction > 18 || req.body.minAgeRestriction <= 0) {           
+        errors.errorsMessages = [];
+                errors.errorsMessages.push(
+                    {
+                        message: `bad request, minAgeRestriction field is greater or less than the allowed value`, 
+                        field: 'minAgeRestriction minimum 1, maximum 18'
+                    }
+                )
 
+        res.status(400).type('tex/plain').send(errors)
+    }
 
+    next()
+}
+
+function allowedProperties(req: Request, res: Response, next: NextFunction) {
+    for(let i in req.body) {
+        let trusty = methodsDB.permissionsProperty.find((element) => element === i);
+        if(!trusty) {
+            delete req.body[i]
+        }   
+    }
+
+    next()
+}
 
