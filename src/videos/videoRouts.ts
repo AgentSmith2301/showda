@@ -90,9 +90,9 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
                 // если в базе есть то добавляем 
                 if(value === i) {
                     // проверка на существование формата в массиве
-                    if(validateAvailableResolutions.includes(value)) {
-                        return
-                    }
+                    // if(validateAvailableResolutions.includes(value)) {
+                    //     return
+                    // }
                     validateAvailableResolutions.push(value)
                 } else if(!methodsDB.format.includes(value) ) {
                     errors.errorsMessages = [];
