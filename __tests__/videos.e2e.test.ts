@@ -168,6 +168,11 @@ describe(`request for '/videos'` , () => {
         await req.get(SETTINGS.PATH.VIDEOS).expect([]);
     })
 
+    // it('remove non-existent id 👉 "DELETE /testing/all-data"' , async() => {
+    //     await req.delete(SETTINGS.PATH.DELETEALL).expect(204);
+
+    // })
+
 
 
     // добавить проверку на изменение объекта видео и удаление , а так же создать проверку на удаление всех данных из базы

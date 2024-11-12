@@ -6,7 +6,7 @@ import {methodsDB} from './db/db'
 
 export const app = express();
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
 
 
 app.get('/', (req, res) => {

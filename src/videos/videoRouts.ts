@@ -79,22 +79,17 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
         errors.errorsMessages.push(
             {
                 message: `bad request, field availableResolutions empty`, 
-                field: 'field availableResolutions empty'
+                field: 'availableResolutions'
             });
         res.status(400).type('text/plain').send(errors);
     } 
-    else if(formatFlag.length > 1) {
+    else if(formatFlag.length > 0) {
         const validateAvailableResolutions: string[] = []; 
-        for(let i of methodsDB.format) {
-            formatFlag.find((value) => {
-                // если в базе есть то добавляем 
+        for(let i of formatFlag) {
+            methodsDB.format.find((value) => {
                 if(value === i) {
-                    // проверка на существование формата в массиве
-                    // if(validateAvailableResolutions.includes(value)) {
-                    //     return
-                    // }
                     validateAvailableResolutions.push(value)
-                } else if(!methodsDB.format.includes(value) ) {
+                } else if(!methodsDB.format.includes(i)) {
                     errors.errorsMessages = [];
                     errors.errorsMessages.push(
                         {
@@ -103,14 +98,37 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
                         }
                     );
                     res.status(400).type('text/plain').send(errors);
-                    // errors.errorsMessages = [];
                 }
             })
-            
-        }
+        } 
         req.body.availableResolutions = validateAvailableResolutions;
+        
+        // for(let i of methodsDB.format) { // поиск по базе
+        //     formatFlag.find((value) => { // перебираем полученные разрешения из запроса
+        //         // если в базе есть то добавляем 
+        //         if(value === i) {
+        //             // проверка на существование формата в массиве
+        //             // if(validateAvailableResolutions.includes(value)) {
+        //             //     return
+        //             // }
+        //             // validateAvailableResolutions.push(value)
+        //         // } else if(!methodsDB.format.includes(value) ) { // если в базе нет значения который мы получили от фронта
+        //             // errors.errorsMessages = [];
+        //             // errors.errorsMessages.push(
+        //             //     {
+        //             //         message: `bad request, incorrect format`, 
+        //             //         field: 'invalid format field availableResolution'
+        //             //     }
+        //             // );
+        //             // res.status(400).type('text/plain').send(errors);
+        //             // errors.errorsMessages = [];
+        //         // }
+        //     })
+        // 
+        // }
+        // req.body.availableResolutions = validateAvailableResolutions;
     }
-        next();
+    next();
 }
 
 function flagForDownload(req: Request, res: Response, next: NextFunction) {
