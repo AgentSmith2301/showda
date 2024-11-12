@@ -88,6 +88,10 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
         for(let i of formatFlag) {
             methodsDB.format.find((value) => {
                 if(value === i) {
+                    // проверка на существование формата в массиве
+                    if(validateAvailableResolutions.includes(value)) {
+                        return
+                    }
                     validateAvailableResolutions.push(value)
                 } else if(!methodsDB.format.includes(i)) {
                     errors.errorsMessages = [];
