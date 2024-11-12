@@ -45,12 +45,45 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
 
 
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
-    if(!req.body.title || !req.body.author|| req.body.title === null || req.body.author === null) { // если нет свойства title или author
+    // if(!req.body.title || !req.body.author|| req.body.title === null || req.body.author === null) { // если нет свойства title или author
+    //     errors.errorsMessages = [];
+    //     errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
+    //     res.status(400).type('text/plain').send(errors);
+    // } 
+
+    if(!req.body.title) {
         errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
         res.status(400).type('text/plain').send(errors);
         // errors.errorsMessages = [];
-    } else if(!req.body.title.trim() || !req.body.author.trim()) { // если свойства title или author пусто
+    }
+
+    if(!req.body.author) {
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
+        res.status(400).type('text/plain').send(errors);
+        // errors.errorsMessages = [];
+    }
+
+    if(req.body.title === null) {
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
+        res.status(400).type('text/plain').send(errors);
+        // errors.errorsMessages = [];
+    }
+
+    if(req.body.author === null) {
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
+        res.status(400).type('text/plain').send(errors);
+        // errors.errorsMessages = [];
+    }
+
+
+
+
+    
+    else if(!req.body.title.trim() || !req.body.author.trim()) { // если свойства title или author пусто
         errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'fild author or title empty'});
         res.status(400).type('text/plain').send(errors) ;
