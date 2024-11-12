@@ -47,7 +47,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
     if(!req.body.title || !req.body.author|| req.body.title === null || req.body.author === null) { // если нет свойства title или author
         errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'fild author or title not faund'});
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
         res.status(400).type('text/plain').send(errors);
         // errors.errorsMessages = [];
     } else if(!req.body.title.trim() || !req.body.author.trim()) { // если свойства title или author пусто
