@@ -167,13 +167,12 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
     if(formatFlag === undefined) {
         req.body.availableResolutions = ['P144'];
     } else if(formatFlag.length === 0) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
                 message: `bad request, field availableResolutions empty`, 
                 field: 'availableResolutions'
             });
-        res.status(400).type('text/plain').send(errors);
+        // res.status(400).type('text/plain').send(errors);
     } 
     else if(formatFlag.length > 0) {
         const validateAvailableResolutions: string[] = []; 
@@ -186,27 +185,18 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
                     }
                     validateAvailableResolutions.push(value)
                 } else if(!methodsDB.format.includes(i)) {
-                    // errors.errorsMessages = [];
                     errors.errorsMessages.push(
                         {
                             message: `bad request, incorrect format`, 
                             field: 'availableResolutions'
                         }
                     );
-                    res.status(400).type('text/plain').send(errors);
+                    // res.status(400).type('text/plain').send(errors);
                 }
             })
         } 
         req.body.availableResolutions = validateAvailableResolutions;
     }
-
-    // if(errors.errorsMessages.length > 0) {
-    //     // здесь можно вывести все ошибки (но прежде отключи очистку)
-    //     return
-    // } else {
-    //     next();
-    // }
-
     next();
 
     
