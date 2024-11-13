@@ -14,8 +14,17 @@ videoRolter.get('/', (req: Request, res: Response) => {
 
 videoRolter.get('/:id', (req: Request, res: Response) => {
     const result = methodsDB.getVideoById(+req.params.id);
-    if(result === 'NOT FOUND') res.send(404)
-    res.status(200).type('text/plain').send(result);
+    if(result === 'not found') {
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
+        res.status(404).type('text/plain').send(errors);
+    } else if(result === 'update') {
+        res.send(204)
+    }  
+
+    errors.errorsMessages = [];
+    errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
+    res.status(404).type('text/plain').send(errors);
 })
 
 videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, allowedProperties, (req: Request, res: Response) => {
@@ -28,7 +37,9 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
     if(result) {
         res.send(204)
     } else {
-        res.send(404)
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
+        res.status(404).type('text/plain').send(errors);
     }
     
 })
@@ -36,11 +47,12 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
 videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, (req: Request, res: Response) => {
     const result = methodsDB.updateDB(+req.params.id, req.body);
     if(result === 'not found') {
-        res.send(404)
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
+        res.status(404).type('text/plain').send(errors);
     } else if(result === 'update') {
         res.send(204)
-    }
-    
+    }   
 })
 
 
@@ -238,3 +250,6 @@ function allowedProperties(req: Request, res: Response, next: NextFunction) {
     next()
 }
 
+// function returnErrorIfNotIdInURL(req: Request, res: Response, next: NextFunction) {
+//     if(req.path)
+// }
