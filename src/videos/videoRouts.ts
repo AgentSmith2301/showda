@@ -143,7 +143,7 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
                     errors.errorsMessages.push(
                         {
                             message: `bad request, incorrect format`, 
-                            field: 'invalid format field availableResolution'
+                            field: 'availableResolutions'
                         }
                     );
                     res.status(400).type('text/plain').send(errors);
@@ -183,7 +183,7 @@ function minMaxAge(req: Request, res: Response, next: NextFunction) {
                 errors.errorsMessages.push(
                     {
                         message: `bad request, minAgeRestriction field is greater or less than the allowed value`, 
-                        field: 'minAgeRestriction minimum 1, maximum 18'
+                        field: 'minAgeRestriction'
                     }
                 )
 
