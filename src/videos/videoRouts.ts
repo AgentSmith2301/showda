@@ -46,45 +46,45 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
 
 
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
-    
+    errors.errorsMessages = [];
+
     if(req.body.title == null) {
-        errors.errorsMessages = [];
+        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'title value cannot be null', field: 'title'});
-        res.status(400).type('text/plain').send(errors);
+        // res.status(400).type('text/plain').send(errors);
     }
 
-    if(req.body.author === null) {
-        errors.errorsMessages = [];
+    if(req.body.author == null) {
+        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'author value cannot be null', field: 'author'});
-        res.status(400).type('text/plain').send(errors);
+        // res.status(400).type('text/plain').send(errors);
     }
-    
-    errors.errorsMessages = [];
-    if(!req.body.title) {
+
+    if(req.body.title != null && !req.body.title) {
         // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
         // res.status(400).type('text/plain').send(errors);
     }
 
-    if(!req.body.author) {
+    if(req.body.author != null && !req.body.author) {
         // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
         // res.status(400).type('text/plain').send(errors);
     }
     
-    if(!req.body.title.trim()) {
+    if(req.body.title != null && !req.body.title.trim()) {
         // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'title'});
         // res.status(400).type('text/plain').send(errors) ;
     }
 
-    if(!req.body.author.trim()) {
+    if(req.body.author != null && !req.body.author.trim()) {
         // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'author'});
         // res.status(400).type('text/plain').send(errors) ;
     }
     
-    if(req.body.title.length > 40) {
+    if(req.body.title != null && req.body.title.length > 40) {
         // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
@@ -94,7 +94,7 @@ function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction)
         // res.status(400).type('text/plain').send(errors);
     }
 
-    if(req.body.author.length > 20) {
+    if(req.body.author != null && req.body.author.length > 20) {
         // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
