@@ -46,6 +46,19 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
 
 
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
+    
+    if(req.body.title == null) {
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'title value cannot be null', field: 'title'});
+        res.status(400).type('text/plain').send(errors);
+    }
+
+    if(req.body.author === null) {
+        errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'author value cannot be null', field: 'author'});
+        res.status(400).type('text/plain').send(errors);
+    }
+    
     errors.errorsMessages = [];
     if(!req.body.title) {
         // errors.errorsMessages = [];
@@ -54,18 +67,6 @@ function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction)
     }
 
     if(!req.body.author) {
-        // errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
-        // res.status(400).type('text/plain').send(errors);
-    }
-
-    if(req.body.title === null) {
-        // errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
-        // res.status(400).type('text/plain').send(errors);
-    }
-
-    if(req.body.author === null) {
         // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
         // res.status(400).type('text/plain').send(errors);
@@ -103,7 +104,7 @@ function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction)
         // res.status(400).type('text/plain').send(errors);
     }
     
-    console.log(errors.errorsMessages.length, '<--- errors.errorsMessages.length')
+    // console.log(errors.errorsMessages.length, '<--- errors.errorsMessages.length')
     
     if(errors.errorsMessages.length === 0){
         next();
