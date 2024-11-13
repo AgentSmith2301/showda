@@ -62,11 +62,11 @@ export const methodsDB: MethodsDB = {
         return newVideo;
     },
     deleteById(id) {
-        let result = db.videos.findIndex((value) => value.id === id)
-        let spliced = db.videos.splice(result,1)
-        if(spliced.length === 0) {
-            return false;
+        let result = db.videos.findIndex((value) => value.id === id);
+        if(result === -1) {
+            return false
         } else {
+            db.videos.splice(result,1);
             return true;
         }
     },

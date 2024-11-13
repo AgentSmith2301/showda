@@ -13,32 +13,75 @@ videoRolter.get('/', (req: Request, res: Response) => {
 })
 
 videoRolter.get('/:id', (req: Request, res: Response) => {
+    // создаем пустой объект массивов для дальнейшего использования
+    errors.errorsMessages = [];
+    
     const result = methodsDB.getVideoById(+req.params.id);
-    if(result === 'NOT FOUND') res.send(404)
-    res.status(200).type('text/plain').send(result);
+    if(result === 'NOT FOUND') {
+        errors.errorsMessages.push(
+            {
+                message: `bad request, id not found`, 
+                field: 'id'
+            }
+        )
+    }
+    if(errors.errorsMessages.length > 0) {
+        res.status(404).send(errors)
+    } else {
+        res.status(200).type('text/plain').send(result);
+    }
+    
 })
 
 videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, allowedProperties, (req: Request, res: Response) => {
+    // создаем пустой объект массивов для дальнейшего использования
+    errors.errorsMessages = [];
+    
     const result = methodsDB.createVideo(req.body)
-    res.status(201).type('tex/plain').send(result)
+    
+    if(errors.errorsMessages.length === 0) {
+        res.status(201).type('tex/plain').send(result)
+    } else {
+        res.status(400).send(errors)
+    }
+
 })
 
 videoRolter.delete('/:id', (req: Request, res: Response) => {
+    // создаем пустой объект массивов для дальнейшего использования
+    errors.errorsMessages = [];
+    
     const result = methodsDB.deleteById(+req.params.id);
     if(result) {
         res.send(204)
     } else {
-        res.send(404)
+        errors.errorsMessages.push(
+            {
+                message: `bad request, id not found`, 
+                field: 'id'
+            }
+        );
+        res.status(404).send(errors)
     }
     
 })
 
 videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownloadForPut, minMaxAge, (req: Request, res: Response) => {
+    // создаем пустой объект массивов для дальнейшего использования
+    errors.errorsMessages = [];
+    
     const result = methodsDB.updateDB(+req.params.id, req.body);
-    if(result === 'not found') {
-        res.send(404)
-        return
-    } else if(result === 'update') {
+    // если с базы вернется ответ not found по запросу на id или были другие ошибки в других валидаторах то выдаст ошибку
+    if(result === 'not found' || errors.errorsMessages.length > 0) {
+        errors.errorsMessages.push(
+            {
+                message: `bad request, id not found`, 
+                field: 'id'
+            }
+        );
+        res.status(400).send(errors)
+        
+    } else if(result === 'update' && errors.errorsMessages.length === 0) { // если ошибок нет и с базы вернется update , то возвращаем данные 
         res.send(204)
     }
     
@@ -46,7 +89,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
 
 
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
-    errors.errorsMessages = [];
+    // errors.errorsMessages = [];
 
     if(req.body.title == null) {
         // errors.errorsMessages = [];
@@ -106,11 +149,14 @@ function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction)
     
     // console.log(errors.errorsMessages.length, '<--- errors.errorsMessages.length')
     
-    if(errors.errorsMessages.length === 0){
-        next();
-    } else {
-        res.status(400).type('text/plain').send(errors);
-    }
+    // if(errors.errorsMessages.length === 0){
+    //     next();
+    // } else {
+    //     res.status(400).type('text/plain').send(errors);
+    // }
+
+    next();
+
 
 }
 
@@ -120,7 +166,7 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
     if(formatFlag === undefined) {
         req.body.availableResolutions = ['P144'];
     } else if(formatFlag.length === 0) {
-        errors.errorsMessages = [];
+        // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
                 message: `bad request, field availableResolutions empty`, 
@@ -139,7 +185,7 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
                     }
                     validateAvailableResolutions.push(value)
                 } else if(!methodsDB.format.includes(i)) {
-                    errors.errorsMessages = [];
+                    // errors.errorsMessages = [];
                     errors.errorsMessages.push(
                         {
                             message: `bad request, incorrect format`, 
@@ -153,12 +199,15 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
         req.body.availableResolutions = validateAvailableResolutions;
     }
 
-    if(errors.errorsMessages.length > 0) {
-        // здесь можно вывести все ошибки (но прежде отключи очистку)
-        return
-    } else {
-        next();
-    }
+    // if(errors.errorsMessages.length > 0) {
+    //     // здесь можно вывести все ошибки (но прежде отключи очистку)
+    //     return
+    // } else {
+    //     next();
+    // }
+
+    next();
+
     
 }
 
@@ -167,25 +216,18 @@ function flagForDownload(req: Request, res: Response, next: NextFunction) {
         req.body.canBeDownloaded = false;
     }
 
-    // if(req.body.canBeDownloaded !== true || req.body.canBeDownloaded !== false) {
-    //     errors.errorsMessages.push(
-    //         {
-    //             message: `bad request, field canBeDownloaded not boolean`, 
-    //             field: 'canBeDownloaded'
-    //         }
-    //     );
+    // if(errors.errorsMessages.length > 0) {
+    //     res.status(400).type('text/plain').send(errors);
+    // } else {
+    //     next();
     // }
 
-    if(errors.errorsMessages.length > 0) {
-        res.status(400).type('text/plain').send(errors);
-    } else {
-        next();
-    }
+    next();
+
 }
 
 function flagForDownloadForPut(req: Request, res: Response, next: NextFunction) {
     if(typeof req.body.canBeDownloaded !== 'boolean') {
-        console.log(typeof req.body.canBeDownloaded, ' <---- canBeDownloaded')
         
         errors.errorsMessages.push(
             {
@@ -195,18 +237,21 @@ function flagForDownloadForPut(req: Request, res: Response, next: NextFunction) 
         );
     }
 
-    if(errors.errorsMessages.length > 0) {
-        res.status(400).type('text/plain').send(errors);
-    } else {
-        next();
-    }
+    // if(errors.errorsMessages.length > 0) {
+    //     res.status(400).type('text/plain').send(errors);
+    // } else {
+    //     next();
+    // }
+
+    next();
+
 }
 
 function minMaxAge(req: Request, res: Response, next: NextFunction) {
     if(!req.body.minAgeRestriction && req.body.minAgeRestriction !== 0) {
         req.body.minAgeRestriction = null;
     } else if(req.body.minAgeRestriction > 18 || req.body.minAgeRestriction <= 0) {           
-        errors.errorsMessages = [];
+        // errors.errorsMessages = [];
                 errors.errorsMessages.push(
                     {
                         message: `bad request, minAgeRestriction field is greater or less than the allowed value`, 
@@ -214,15 +259,18 @@ function minMaxAge(req: Request, res: Response, next: NextFunction) {
                     }
                 )
 
-        res.status(400).type('tex/plain').send(errors)
+        // res.status(400).type('tex/plain').send(errors)
     }
 
-    if(errors.errorsMessages.length > 0) {
-        // здесь можно вывести все ошибки (но прежде отключи очистку)
-        return
-    } else {
-        next();
-    }
+    // if(errors.errorsMessages.length > 0) {
+    //     // здесь можно вывести все ошибки (но прежде отключи очистку)
+    //     return
+    // } else {
+    //     next();
+    // }
+
+    next();
+
 }
 
 function allowedProperties(req: Request, res: Response, next: NextFunction) {
@@ -233,11 +281,14 @@ function allowedProperties(req: Request, res: Response, next: NextFunction) {
         }   
     }
 
-    if(errors.errorsMessages.length > 0) {
-        // здесь можно вывести все ошибки (но прежде отключи очистку)
-        return
-    } else {
-        next();
-    }
+    // if(errors.errorsMessages.length > 0) {
+    //     // здесь можно вывести все ошибки (но прежде отключи очистку)
+    //     return
+    // } else {
+    //     next();
+    // }
+
+    next();
+
 }
 
