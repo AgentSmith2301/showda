@@ -14,17 +14,8 @@ videoRolter.get('/', (req: Request, res: Response) => {
 
 videoRolter.get('/:id', (req: Request, res: Response) => {
     const result = methodsDB.getVideoById(+req.params.id);
-    if(result === 'not found') {
-        errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
-        res.status(404).type('text/plain').send(errors);
-    } else if(result === 'update') {
-        res.send(204)
-    }  
-
-    errors.errorsMessages = [];
-    errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
-    res.status(404).type('text/plain').send(errors);
+    if(result === 'NOT FOUND') res.send(404)
+    res.status(200).type('text/plain').send(result);
 })
 
 videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, allowedProperties, (req: Request, res: Response) => {
@@ -37,9 +28,7 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
     if(result) {
         res.send(204)
     } else {
-        errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
-        res.status(404).type('text/plain').send(errors);
+        res.send(404)
     }
     
 })
@@ -47,12 +36,11 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
 videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, (req: Request, res: Response) => {
     const result = methodsDB.updateDB(+req.params.id, req.body);
     if(result === 'not found') {
-        errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund id', field: 'id'});
-        res.status(404).type('text/plain').send(errors);
+        res.send(404)
     } else if(result === 'update') {
         res.send(204)
-    }   
+    }
+    
 })
 
 
@@ -184,33 +172,15 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
             })
         } 
         req.body.availableResolutions = validateAvailableResolutions;
-        
-        // for(let i of methodsDB.format) { // поиск по базе
-        //     formatFlag.find((value) => { // перебираем полученные разрешения из запроса
-        //         // если в базе есть то добавляем 
-        //         if(value === i) {
-        //             // проверка на существование формата в массиве
-        //             // if(validateAvailableResolutions.includes(value)) {
-        //             //     return
-        //             // }
-        //             // validateAvailableResolutions.push(value)
-        //         // } else if(!methodsDB.format.includes(value) ) { // если в базе нет значения который мы получили от фронта
-        //             // errors.errorsMessages = [];
-        //             // errors.errorsMessages.push(
-        //             //     {
-        //             //         message: `bad request, incorrect format`, 
-        //             //         field: 'invalid format field availableResolution'
-        //             //     }
-        //             // );
-        //             // res.status(400).type('text/plain').send(errors);
-        //             // errors.errorsMessages = [];
-        //         // }
-        //     })
-        // 
-        // }
-        // req.body.availableResolutions = validateAvailableResolutions;
     }
-    next();
+
+    if(errors.errorsMessages.length > 0) {
+        // здесь можно вывести все ошибки (но прежде отключи очистку)
+        return
+    } else {
+        next();
+    }
+    
 }
 
 function flagForDownload(req: Request, res: Response, next: NextFunction) {
@@ -218,7 +188,12 @@ function flagForDownload(req: Request, res: Response, next: NextFunction) {
         req.body.canBeDownloaded = false;
     }
 
-    next()
+    if(errors.errorsMessages.length > 0) {
+        // здесь можно вывести все ошибки (но прежде отключи очистку)
+        return
+    } else {
+        next();
+    }
 }
 
 function minMaxAge(req: Request, res: Response, next: NextFunction) {
@@ -236,7 +211,12 @@ function minMaxAge(req: Request, res: Response, next: NextFunction) {
         res.status(400).type('tex/plain').send(errors)
     }
 
-    next()
+    if(errors.errorsMessages.length > 0) {
+        // здесь можно вывести все ошибки (но прежде отключи очистку)
+        return
+    } else {
+        next();
+    }
 }
 
 function allowedProperties(req: Request, res: Response, next: NextFunction) {
@@ -247,9 +227,11 @@ function allowedProperties(req: Request, res: Response, next: NextFunction) {
         }   
     }
 
-    next()
+    if(errors.errorsMessages.length > 0) {
+        // здесь можно вывести все ошибки (но прежде отключи очистку)
+        return
+    } else {
+        next();
+    }
 }
 
-// function returnErrorIfNotIdInURL(req: Request, res: Response, next: NextFunction) {
-//     if(req.path)
-// }
