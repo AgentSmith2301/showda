@@ -37,6 +37,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
     const result = methodsDB.updateDB(+req.params.id, req.body);
     if(result === 'not found') {
         res.send(404)
+        return
     } else if(result === 'update') {
         res.send(204)
     }
@@ -45,92 +46,69 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
 
 
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
-    // if(!req.body.title || !req.body.author|| req.body.title === null || req.body.author === null) { // если нет свойства title или author
-    //     errors.errorsMessages = [];
-    //     errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
-    //     res.status(400).type('text/plain').send(errors);
-    // } 
-
+    errors.errorsMessages = [];
     if(!req.body.title) {
-        errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
-        res.status(400).type('text/plain').send(errors);
         // errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
+        // res.status(400).type('text/plain').send(errors);
     }
 
     if(!req.body.author) {
-        errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
-        res.status(400).type('text/plain').send(errors);
         // errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
+        // res.status(400).type('text/plain').send(errors);
     }
 
     if(req.body.title === null) {
-        errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
-        res.status(400).type('text/plain').send(errors);
         // errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
+        // res.status(400).type('text/plain').send(errors);
     }
 
     if(req.body.author === null) {
-        errors.errorsMessages = [];
-        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
-        res.status(400).type('text/plain').send(errors);
         // errors.errorsMessages = [];
+        errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
+        // res.status(400).type('text/plain').send(errors);
     }
-
-    
-    // else if(!req.body.title.trim() || !req.body.author.trim()) { // если свойства title или author пусто
-    //     errors.errorsMessages = [];
-    //     errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'fild author or title empty'});
-    //     res.status(400).type('text/plain').send(errors) ;
-    //     // errors.errorsMessages = [];
-    // } else if(req.body.title.length > 40 || req.body.author.length > 20) {
-    //     errors.errorsMessages = [];
-    //     errors.errorsMessages.push(
-    //         {
-    //             message: `the title field cannot be longer than 40 characters, the author field cannot be longer than 20 characters`, 
-    //             field: 'maximum length of author or title field exceeded'
-    //         });
-    //     res.status(400).type('text/plain').send(errors);
-    //     // errors.errorsMessages = [];
-    // }
     
     if(!req.body.title.trim()) {
-        errors.errorsMessages = [];
+        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'title'});
-        res.status(400).type('text/plain').send(errors) ;
+        // res.status(400).type('text/plain').send(errors) ;
     }
 
     if(!req.body.author.trim()) {
-        errors.errorsMessages = [];
+        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'author'});
-        res.status(400).type('text/plain').send(errors) ;
+        // res.status(400).type('text/plain').send(errors) ;
     }
     
     if(req.body.title.length > 40) {
-        errors.errorsMessages = [];
+        // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
                 message: `the title field cannot be longer than 40 characters, the author field cannot be longer than 20 characters`, 
                 field: 'title'
             });
-        res.status(400).type('text/plain').send(errors);
+        // res.status(400).type('text/plain').send(errors);
     }
 
     if(req.body.author.length > 20) {
-        errors.errorsMessages = [];
+        // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
                 message: `the title field cannot be longer than 40 characters, the author field cannot be longer than 20 characters`, 
                 field: 'author'
             });
-        res.status(400).type('text/plain').send(errors);
+        // res.status(400).type('text/plain').send(errors);
     }
     
+    console.log(errors.errorsMessages.length, '<--- errors.errorsMessages.length')
     
-    else {
+    if(errors.errorsMessages.length === 0){
         next();
+    } else {
+        res.status(400).type('text/plain').send(errors);
     }
 
 }
