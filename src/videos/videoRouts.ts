@@ -13,8 +13,6 @@ videoRolter.get('/', (req: Request, res: Response) => {
 })
 
 videoRolter.get('/:id', (req: Request, res: Response) => {
-    // создаем пустой объект массивов для дальнейшего использования
-    errors.errorsMessages = [];
     
     const result = methodsDB.getVideoById(+req.params.id);
     if(result === 'NOT FOUND') {
@@ -26,7 +24,8 @@ videoRolter.get('/:id', (req: Request, res: Response) => {
         )
     }
     if(errors.errorsMessages.length > 0) {
-        res.status(404).send(errors)
+        res.status(404).send(errors);
+        errors.errorsMessages = [];
     } else {
         res.status(200).type('text/plain').send(result);
     }
@@ -34,8 +33,6 @@ videoRolter.get('/:id', (req: Request, res: Response) => {
 })
 
 videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, allowedProperties, (req: Request, res: Response) => {
-    // создаем пустой объект массивов для дальнейшего использования
-    errors.errorsMessages = [];
     
     const result = methodsDB.createVideo(req.body)
     
@@ -43,13 +40,12 @@ videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownl
         res.status(201).type('tex/plain').send(result)
     } else {
         res.status(400).send(errors)
+        errors.errorsMessages = [];
     }
 
 })
 
 videoRolter.delete('/:id', (req: Request, res: Response) => {
-    // создаем пустой объект массивов для дальнейшего использования
-    errors.errorsMessages = [];
     
     const result = methodsDB.deleteById(+req.params.id);
     if(result) {
@@ -62,6 +58,7 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
             }
         );
         res.status(404).send(errors)
+        errors.errorsMessages = [];
     }
     
 })
@@ -83,6 +80,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
     } 
     if(errors.errorsMessages.length > 0) {
         res.status(400).send(errors)
+        errors.errorsMessages = [];
     } else if(result === 'update' && errors.errorsMessages.length === 0) { // если ошибок нет и с базы вернется update , то возвращаем данные 
         res.send(204)
     }
