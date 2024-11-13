@@ -172,7 +172,6 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
                 message: `bad request, field availableResolutions empty`, 
                 field: 'availableResolutions'
             });
-        // res.status(400).type('text/plain').send(errors);
     } 
     else if(formatFlag.length > 0) {
         const validateAvailableResolutions: string[] = []; 
@@ -184,16 +183,17 @@ function videoFormatValidator(req: Request, res: Response, next: NextFunction) {
                         return
                     }
                     validateAvailableResolutions.push(value)
-                } else if(!methodsDB.format.includes(i)) {
-                    errors.errorsMessages.push(
-                        {
-                            message: `bad request, incorrect format`, 
-                            field: 'availableResolutions'
-                        }
-                    );
-                    // res.status(400).type('text/plain').send(errors);
                 }
             })
+
+            if(!methodsDB.format.includes(i)) {
+                errors.errorsMessages.push(
+                    {
+                        message: `bad request, incorrect format`, 
+                        field: 'availableResolutions'
+                    }
+                )
+            }
         } 
         req.body.availableResolutions = validateAvailableResolutions;
     }
