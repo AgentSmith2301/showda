@@ -67,24 +67,28 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
 })
 
 videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownloadForPut, minMaxAge, (req: Request, res: Response) => {
-    // создаем пустой объект массивов для дальнейшего использования
-    errors.errorsMessages = [];
     
     const result = methodsDB.updateDB(+req.params.id, req.body);
     // если с базы вернется ответ not found по запросу на id или были другие ошибки в других валидаторах то выдаст ошибку
-    if(result === 'not found' || errors.errorsMessages.length > 0) {
+    if(result === 'not found') {
         errors.errorsMessages.push(
             {
                 message: `bad request, id not found`, 
                 field: 'id'
             }
         );
-        res.status(400).send(errors)
+        res.status(400).send(errors);
+        errors.errorsMessages = [];
         
+    } 
+    if(errors.errorsMessages.length > 0) {
+        res.status(400).send(errors)
     } else if(result === 'update' && errors.errorsMessages.length === 0) { // если ошибок нет и с базы вернется update , то возвращаем данные 
         res.send(204)
     }
-    
+
+    // создаем пустой объект массивов для дальнейшего использования
+    errors.errorsMessages = [];
 })
 
 
