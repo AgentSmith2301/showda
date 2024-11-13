@@ -33,7 +33,7 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
     
 })
 
-videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, (req: Request, res: Response) => {
+videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownloadForPut, minMaxAge, (req: Request, res: Response) => {
     const result = methodsDB.updateDB(+req.params.id, req.body);
     if(result === 'not found') {
         res.send(404)
@@ -167,9 +167,36 @@ function flagForDownload(req: Request, res: Response, next: NextFunction) {
         req.body.canBeDownloaded = false;
     }
 
+    // if(req.body.canBeDownloaded !== true || req.body.canBeDownloaded !== false) {
+    //     errors.errorsMessages.push(
+    //         {
+    //             message: `bad request, field canBeDownloaded not boolean`, 
+    //             field: 'canBeDownloaded'
+    //         }
+    //     );
+    // }
+
     if(errors.errorsMessages.length > 0) {
-        // здесь можно вывести все ошибки (но прежде отключи очистку)
-        return
+        res.status(400).type('text/plain').send(errors);
+    } else {
+        next();
+    }
+}
+
+function flagForDownloadForPut(req: Request, res: Response, next: NextFunction) {
+    if(typeof req.body.canBeDownloaded !== 'boolean') {
+        console.log(typeof req.body.canBeDownloaded, ' <---- canBeDownloaded')
+        
+        errors.errorsMessages.push(
+            {
+                message: `bad request, field canBeDownloaded not boolean`, 
+                field: 'canBeDownloaded'
+            }
+        );
+    }
+
+    if(errors.errorsMessages.length > 0) {
+        res.status(400).type('text/plain').send(errors);
     } else {
         next();
     }
