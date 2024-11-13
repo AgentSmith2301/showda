@@ -34,9 +34,8 @@ videoRolter.get('/:id', (req: Request, res: Response) => {
 
 videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, allowedProperties, (req: Request, res: Response) => {
     
-    const result = methodsDB.createVideo(req.body)
-    
     if(errors.errorsMessages.length === 0) {
+        const result = methodsDB.createVideo(req.body)
         res.status(201).type('tex/plain').send(result)
     } else {
         res.status(400).send(errors)
