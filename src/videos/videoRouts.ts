@@ -74,7 +74,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
                 field: 'id'
             }
         );
-        res.status(400).send(errors);
+        res.status(404).send(errors);
         errors.errorsMessages = [];
         
     } 
