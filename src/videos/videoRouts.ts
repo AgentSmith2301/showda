@@ -60,6 +60,10 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
     
 })
 
+videoRolter.put('/', (req: Request, res: Response) => {
+    res.status(400).send('not a valibl URL')
+})
+
 videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownloadForPut, minMaxAge, (req: Request, res: Response) => {
     
     const result = methodsDB.getVideoById(+req.params.id);
