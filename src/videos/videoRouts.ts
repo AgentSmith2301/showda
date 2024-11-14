@@ -60,10 +60,6 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
     
 })
 
-videoRolter.put('/', (req: Request, res: Response) => {
-    res.status(400).send('not a valibl URL')
-})
-
 videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownloadForPut, minMaxAge, (req: Request, res: Response) => {
     
     const result = methodsDB.getVideoById(+req.params.id);
@@ -82,25 +78,26 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
         return
     } 
 
+    if(typeof req.body.publicationDate === 'number') {
+        req.body.publicationDate = String(req.body.publicationDate)
+    }
+
     if(req.body.publicationDate && req.body.publicationDate.trim()) {
         let data = req.body.publicationDate ;
         data = data.trim();
 
         if(data.length <= 8) {
-            console.log(' <--- здесь')
             errors.errorsMessages.push(
                 {
                     message: `publicationDate does not meet the requirement`, 
                     field: 'publicationDate'
                 }
             )
-
         } else {
             try{
                 new Date(data).toISOString();
                 findOrNot = true;
             } catch {
-                console.log(' <--- или здесь')
                 errors.errorsMessages.push(
                     {
                         message: `publicationDate does not meet the requirement`, 
