@@ -12,8 +12,7 @@ videoRolter.get('/', (req: Request, res: Response) => {
     res.status(200).send(methodsDB.getVideo());
 })
 
-videoRolter.get('/:id', (req: Request, res: Response) => {
-    
+videoRolter.get('/:id', (req: Request, res: Response) => {   
     const result = methodsDB.getVideoById(+req.params.id);
     if(result === 'NOT FOUND') {
         errors.errorsMessages.push(
@@ -28,8 +27,7 @@ videoRolter.get('/:id', (req: Request, res: Response) => {
         errors.errorsMessages = [];
     } else {
         res.status(200).type('text/plain').send(result);
-    }
-    
+    }  
 })
 
 videoRolter.post('/', titleAndAfthorValidate, videoFormatValidator, flagForDownload, minMaxAge, allowedProperties, (req: Request, res: Response) => {
@@ -77,6 +75,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
         );
         res.status(404).send(errors);
         errors.errorsMessages = [];
+        return
     } 
 
     if(req.body.publicationDate && req.body.publicationDate.trim()) {
@@ -84,6 +83,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
         data = data.trim();
 
         if(data.length <= 8) {
+            console.log(' <--- здесь')
             errors.errorsMessages.push(
                 {
                     message: `publicationDate does not meet the requirement`, 
@@ -96,6 +96,7 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
                 new Date(data).toISOString();
                 findOrNot = true;
             } catch {
+                console.log(' <--- или здесь')
                 errors.errorsMessages.push(
                     {
                         message: `publicationDate does not meet the requirement`, 
@@ -108,11 +109,12 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
 
     if(errors.errorsMessages.length > 0) {
         res.status(400).send(errors);
+        errors.errorsMessages = [];
     } else if(findOrNot === true && errors.errorsMessages.length === 0) {  
         res.send(204);
         methodsDB.updateDB(+req.params.id, req.body);
     }
-    errors.errorsMessages = [];
+    // errors.errorsMessages = [];
 })
 
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
