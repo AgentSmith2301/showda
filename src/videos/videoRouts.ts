@@ -64,9 +64,11 @@ videoRolter.delete('/:id', (req: Request, res: Response) => {
 
 videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDownloadForPut, minMaxAge, (req: Request, res: Response) => {
     
-    const result = methodsDB.updateDB(+req.params.id, req.body);
-    // если с базы вернется ответ not found по запросу на id или были другие ошибки в других валидаторах то выдаст ошибку
-    if(result === 'not found') {
+    const result = methodsDB.getVideoById(+req.params.id);
+
+    let findOrNot;
+
+    if(result === 'NOT FOUND') {
         errors.errorsMessages.push(
             {
                 message: `bad request, id not found`, 
@@ -75,87 +77,85 @@ videoRolter.put('/:id', titleAndAfthorValidate, videoFormatValidator, flagForDow
         );
         res.status(404).send(errors);
         errors.errorsMessages = [];
-        
     } 
-    if(errors.errorsMessages.length > 0) {
-        res.status(400).send(errors)
-        errors.errorsMessages = [];
-    } else if(result === 'update' && errors.errorsMessages.length === 0) { // если ошибок нет и с базы вернется update , то возвращаем данные 
-        res.send(204)
+
+    if(req.body.publicationDate && req.body.publicationDate.trim()) {
+        let data = req.body.publicationDate ;
+        data = data.trim();
+
+        if(data.length <= 8) {
+            errors.errorsMessages.push(
+                {
+                    message: `publicationDate does not meet the requirement`, 
+                    field: 'publicationDate'
+                }
+            )
+
+        } else {
+            try{
+                new Date(data).toISOString();
+                findOrNot = true;
+            } catch {
+                errors.errorsMessages.push(
+                    {
+                        message: `publicationDate does not meet the requirement`, 
+                        field: 'publicationDate'
+                    }
+                )
+            }
+        }
     }
 
-    // создаем пустой объект массивов для дальнейшего использования
+    if(errors.errorsMessages.length > 0) {
+        res.status(400).send(errors);
+    } else if(findOrNot === true && errors.errorsMessages.length === 0) {  
+        res.send(204);
+        methodsDB.updateDB(+req.params.id, req.body);
+    }
     errors.errorsMessages = [];
 })
 
-
 function titleAndAfthorValidate(req: Request, res: Response, next: NextFunction) {
-    // errors.errorsMessages = [];
 
     if(req.body.title == null) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'title value cannot be null', field: 'title'});
-        // res.status(400).type('text/plain').send(errors);
     }
 
     if(req.body.author == null) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'author value cannot be null', field: 'author'});
-        // res.status(400).type('text/plain').send(errors);
     }
 
     if(req.body.title != null && !req.body.title) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'title'});
-        // res.status(400).type('text/plain').send(errors);
     }
 
     if(req.body.author != null && !req.body.author) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, not faund title or author', field: 'author'});
-        // res.status(400).type('text/plain').send(errors);
     }
     
     if(req.body.title != null && !req.body.title.trim()) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'title'});
-        // res.status(400).type('text/plain').send(errors) ;
     }
 
     if(req.body.author != null && !req.body.author.trim()) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push({message: 'bad request, title and author fields cannot be empty', field: 'author'});
-        // res.status(400).type('text/plain').send(errors) ;
     }
     
     if(req.body.title != null && req.body.title.length > 40) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
                 message: `the title field cannot be longer than 40 characters, the author field cannot be longer than 20 characters`, 
                 field: 'title'
             });
-        // res.status(400).type('text/plain').send(errors);
     }
 
     if(req.body.author != null && req.body.author.length > 20) {
-        // errors.errorsMessages = [];
         errors.errorsMessages.push(
             {
                 message: `the title field cannot be longer than 40 characters, the author field cannot be longer than 20 characters`, 
                 field: 'author'
             });
-        // res.status(400).type('text/plain').send(errors);
     }
-    
-    // console.log(errors.errorsMessages.length, '<--- errors.errorsMessages.length')
-    
-    // if(errors.errorsMessages.length === 0){
-    //     next();
-    // } else {
-    //     res.status(400).type('text/plain').send(errors);
-    // }
-
     next();
 
 
