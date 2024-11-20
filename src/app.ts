@@ -1,8 +1,10 @@
 import express, { Router, Request, Response } from 'express';
 import cors from 'cors';
-import { videoRolter } from './videos/videoRouts';
+import { videoRolter } from './routers/videoRouts';
+import { postRouter, blogRouter } from './routers/postAndBlogRouters';
 import { SETTINGS } from './settings';
-import {methodsDB} from './db/db'
+import {methodsDB} from './repositories/videosRepository'
+import {metodsPostsDB, metodsBlogsDB} from './repositories/postAndBlogRepository'
 
 export const app = express();
 app.use(express.json());
@@ -10,12 +12,16 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-    res.status(200).json({version: '1.0'});
+    res.status(200).json({version: '2.0'});
 })
 
 app.delete(SETTINGS.PATH.DELETEALL, (req: Request, res: Response) => {
     methodsDB.deleteAll();
+    metodsBlogsDB.deleteAll();
+    metodsPostsDB.deleteAll();
     res.send(204);
 })
 
 app.use(SETTINGS.PATH.VIDEOS, videoRolter)
+app.use(SETTINGS.PATH.POSTS, postRouter)
+app.use(SETTINGS.PATH.BLOGS, blogRouter)

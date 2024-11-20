@@ -1,5 +1,5 @@
 import {Router, Request, Response, NextFunction} from 'express';
-import {methodsDB} from '../db/db';
+import {methodsDB} from '../repositories/videosRepository';
 import {CastomErrors} from '../errors/castomErrorsObject';
 
 const errors: CastomErrors = {

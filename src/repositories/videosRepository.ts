@@ -11,7 +11,6 @@ interface Video {
 
 type DBType = {
     videos: Video[];
-    // blogs: any[];
 };
 
 interface MethodsDB {
@@ -27,7 +26,6 @@ interface MethodsDB {
 
 export const db: DBType = {
     videos: [],
-    // blogs: [],
 };
 
 export const methodsDB: MethodsDB = {
