@@ -59,7 +59,7 @@ blogRouter.post('/', checkAuthorization, objectValidateMetods.postAndPutReqvestb
         errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
     } 
 
-    res.status(200).send(metodsBlogsDB.createBlog(req.body))
+    res.status(201).send(metodsBlogsDB.createBlog(req.body))
 })
 
 blogRouter.get('/', (req: Request, res: Response) => {
@@ -104,13 +104,10 @@ blogRouter.put('/:id', checkAuthorization, objectValidateMetods.postAndPutReqves
 blogRouter.delete('/:id', checkAuthorization, (req: Request, res: Response) => {
     const checkId = metodsBlogsDB.checkId(req.params.id);
     if(checkId === false) {
-        res.send(404)
+        res.sendStatus(404)
     }
-
     const result = metodsBlogsDB.deleteBlog(req.params.id);
-    if(metodsBlogsDB) {
-        res.send(204)
-    } {
-        res.send(404)
-    }
+    if(result) {
+        res.sendStatus(204)
+    } 
 })

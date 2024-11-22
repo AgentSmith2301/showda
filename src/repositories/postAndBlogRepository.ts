@@ -117,14 +117,25 @@ export const metodsBlogsDB = {
         return essence;
     },
     deleteBlog(id: string) {
-        allDB.blog.find((value, index) => {
-            if(value.id === id) {
-                allDB.blog.splice(index, 1);
-                return true;
-            } else {
-                return false;
-            }
-        });
+        // allDB.blog.find((value, index) => {
+        //     if(value.id === id) {
+        //         console.log('привет, я нашел id')
+        //         allDB.blog.splice(index, 1);
+        //         return true;
+        //     } else {
+        //         return false;
+        //     }
+        // })
+
+        let result = allDB.blog.findIndex((value) => value.id === id);
+        console.log(result, 'result')
+        if(result > -1) {
+            allDB.blog.splice(result, 1)
+            return true
+        } else {
+            return false
+        }
+
     }
 }
 

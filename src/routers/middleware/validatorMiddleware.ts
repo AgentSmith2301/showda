@@ -25,10 +25,11 @@ const postAndPutReqvestbodyValBlogs = [
     .isLength({min:3, max:500}).withMessage('min length 3 and max 500'),
 
     body('websiteUrl')
-    .trim().exists().withMessage('this field is required')
+    .exists().withMessage('this field is required')
+    .trim()
     // .isURL().withMessage('field not URL')
     .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/).withMessage('invalid URL format')
-    .isLength({min:3, max:100}).withMessage('min length 3 and max 100'),
+    .isLength({min:5, max:100}).withMessage('min length 3 and max 100'),
 ];
 
 // const checkOnliIdValBlogs = [
