@@ -49,24 +49,43 @@ export const metodsPostsDB = {
     getAll() {
         return allDB.posts;
     },
-    // getPost() {},
+    getPost(id: string) {
+        const result = allDB.posts.find((value) => value.id === id );
+        return result;
+    },
     createPost(post: PostInputModel): PostViewModel {
-        let id = (Date.now() + Math.random()).toString();
-        id.toString();
-        // let blogName = 
-        return {
+        let id = Date.now().toString();;
+        let blogNotUndefined = metodsBlogsDB.getBlog(post.blogId);
+        let result: string;
+        if(blogNotUndefined !== undefined) {
+            result = blogNotUndefined.name;
+        } else {
+            result = 'NOT FIND'
+        }
+        const baseUpdate = {
             id: id,
             title: post.title,
             shortDescription: post.shortDescription,
             content: post.content,
             blogId: post.blogId,
-            blogName: 'какое-то имя пока так'// из блога возьми и вставь сюда в место заглушки
+            blogName: result 
         }
-
+        allDB.posts.push(baseUpdate)
+        return baseUpdate
     },
-    // updatePost() {},
+    updatePost(id: string, body: PostInputModel) {
+        const searchFromBase = allDB.posts.findIndex((value) => value.id === id);
+        if(searchFromBase >= 0) {
+            let result = allDB.posts.filter((value, index) => searchFromBase === index)
+            allDB.posts.splice(searchFromBase,1, {...result[0], ...body})
+            return true;
+        } else {
+            return false;
+        }
+    },
     deletePost(id: string) {
         let result = allDB.posts.findIndex((value) => value.id === id);
+        allDB.posts.splice(result,1)
         return result;
     },
     deleteAll() {
@@ -117,16 +136,6 @@ export const metodsBlogsDB = {
         return essence;
     },
     deleteBlog(id: string) {
-        // allDB.blog.find((value, index) => {
-        //     if(value.id === id) {
-        //         console.log('привет, я нашел id')
-        //         allDB.blog.splice(index, 1);
-        //         return true;
-        //     } else {
-        //         return false;
-        //     }
-        // })
-
         let result = allDB.blog.findIndex((value) => value.id === id);
         console.log(result, 'result')
         if(result > -1) {

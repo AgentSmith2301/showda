@@ -2,10 +2,12 @@ import {check, body, validationResult} from 'express-validator'
 import {Router, Response, Request, NextFunction} from 'express';
 
 const postReqvestbodyValPosts = [
-    body('title').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined').escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
+    body('title').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined')
+    .escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
     .isLength({min:3, max:30}).withMessage('min length 3 and max 30'),
     
-    body('shortDescription').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined').escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
+    body('shortDescription').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined')
+    .escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
     .isLength({min:3, max:100}).withMessage('min length 3 and max 100'),
 
     body('content').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined').escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
@@ -32,17 +34,10 @@ const postAndPutReqvestbodyValBlogs = [
     .isLength({min:5, max:100}).withMessage('min length 3 and max 100'),
 ];
 
-// const checkOnliIdValBlogs = [
-//     body('id').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined')
-//     .escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
-    
-// ];
-
 
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,
-    // checkOnliIdValBlogs,
 
 }
 

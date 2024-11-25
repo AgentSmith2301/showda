@@ -286,3 +286,325 @@ describe('тесты на создание, на авторизацию при �
     })
 
 })
+
+// ТЕСТЫ НА POSTS
+describe('тесты на валидацию постов ==> POSTS  👇', () => {
+    beforeAll(async() => {
+        await req.delete(SETTINGS.PATH.DELETEALL).expect(204)
+    })
+
+    let response: any ;
+
+    it('создание блога', async() => { // get all blogs
+        response = await req.post(SETTINGS.PATH.BLOGS).send({
+            "name": "Tamerlan",
+            "description": "creator of the devastating blow to the little finger",
+            "websiteUrl": "https://showda.com"
+        }).auth('admin','qwerty').expect(201)
+        
+    })
+
+    it('пользователь не авторизован', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "the title",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": response.body.id,
+        }).expect(401)
+    })
+
+    it('не создавать блог отсутствует поле title', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string",
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог title пуст', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог title не строка', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": 1,
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог title пустая строка', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "  ",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог title undefined', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": undefined,
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог title null', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": null,
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог title длинее 30 символов', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title length > 30 , hu laike a dogz aut",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог title меньше 3 символов', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "ti",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог shortDescription меньше 3 символов', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "st",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог shortDescription больше 100 символов', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "stывллжыалфылфэжалзцлузафэзулащуцлаойцкйшйщазщлшацщлуоэцоацэацзщокзщцовщаоыщуаруажвмфтшуоафщцоулютылвтсцшур",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог поле shortDescription отсутствует', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог shortDescription пусто', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "  ",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог shortDescription не строка', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "st",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог shortDescription не может быть null', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": null,
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог shortDescription не может быть undefined', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": undefined,
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог content не может быть undefined', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": undefined,
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог content не может быть null', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": null,
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог content не может быть меньше 3 символов', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": 'nu',
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог поле content отсутствует', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог content не может быть null', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": null,
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог content не может быть undefined', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": undefined,
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог поле content должено быть строкой', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": 1,
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог , blogId не может быть undefined', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": "string"
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог , blogId не может быть null', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": null
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог , отсутствует поле blogId', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": "string",
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог , поле blogId должно быть строкой', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": 1
+        }).auth('admin','qwerty').expect(400)
+    })
+
+    it('не создавать блог , blogId не может быть null', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "title ok",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": null
+        }).auth('admin','qwerty').expect(400)
+    })
+
+})
+
+describe('тесты на создание , получение , обновление и удаление постов ==> POSTS  👇', () => {
+    beforeAll(async() => {
+        await req.delete(SETTINGS.PATH.DELETEALL).expect(204)
+    })
+
+    let response: any ;
+
+    it('создание блога', async() => { // get all blogs
+        response = await req.post(SETTINGS.PATH.BLOGS).send({
+            "name": "Tamerlan",
+            "description": "creator of the devastating blow to the little finger",
+            "websiteUrl": "https://showda.com"
+        }).auth('admin','qwerty').expect(201)
+        
+    })
+
+    it('создать пост', async() => {
+        await req.post(SETTINGS.PATH.POSTS).send({
+            "title": "the title",
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": response.body.id,
+        }).auth('admin','qwerty').expect(201)
+    })
+
+    let result: any ;
+
+    it('получить все посты', async() => {
+        result = await req.get(SETTINGS.PATH.POSTS).expect(200);
+        expect(result.body).toEqual([{
+            "title": "the title",
+            "id": result.body[0].id,
+            "blogName": response.body.name,
+            "shortDescription": "string",
+            "content": "string",
+            "blogId": response.body.id
+        }])
+    })
+
+    it('изменить пост', async() => {
+        await req.put(`${SETTINGS.PATH.POSTS}/${result.body[0].id}`).send({
+            "title": "new title from put requst",
+            "shortDescription": "new string",
+            "content": "new string",
+            "blogId": response.body.id,
+        }).auth('admin','qwerty').expect(204)
+    })
+
+    it('удалить пост', async() => {
+        await req.delete(`${SETTINGS.PATH.POSTS}/${result.body[0].id}`).auth('admin','qwerty').expect(204)
+    })
+
+    
+})

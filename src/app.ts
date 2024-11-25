@@ -19,7 +19,7 @@ app.delete(SETTINGS.PATH.DELETEALL, (req: Request, res: Response) => {
     methodsDB.deleteAll();
     metodsBlogsDB.deleteAll();
     metodsPostsDB.deleteAll();
-    res.send(204);
+    res.sendStatus(204);
 })
 
 app.use(SETTINGS.PATH.VIDEOS, videoRolter)
