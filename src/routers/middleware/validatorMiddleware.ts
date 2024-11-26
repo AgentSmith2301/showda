@@ -14,7 +14,7 @@ const postReqvestbodyValPosts = [
     .isLength({min:3, max:1000}).withMessage('min length 3 and max 1000'),
 
     body('blogId').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined').escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
-    .isLength({min:3, max:30}).withMessage('min length 3 and max 30'),
+    .isLength({min:6, max:30}).withMessage('min length 6 and max 30'),
 ];
 
 const postAndPutReqvestbodyValBlogs = [
