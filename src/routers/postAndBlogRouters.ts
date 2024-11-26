@@ -129,7 +129,24 @@ postRouter.post('/', checkAuthorization, objectValidateMetods.postReqvestbodyVal
 
 postRouter.put('/:id', checkAuthorization, objectValidateMetods.postReqvestbodyValPosts, (req: Request, res: Response, next: NextFunction) => {
     const result = metodsPostsDB.updatePost(req.params.id, req.body);
-    if(result) {
+    // if(result) {
+    //     res.sendStatus(204)
+    // } else {
+    //     res.sendStatus(404)
+    // }
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ 
+            message: error.msg.message || error.msg,
+            field: error.path
+        }))
+        filterErrors.map((value) => {
+            errorFromBlogsAndPosts.errorsMessages.push(value);
+        })
+        res.status(400).send(errorFromBlogsAndPosts);
+        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+    } else if(result) { // если не нашли id блогера то ошибка
         res.sendStatus(204)
     } else {
         res.sendStatus(404)
