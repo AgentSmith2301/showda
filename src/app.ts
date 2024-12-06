@@ -1,7 +1,8 @@
 import express, { Router, Request, Response } from 'express';
-import cors from 'cors';
+// import cors from 'cors';
 import { videoRolter } from './routers/videoRouts';
-import { postRouter, blogRouter } from './routers/postAndBlogRouters';
+import { blogRouter } from './routers/blogRouts';
+import { postRouter } from './routers/postRouts';
 import { SETTINGS } from './settings';
 import {methodsDB} from './repositories/videosRepository'
 import {metodsPostsDB, metodsBlogsDB} from './repositories/postAndBlogRepository'

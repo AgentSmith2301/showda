@@ -1,45 +1,5 @@
-interface PostViewModel {
-    id: string,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-    blogName: string,
-}
+import {DBType, PostInputModel, PostViewModel, BlogViewModel, BlogInputModel} from '../types/dbType'
 
-interface PostInputModel {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-}
-
-interface BlogViewModel {
-    id: string,
-    name: string,
-    description: string,
-    websiteUrl: string,
-}
-
-interface BlogInputModel {
-    name: string,
-    description: string,
-    websiteUrl: string,
-}
-
-type ErrorResult = FieldError[];
-
-interface FieldError {
-    message: string,
-    field: string,
-}
-
-// Типы в базе 
-interface DBType {
-    posts: PostViewModel[];
-    blog: BlogViewModel[];
-}
-// база postsDB { post: [ PostViewModel ] }
 const allDB: DBType = {
     posts: [],
     blog: [],
@@ -144,7 +104,6 @@ export const metodsBlogsDB = {
         } else {
             return false
         }
-
     }
 }
 
