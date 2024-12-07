@@ -1,7 +1,5 @@
-/node_modules
-/dist
+node_modules/
+dist/
 .env
-/coverage
-/__tests__
-__tests__/datasets.ts
-__tests__/blogsAndPosts.e2e.test.ts
+coverage/
+__tests__/
