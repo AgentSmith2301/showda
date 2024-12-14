@@ -1,6 +1,7 @@
 import {Response, Request, NextFunction} from 'express';
 import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
-import {metodsBlogsDB} from '../repositories/postAndBlogRepository';
+import {metodsBlogsDB} from '../repositories/blogsRepositories';
+
 import {validationResult} from 'express-validator'
 
 

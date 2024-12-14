@@ -1,5 +1,5 @@
 import {check, body, validationResult} from 'express-validator'
-import {Router, Response, Request, NextFunction} from 'express';
+// import {Router, Response, Request, NextFunction} from 'express';
 
 const postReqvestbodyValPosts = [
     body('title').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined')

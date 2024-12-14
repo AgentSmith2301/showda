@@ -14,4 +14,3 @@ export const SETTINGS = {
     DB_NAME: process.env.DB_NAME || ''
 }
 
-

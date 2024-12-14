@@ -35,13 +35,13 @@ interface FieldError {
 }
 
 // Типы в базе 
-export interface DBType {
+interface DBType {
     posts: PostViewModel[];
     blog: BlogViewModel[];
 }
 // база postsDB { post: [ PostViewModel ] }
-// const allDB: DBType = {
-//     posts: [],
-//     blog: [],
-// }
+export const allDB: DBType = {
+    posts: [],
+    blog: [],
+}
 

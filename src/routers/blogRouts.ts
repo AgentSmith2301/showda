@@ -1,9 +1,6 @@
 import {Router} from 'express';
-// import {metodsBlogsDB} from '../repositories/postAndBlogRepository';
 import {checkAuthorization} from '../middleware/authorizationMiddleware'
-// import {validationResult} from 'express-validator'
 import {objectValidateMetods} from '../middleware/validatorMiddleware'
-// import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
 import {createBlogController, deleteBlogController, changeBlogController, getBlogFromIdController, getAllBlogsController} from '../controllers/blogsControllers'
 
 export const blogRouter = Router();

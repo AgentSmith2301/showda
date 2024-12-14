@@ -1,15 +1,15 @@
 import express, { Router, Request, Response } from 'express';
-// import cors from 'cors';
 import { videoRolter } from './routers/videoRouts';
 import { blogRouter } from './routers/blogRouts';
 import { postRouter } from './routers/postRouts';
 import { SETTINGS } from './settings';
 import {methodsDB} from './repositories/videosRepository'
-import {metodsPostsDB, metodsBlogsDB} from './repositories/postAndBlogRepository'
+import {metodsPostsDB} from './repositories/postsRepositories'
+import {metodsBlogsDB} from './repositories/blogsRepositories'
+
 
 export const app = express();
 app.use(express.json());
-// app.use(cors());
 
 
 app.get('/', (req, res) => {
