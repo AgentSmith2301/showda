@@ -1,6 +1,7 @@
 import {Response, Request, NextFunction} from 'express';
 import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
 import {metodsPostsDB} from '../repositories/postsRepositories';
+import {metodsBlogsDB} from '../repositories/blogsRepositories';
 
 
 import {validationResult} from 'express-validator'
@@ -28,17 +29,10 @@ export async function deletePostByIdController(req: Request, res: Response) {
     }else {
         res.send(404);
     }
-
-    // console.log(result, ' from delete')
-    // if(result >= 0) {
-    //     res.send(204);
-    // } else {
-    //     res.send(404);
-    // }
 }
 
 export async function createPostConrtoller(req: Request, res: Response, next: NextFunction) {
-    const result = await metodsPostsDB.createPost(req.body);
+    // const result = await metodsPostsDB.createPost(req.body);
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ 
@@ -51,7 +45,14 @@ export async function createPostConrtoller(req: Request, res: Response, next: Ne
         res.status(400).send(errorFromBlogsAndPosts);
         errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
         return
-    } else if(result !== null && result.blogName === 'NOT FIND') { // если не нашли id блогера то ошибка
+    } 
+    
+    const checkIdBlog = await metodsBlogsDB.checkId(req.body.blogId)
+    if(checkIdBlog) {  // если id блогера найдено
+        const result = await metodsPostsDB.createPost(req.body);
+        res.status(201).send(result)
+        return
+    } else { // если не нашли id блогера то ошибка
         errorFromBlogsAndPosts.errorsMessages.push({
             message: 'blogerName not faund',
             field: 'blogerName'
@@ -59,11 +60,7 @@ export async function createPostConrtoller(req: Request, res: Response, next: Ne
         res.status(400).send(errorFromBlogsAndPosts);
         errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
         return
-    } else {
-        res.status(201).send(result)
-        return
     }
-    
 }
 
 export async function changePostById(req: Request, res: Response, next: NextFunction) {
