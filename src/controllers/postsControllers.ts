@@ -6,12 +6,14 @@ import {metodsPostsDB} from '../repositories/postsRepositories';
 import {validationResult} from 'express-validator'
 
 
-export function getAllpostsController(req: Request, res: Response) {
-    res.status(200).send(metodsPostsDB.getAll())
+export async function getAllpostsController(req: Request, res: Response) {
+    const result = await metodsPostsDB.getAll();
+    res.status(200).send(result)
+
 }
 
-export function getPostByIdController(req: Request, res: Response) {
-    const result =  metodsPostsDB.getPost(req.params.id);
+export async function getPostByIdController(req: Request, res: Response) {
+    const result = await metodsPostsDB.getPost(req.params.id);
     if(result) {
         res.send(result)
     } else {
@@ -19,18 +21,24 @@ export function getPostByIdController(req: Request, res: Response) {
     }
 }
 
-export function deletePostByIdController(req: Request, res: Response) {
-    let result = metodsPostsDB.deletePost(req.params.id);
-    console.log(result, ' from delete')
-    if(result >= 0) {
+export async function deletePostByIdController(req: Request, res: Response) {
+    let result =  await metodsPostsDB.deletePost(req.params.id);
+    if(result) {
         res.send(204);
-    } else {
+    }else {
         res.send(404);
     }
+
+    // console.log(result, ' from delete')
+    // if(result >= 0) {
+    //     res.send(204);
+    // } else {
+    //     res.send(404);
+    // }
 }
 
-export function createPostConrtoller(req: Request, res: Response, next: NextFunction) {
-    const result = metodsPostsDB.createPost(req.body);
+export async function createPostConrtoller(req: Request, res: Response, next: NextFunction) {
+    const result = await metodsPostsDB.createPost(req.body);
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ 
@@ -42,21 +50,24 @@ export function createPostConrtoller(req: Request, res: Response, next: NextFunc
         })
         res.status(400).send(errorFromBlogsAndPosts);
         errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
-    } else if(result.blogName === 'NOT FIND') { // если не нашли id блогера то ошибка
+        return
+    } else if(result !== null && result.blogName === 'NOT FIND') { // если не нашли id блогера то ошибка
         errorFromBlogsAndPosts.errorsMessages.push({
             message: 'blogerName not faund',
             field: 'blogerName'
         })
         res.status(400).send(errorFromBlogsAndPosts);
         errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        return
     } else {
         res.status(201).send(result)
+        return
     }
     
 }
 
-export function changePostById(req: Request, res: Response, next: NextFunction) {
-    const result = metodsPostsDB.updatePost(req.params.id, req.body);
+export async function changePostById(req: Request, res: Response, next: NextFunction) {
+    const result = await metodsPostsDB.updatePost(req.params.id, req.body);
 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {

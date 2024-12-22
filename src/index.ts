@@ -1,6 +1,6 @@
 import {app} from './app';
 import {SETTINGS} from './settings';
-import {runFromDB, postsCollection, blogsCollection} from './db/mongoDb';
+import {runFromDB} from './db/mongoDb';
 
 const startApp = async() => {
     const res = await runFromDB()

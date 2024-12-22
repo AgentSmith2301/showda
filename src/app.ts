@@ -7,7 +7,6 @@ import {methodsDB} from './repositories/videosRepository'
 import {metodsPostsDB} from './repositories/postsRepositories'
 import {metodsBlogsDB} from './repositories/blogsRepositories'
 
-
 export const app = express();
 app.use(express.json());
 
@@ -16,7 +15,7 @@ app.get('/', (req, res) => {
     res.status(200).json({version: '2.0'});
 })
 
-app.delete(SETTINGS.PATH.DELETEALL, (req: Request, res: Response) => {
+app.delete(SETTINGS.PATH.DELETEALL, async(req: Request, res: Response) => {
     methodsDB.deleteAll();
     metodsBlogsDB.deleteAll();
     metodsPostsDB.deleteAll();
@@ -26,3 +25,5 @@ app.delete(SETTINGS.PATH.DELETEALL, (req: Request, res: Response) => {
 app.use(SETTINGS.PATH.VIDEOS, videoRolter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
+
+

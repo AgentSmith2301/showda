@@ -1,4 +1,4 @@
-import {MongoClient, Collection, ObjectId} from 'mongodb'
+import {MongoClient, Collection} from 'mongodb'
 import { SETTINGS } from '../settings';
 import {PostViewModel, BlogViewModel} from '../types/dbType';
 
@@ -7,7 +7,6 @@ const client: MongoClient = new MongoClient(SETTINGS.MONGO_URL)
 
 let postsCollection: Collection<PostViewModel> ;
 let blogsCollection: Collection<BlogViewModel> ; 
-
 
 async function runFromDB() {
 
@@ -26,3 +25,4 @@ async function runFromDB() {
 }
 
 export {postsCollection, blogsCollection, runFromDB}
+
