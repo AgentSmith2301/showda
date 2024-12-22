@@ -12,7 +12,15 @@ export const metodsBlogsDB = {
         }
     },
     async getAll() {
-        const result = await blogsCollection.find({}, {projection: {_id: 0, description: 1, id: 1, name: 1, websiteUrl: 1}}).toArray();
+        const result = await blogsCollection.find({}, {
+            projection: {
+                _id: 0, description: 1,
+                id: 1, 
+                name: 1, 
+                websiteUrl: 1,
+                createdAt: 1,
+                isMembership: 1,
+            }}).toArray();
         return result
 
     },
@@ -21,7 +29,16 @@ export const metodsBlogsDB = {
         
     },
     async getBlog(id: string) {
-        const result = await blogsCollection.findOne({id},{projection: {_id: 0, description: 1, id: 1, name: 1, websiteUrl: 1}})
+        const result = await blogsCollection.findOne({id},{
+            projection: {
+                _id: 0, 
+                description: 1, 
+                id: 1, 
+                name: 1, 
+                websiteUrl: 1,
+                createdAt: 1,
+                isMembership: 1,
+            }})
         return result;
     },
     async updateBlog(id: string, blog: BlogInputModel) {
@@ -36,11 +53,14 @@ export const metodsBlogsDB = {
     }, 
     async createBlog(blog: BlogInputModel): Promise<BlogViewModel | null> {
         const id = Date.now().toString();
+        const createdAt = new Date().toISOString();
         const result = await blogsCollection.insertOne({
             id,
             name: blog.name,
             description: blog.description,
-            websiteUrl: blog.websiteUrl
+            websiteUrl: blog.websiteUrl,
+            createdAt,
+            isMembership: false,
         });
 
         let metodResponse = null;
