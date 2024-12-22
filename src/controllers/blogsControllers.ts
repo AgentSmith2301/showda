@@ -53,6 +53,7 @@ export async function changeBlogController(req: Request, res: Response) {
         })
         res.status(400).send(errorFromBlogsAndPosts);
         errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        return
     } 
     
     let result = await metodsBlogsDB.updateBlog(req.params.id, req.body);

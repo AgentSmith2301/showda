@@ -29,15 +29,18 @@ const postAndPutReqvestbodyValBlogs = [
     body('websiteUrl')
     .exists().withMessage('this field is required')
     .trim()
+    .isLength({min:5, max:100}).withMessage('min length 3 and max 100')
     // .isURL().withMessage('field not URL')
+    // .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/).withMessage('invalid URL format')
+    // .isLength({min:5, max:100}).withMessage('min length 3 and max 100'),
+
     .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/).withMessage('invalid URL format')
-    .isLength({min:5, max:100}).withMessage('min length 3 and max 100'),
+    ,
 ];
 
 
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,
-
 }
 
