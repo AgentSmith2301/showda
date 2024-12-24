@@ -1,78 +1,37 @@
-import { BlogInputModel, BlogViewModel, allDB } from '../types/dbType';
+import { BlogInputModel, BlogViewModel } from '../types/dbType';
 import {blogsCollection} from '../db/mongoDb'
 
+// фильтр для возвращаемых свойтв
+const projection = {
+    _id: 0, 
+    description: 1,
+    id: 1, 
+    name: 1, 
+    websiteUrl: 1,
+    createdAt: 1,
+    isMembership: 1,
+}
+
 export const metodsBlogsDB = {
-    async checkId(id: string): Promise<boolean> {
-        const result = await blogsCollection.findOne({id})
-
-        if(result) {
-            return true
-        } else {
-            return false
-        }
+    async checkId(id: string): Promise<BlogViewModel | null> {
+        return await blogsCollection.findOne({id})
     },
-    async getAll() {
-        const result = await blogsCollection.find({}, {
-            projection: {
-                _id: 0, description: 1,
-                id: 1, 
-                name: 1, 
-                websiteUrl: 1,
-                createdAt: 1,
-                isMembership: 1,
-            }}).toArray();
-        return result
-
+    async getAll():Promise<BlogViewModel[]> {
+        return await blogsCollection.find({}, { projection: projection }).toArray();
     },
-    async deleteAll() {
-        const result = await blogsCollection.deleteMany({})
-        
+    async deleteAll(): Promise<void> {
+        await blogsCollection.deleteMany({}) 
     },
-    async getBlog(id: string) {
-        const result = await blogsCollection.findOne({id},{
-            projection: {
-                _id: 0, 
-                description: 1, 
-                id: 1, 
-                name: 1, 
-                websiteUrl: 1,
-                createdAt: 1,
-                isMembership: 1,
-            }})
-        return result;
+    async getBlog(id: string): Promise<BlogViewModel | null> {
+        return await blogsCollection.findOne({ id },{ projection: projection })
     },
-    async updateBlog(id: string, blog: BlogInputModel) {
-
-        const result = await blogsCollection.updateMany({id},[
-            {$set: {name: blog.name}}, 
-            {$set: {description: blog.description}},
-            {$set: {websiteUrl: blog.websiteUrl}}
-        ])
-        return result.matchedCount === 1
-        
+    async updateBlog(id: string, updateData: BlogInputModel) {
+        return await blogsCollection.updateOne({id},{ $set: {...updateData} })
     }, 
-    async createBlog(blog: BlogInputModel): Promise<BlogViewModel | null> {
-        const id = Date.now().toString();
-        const createdAt = new Date().toISOString();
-        const result = await blogsCollection.insertOne({
-            id,
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt,
-            isMembership: false,
-        });
-
-        let metodResponse = null;
-
-        if(result.acknowledged === true) {
-            metodResponse =  metodsBlogsDB.getBlog(id)
-        } 
-        return metodResponse
-        
+    async createBlog(data: BlogViewModel) {
+        return await blogsCollection.insertOne({...data});
     },
     async deleteBlog(id: string) {
-        const result = await blogsCollection.deleteOne({id})
-        return result.deletedCount === 1
+        return await blogsCollection.deleteOne({id})
     }
 }

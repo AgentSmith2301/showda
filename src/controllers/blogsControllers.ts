@@ -1,6 +1,6 @@
 import {Response, Request, NextFunction} from 'express';
 import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
-import {metodsBlogsDB} from '../repositories/blogsRepositories';
+import {serviceBlogsMethods} from '../service/blogs-service';
 
 import {validationResult} from 'express-validator'
 
@@ -19,25 +19,25 @@ export async function createBlogController(req: Request, res: Response, next: Ne
         errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
         return 
     } else {
-        const reult = await metodsBlogsDB.createBlog(req.body);
+        const reult = await serviceBlogsMethods.createBlog(req.body);
         res.status(201).send(reult)
         return 
     }
 }
 
 export async function deleteBlogController(req: Request, res: Response) {
-    const checkId = await metodsBlogsDB.checkId(req.params.id);
+    const checkId = await serviceBlogsMethods.checkId(req.params.id);
     if(checkId === false) {
         res.sendStatus(404)
     }
-    const result = await metodsBlogsDB.deleteBlog(req.params.id);
+    const result = await serviceBlogsMethods.deleteBlog(req.params.id);
     if(result) {
         res.sendStatus(204)
     } 
 }
 
 export async function changeBlogController(req: Request, res: Response) {
-    const checkId = await metodsBlogsDB.checkId(req.params.id);
+    const checkId = await serviceBlogsMethods.checkId(req.params.id);
     if(checkId === false) {
         res.send(404)
         return
@@ -56,7 +56,7 @@ export async function changeBlogController(req: Request, res: Response) {
         return
     } 
     
-    let result = await metodsBlogsDB.updateBlog(req.params.id, req.body);
+    let result = await serviceBlogsMethods.updateBlog(req.params.id, req.body);
     if(result) {
         res.send(204)
     } else {
@@ -65,7 +65,7 @@ export async function changeBlogController(req: Request, res: Response) {
 }
 
 export async function getBlogFromIdController(req: Request, res: Response) {
-    const result = await metodsBlogsDB.getBlog(req.params.id);
+    const result = await serviceBlogsMethods.getBlog(req.params.id);
     if(result) {
         res.status(200).send(result)
     } else {
@@ -74,7 +74,7 @@ export async function getBlogFromIdController(req: Request, res: Response) {
 }
 
 export async function getAllBlogsController(req: Request, res: Response) {
-    const result = await metodsBlogsDB.getAll();
+    const result = await serviceBlogsMethods.getAll();
     res.status(200).send(result)
 }
 
