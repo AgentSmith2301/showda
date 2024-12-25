@@ -1,19 +1,20 @@
 import { PostInputModel, PostViewModel } from '../types/dbType';
-import { metodsBlogsDB } from '../repositories/blogsRepositories';
+import { getBlogMethods } from '../repositories/blogs-query-repository';
 import { metodsPostsDB } from '../repositories/postsRepositories';
+import { getPostsMetodsDb } from '../repositories/posts-query-repository'
 
 export const servicePostsMethods = {
-    async getAll(): Promise<PostViewModel[]> {
-        return metodsPostsDB.getAll();
-    },
-    async getPost(id: string) {
-        return await metodsPostsDB.getPost(id)
-    },
+    // async getAll(): Promise<PostViewModel[]> {
+    //     return metodsPostsDB.getAll();
+    // },
+    // async getPost(id: string) {
+    //     return await metodsPostsDB.getPost(id)
+    // },
     async createPost(post: PostInputModel): Promise<PostViewModel | null> {
         let id = Date.now().toString();
         const createdAt = new Date().toISOString();
         let blogName: string;
-        const findBlogs = await metodsBlogsDB.getBlog(post.blogId)
+        const findBlogs = await getBlogMethods.getBlog(post.blogId)
         if(findBlogs !== null) {
             blogName = findBlogs.name
             const baseUpdate = {
@@ -29,7 +30,7 @@ export const servicePostsMethods = {
         } else {
             blogName = 'NOT FIND'
         }
-        return metodsPostsDB.getPost(id)
+        return getPostsMetodsDb.getPost(id)
     },
     async updatePost(id: string, body: PostInputModel) {
         const result = await metodsPostsDB.updatePost(id,body)

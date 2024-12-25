@@ -1,6 +1,7 @@
 import { BlogInputModel, BlogViewModel } from '../types/dbType';
 import {blogsCollection} from '../db/mongoDb'
 import {metodsBlogsDB} from '../repositories/blogsRepositories';
+import {getBlogMethods} from '../repositories/blogs-query-repository'
 
 export const serviceBlogsMethods = {
     async checkId(id: string): Promise<boolean> {
@@ -11,16 +12,16 @@ export const serviceBlogsMethods = {
             return false
         }
     },
-    async getAll():Promise<BlogViewModel[]> {
-        return await metodsBlogsDB.getAll();
-    },
+    // async getAll():Promise<BlogViewModel[]> {
+    //     return await metodsBlogsDB.getAll();
+    // },
     async deleteAll(): Promise<void> {
         await blogsCollection.deleteMany({})
         
     },
-    async getBlog(id: string): Promise<BlogViewModel | null> {
-        return await metodsBlogsDB.getBlog(id)
-    },
+    // async getBlog(id: string): Promise<BlogViewModel | null> {
+    //     return await metodsBlogsDB.getBlog(id)
+    // },
     async updateBlog(id: string, blog: BlogInputModel) {
         let updateData = {
             name: blog.name,
@@ -45,7 +46,7 @@ export const serviceBlogsMethods = {
         const result = await metodsBlogsDB.createBlog(data);
         let metodResponse = null;
         if(result.acknowledged === true) {
-            metodResponse =  metodsBlogsDB.getBlog(id)
+            metodResponse =  getBlogMethods.getBlog(id)
         } 
         return metodResponse
         

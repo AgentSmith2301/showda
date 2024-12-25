@@ -1,7 +1,7 @@
 import {Response, Request, NextFunction} from 'express';
 import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
 import {serviceBlogsMethods} from '../service/blogs-service';
-
+import {getBlogMethods} from '../repositories/blogs-query-repository'
 import {validationResult} from 'express-validator'
 
 
@@ -65,7 +65,8 @@ export async function changeBlogController(req: Request, res: Response) {
 }
 
 export async function getBlogFromIdController(req: Request, res: Response) {
-    const result = await serviceBlogsMethods.getBlog(req.params.id);
+    // const result = await serviceBlogsMethods.getBlog(req.params.id);
+    const result = await getBlogMethods.getBlog(req.params.id)
     if(result) {
         res.status(200).send(result)
     } else {
@@ -74,7 +75,8 @@ export async function getBlogFromIdController(req: Request, res: Response) {
 }
 
 export async function getAllBlogsController(req: Request, res: Response) {
-    const result = await serviceBlogsMethods.getAll();
+    // const result = await serviceBlogsMethods.getAll();
+    const result =  await getBlogMethods.getAll();
     res.status(200).send(result)
 }
 

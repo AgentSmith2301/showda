@@ -2,21 +2,19 @@ import {Response, Request, NextFunction} from 'express';
 import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
 import {servicePostsMethods} from '../service/posts-service';
 import {serviceBlogsMethods} from '../service/blogs-service';
-
-
-
+import { getPostsMetodsDb } from '../repositories/posts-query-repository'
 
 import {validationResult} from 'express-validator'
 
 
 export async function getAllpostsController(req: Request, res: Response) {
-    const result = await servicePostsMethods.getAll();
+    const result = await getPostsMetodsDb.getAll();
     res.status(200).send(result)
 
 }
 
 export async function getPostByIdController(req: Request, res: Response) {
-    const result = await servicePostsMethods.getPost(req.params.id);
+    const result = await getPostsMetodsDb.getPost(req.params.id);
     if(result) {
         res.send(result)
     } else {
