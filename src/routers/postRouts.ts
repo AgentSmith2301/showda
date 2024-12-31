@@ -6,7 +6,7 @@ import {getAllpostsController, getPostByIdController, deletePostByIdController, 
 
 export const postRouter = Router();
 
-postRouter.get('/', getAllpostsController)
+postRouter.get('/', objectValidateMetods.postsQueryValidation, getAllpostsController)
 
 postRouter.get('/:id', getPostByIdController)
 

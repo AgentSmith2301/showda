@@ -5,10 +5,26 @@ import {serviceBlogsMethods} from '../service/blogs-service';
 import { getPostsMetodsDb } from '../repositories/posts-query-repository'
 
 import {validationResult} from 'express-validator'
+import { GetQueryPosts } from '../types/dbType';
 
 
 export async function getAllpostsController(req: Request, res: Response) {
-    const result = await getPostsMetodsDb.getAll();
+    let queryObject = {...req.query}; //TODO delete this stroke
+    console.log(queryObject, ' <== queryObject из файла postsControlers, 13 строка'); //TODO delete this stroke "queryObject"
+
+    let pageNumber = +req.query.pageNumber!;
+    let pageSize = +req.query.pageSize!;
+    let sortBy = req.query.sortBy?.toString();
+    let sortDirection: 1|-1 ;
+    if(req.query.sortDirection === "asc") {
+        sortDirection = 1;
+    } else {
+        sortDirection = -1;
+    }
+
+    let filter: GetQueryPosts = {pageNumber, pageSize, sortBy, sortDirection}
+    
+    const result = await getPostsMetodsDb.getAll(filter);
     res.status(200).send(result)
 
 }

@@ -3,6 +3,7 @@ import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
 import {serviceBlogsMethods} from '../service/blogs-service';
 import {getBlogMethods} from '../repositories/blogs-query-repository'
 import {validationResult} from 'express-validator'
+import { GetQueryBlogs } from '../types/dbType';
 
 
 export async function createBlogController(req: Request, res: Response, next: NextFunction) {
@@ -65,7 +66,6 @@ export async function changeBlogController(req: Request, res: Response) {
 }
 
 export async function getBlogFromIdController(req: Request, res: Response) {
-    // const result = await serviceBlogsMethods.getBlog(req.params.id);
     const result = await getBlogMethods.getBlog(req.params.id)
     if(result) {
         res.status(200).send(result)
@@ -75,11 +75,34 @@ export async function getBlogFromIdController(req: Request, res: Response) {
 }
 
 export async function getAllBlogsController(req: Request, res: Response) {
-    // const result = await serviceBlogsMethods.getAll();
-    const result =  await getBlogMethods.getAll();
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ // добавить в array( {onlyFirstError: true} )
+            message: error.msg.message || error.msg,
+            field: error.path
+        }))
+        filterErrors.map((value) => {
+            errorFromBlogsAndPosts.errorsMessages.push(value);
+        })
+        res.status(400).send(errorFromBlogsAndPosts);
+        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        return
+    }
+    
+    let filter: GetQueryBlogs = {};
+    if(req.query.searchNameTerm) filter.searchNameTerm = req.query.searchNameTerm.toString()
+    filter.sortBy = req.query.sortBy!.toString();
+    if(req.query.sortDirection === 'asc') {
+        filter.sortDirection = 1
+    } else {
+        filter.sortDirection = -1
+    }
+    filter.pageNumber = req.query.pageNumber ? +req.query.pageNumber : 1
+    filter.pageSize = req.query.pageSize ? +req.query.pageSize : 10
+
+    const result =  await getBlogMethods.getAll(filter);
     res.status(200).send(result)
 }
-
 
 
 

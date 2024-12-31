@@ -48,3 +48,42 @@ export const allDB: DBType = {
     blog: [],
 }
 
+// пагинация
+export interface PaginatorBlogViewModel {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: BlogViewModel[]
+}
+
+export interface PaginatorPostViewModel {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: PostViewModel[]
+}
+
+export interface BlogPostInputModel {
+    title: string,
+    shortDescription: string,
+    content: string
+}
+
+// тип объекта запроса гет для blogs 
+export interface GetQueryBlogs {
+    searchNameTerm?: string ,  // поиск по полю name
+    sortBy?: string,          
+    sortDirection?: 1 | -1 ,   
+    pageNumber?: number,
+    pageSize?: number
+}
+
+// тип объекта запроса гет для posts
+export interface GetQueryPosts {
+    pageNumber?: number,
+    pageSize?: number
+    sortBy?: string,          
+    sortDirection?: 1 | -1 ,   
+}

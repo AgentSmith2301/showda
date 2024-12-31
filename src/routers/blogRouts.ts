@@ -9,7 +9,7 @@ export const blogRouter = Router();
 blogRouter.post('/', checkAuthorization, objectValidateMetods.postAndPutReqvestbodyValBlogs, createBlogController)
 
 // получить все блоги
-blogRouter.get('/', getAllBlogsController)
+blogRouter.get('/', objectValidateMetods.blogsQueryValidation , getAllBlogsController)
 
 // получить блог по id
 blogRouter.get('/:id', getBlogFromIdController)

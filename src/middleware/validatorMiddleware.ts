@@ -1,4 +1,4 @@
-import {check, body, validationResult} from 'express-validator'
+import {check, body, validationResult, query} from 'express-validator'
 // import {Router, Response, Request, NextFunction} from 'express';
 
 const postReqvestbodyValPosts = [
@@ -34,13 +34,69 @@ const postAndPutReqvestbodyValBlogs = [
     // .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/).withMessage('invalid URL format')
     // .isLength({min:5, max:100}).withMessage('min length 3 and max 100'),
 
-    .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/).withMessage('invalid URL format')
-    ,
+    .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/).withMessage('invalid URL format'),
+];
+
+const keysBySortBlogs = [ 'id', 'name', 'description', 'websiteUrl', 'createdAt', 'isMembership']
+
+const blogsQueryValidation = [
+    query('searchNameTerm').optional().toLowerCase(),
+    query('sortBy')
+        .customSanitizer(value => {
+            let result;
+            for(let i of keysBySortBlogs) {
+                if(i === value) {
+                    result = i
+                }
+            }
+            return result
+        })
+        .default('createdAt'),
+    query('sortDirection')
+        .customSanitizer(value => {
+            if(value === 'asc') {
+                return value
+            } else {
+                return value = null
+            }
+        })
+        .default('desc'),
+    query('pageNumber').optional().toInt(),
+    query('pageSize').toInt(),
+];
+
+let keysBySortPosts = ["id", "title", "shortDescription", "content", "blogId", "blogName", "createdAt"];
+
+const postsQueryValidation = [
+    query('sortBy')
+        .customSanitizer(value => {
+            let result;
+            for(let i of keysBySortPosts) {
+                if(i === value) {
+                    result = i
+                }
+            }
+            return result
+        })
+        .default('createdAt'),
+    query('sortDirection')
+        .customSanitizer(value => {
+            if(value === 'asc') {
+                return value
+            } else {
+                return value = null
+            }
+        })
+        .default('desc'),
+    query('pageNumber').toInt().default(1),
+    query('pageSize').toInt().default(10),
 ];
 
 
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,
+    blogsQueryValidation,
+    postsQueryValidation
 }
 
