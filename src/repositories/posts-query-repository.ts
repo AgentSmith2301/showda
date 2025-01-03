@@ -35,11 +35,22 @@ export const getPostsMetodsDb = {
     },
 
     async getAllPostsForBlog(id: string, filter: GetQueryPosts) {
-        return await postsCollection.find({blogId:id}, { projection: projection })
+        let searchItems = await postsCollection.find({blogId:id}, { projection: projection })
         .sort([filter.sortBy!, filter.sortDirection!])
         .skip((filter.pageNumber! - 1) * filter.pageSize!)
         .limit(filter.pageSize!)
         .toArray();
+
+        const totalCaunt = await postsCollection.countDocuments({});
+
+        let result: PaginatorPostViewModel = {
+            pagesCount: Math.ceil(totalCaunt/filter.pageSize!), // сколько всего страниц
+            page: filter.pageNumber!, // какая страница
+            pageSize: filter.pageSize!,
+            totalCount: totalCaunt,
+            items: searchItems
+        };
+        return result;
 
     }
 }

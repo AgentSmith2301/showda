@@ -168,6 +168,8 @@ export async function getPostsWithBlogId(req: Request, res: Response) {
         return
     }
     let result = await getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
+
+    // result нужно вложить в items
     
     // тип возвращаемого значения PaginatorPostViewModel в нутри items = PostViewModel
     res.status(200).send(result);
