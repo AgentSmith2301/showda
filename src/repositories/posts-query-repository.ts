@@ -18,6 +18,7 @@ export const getPostsMetodsDb = {
         let searchItems = await postsCollection
         .find({}, { projection: projection })
         .sort([filter.sortBy!, filter.sortDirection!])
+        .limit(filter.pageSize!)
         .toArray();
 
         let result: PaginatorPostViewModel = {
