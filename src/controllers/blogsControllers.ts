@@ -158,8 +158,6 @@ export async function getPostsWithBlogId(req: Request, res: Response) {
     let sortDirection: 1 | -1 = req.query.sortDirection === 'asc' ? 1 : -1; 
     let blogId = req.params.blogId;
 
-    console.log(pageNumber, pageSize, sortBy, sortDirection, ' <=== this is')
-
     let filter: GetQueryPosts = {pageNumber, pageSize, sortBy, sortDirection};
 
     const checkId = await serviceBlogsMethods.checkId(blogId);
@@ -170,6 +168,7 @@ export async function getPostsWithBlogId(req: Request, res: Response) {
     let result = await getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
 
     // result нужно вложить в items
+    console.log(result, ' <=== result')
     
     // тип возвращаемого значения PaginatorPostViewModel в нутри items = PostViewModel
     res.status(200).send(result);

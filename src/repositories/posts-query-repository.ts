@@ -41,7 +41,7 @@ export const getPostsMetodsDb = {
         .limit(filter.pageSize!)
         .toArray();
 
-        const totalCaunt = await postsCollection.countDocuments({});
+        const totalCaunt = await postsCollection.countDocuments({blogId:id});
 
         let result: PaginatorPostViewModel = {
             pagesCount: Math.ceil(totalCaunt/filter.pageSize!), // сколько всего страниц
