@@ -30,7 +30,7 @@ export async function createBlogController(req: Request, res: Response) {
 export async function createPostFromBlogWithIdController(req: Request, res: Response) { 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        const filterErrors = errors.array().map((error: any) => ({ // добавить в array( {onlyFirstError: true} )
+        const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ // добавить в array( {onlyFirstError: true} )
             message: error.msg.message || error.msg,
             field: error.path
         }))

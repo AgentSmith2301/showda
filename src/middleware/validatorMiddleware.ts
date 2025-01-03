@@ -99,7 +99,7 @@ const postFromBlogWithId = [
     .escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
     .isLength({max:30}).withMessage('max length 30'),
 
-    body('shortDescription').exists().notEmpty().withMessage('field cannot be null or undefined')
+    body('shortDescription').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined')
     .escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
     .isLength({max:100}).withMessage('min length 3 and max 100'),
 
