@@ -4,12 +4,6 @@ import { metodsPostsDB } from '../repositories/postsRepositories';
 import { getPostsMetodsDb } from '../repositories/posts-query-repository'
 
 export const servicePostsMethods = {
-    // async getAll(): Promise<PostViewModel[]> {
-    //     return metodsPostsDB.getAll();
-    // },
-    // async getPost(id: string) {
-    //     return await metodsPostsDB.getPost(id)
-    // },
     async createPost(post: PostInputModel): Promise<PostViewModel | null> {
         let id = Date.now().toString();
         const createdAt = new Date().toISOString();

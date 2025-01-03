@@ -14,10 +14,7 @@ const projection = {
 
 export const getPostsMetodsDb = {
     async getAll(filter: GetQueryPosts): Promise<PaginatorPostViewModel> { 
-        console.log(filter, ' <== filter') // TODO delete this stroke "filter"
-        
         const totalCaunt = await postsCollection.countDocuments({});
-        
         let searchItems = await postsCollection
         .find({}, { projection: projection })
         .sort([filter.sortBy!, filter.sortDirection!])
@@ -30,12 +27,19 @@ export const getPostsMetodsDb = {
             totalCount: totalCaunt,
             items: searchItems
         };
-
-        console.log(result, " <== result posts requst") // TODO delete this stroke 'result request'
         return result;
 
     },
     async getPost(id: string) {
         return await postsCollection.findOne({id}, { projection: projection })
+    },
+
+    async getAllPostsForBlog(id: string, filter: GetQueryPosts) {
+        return await postsCollection.find({blogId:id}, { projection: projection })
+        .sort([filter.sortBy!, filter.sortDirection!])
+        .skip((filter.pageNumber! - 1) * filter.pageSize!)
+        .limit(filter.pageSize!)
+        .toArray();
+
     }
 }

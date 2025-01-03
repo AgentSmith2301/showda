@@ -1,7 +1,10 @@
-import { BlogInputModel, BlogViewModel } from '../types/dbType';
+import { BlogInputModel, BlogPostInputModel, BlogViewModel, PostViewModel } from '../types/dbType';
 import {blogsCollection} from '../db/mongoDb'
 import {metodsBlogsDB} from '../repositories/blogsRepositories';
 import {getBlogMethods} from '../repositories/blogs-query-repository'
+import { metodsPostsDB } from '../repositories/postsRepositories';
+import { getPostsMetodsDb } from '../repositories/posts-query-repository'
+import { servicePostsMethods } from './posts-service';
 
 export const serviceBlogsMethods = {
     async checkId(id: string): Promise<boolean> {
@@ -12,16 +15,10 @@ export const serviceBlogsMethods = {
             return false
         }
     },
-    // async getAll():Promise<BlogViewModel[]> {
-    //     return await metodsBlogsDB.getAll();
-    // },
     async deleteAll(): Promise<void> {
         await blogsCollection.deleteMany({})
         
     },
-    // async getBlog(id: string): Promise<BlogViewModel | null> {
-    //     return await metodsBlogsDB.getBlog(id)
-    // },
     async updateBlog(id: string, blog: BlogInputModel) {
         let updateData = {
             name: blog.name,
@@ -50,6 +47,17 @@ export const serviceBlogsMethods = {
         } 
         return metodResponse
         
+    },
+    // новая функция создания поста по id блога
+    async createPostForBlogWithId(checkId: string, filter: BlogPostInputModel): Promise<PostViewModel | boolean> { 
+        let result ;
+        let check = await metodsBlogsDB.checkId(checkId);
+        if(!check) {
+            result = false
+        } else { 
+            result = await servicePostsMethods.createPost({...filter, blogId: checkId})
+        }
+        return result!
     },
     async deleteBlog(id: string) {
         const result = await metodsBlogsDB.deleteBlog(id)

@@ -1,4 +1,4 @@
-import {check, body, validationResult, query} from 'express-validator'
+import {param, body, query} from 'express-validator'
 // import {Router, Response, Request, NextFunction} from 'express';
 
 const postReqvestbodyValPosts = [
@@ -92,11 +92,58 @@ const postsQueryValidation = [
     query('pageSize').toInt().default(10),
 ];
 
+const postFromBlogWithId = [
+    param('blogId').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined'),
+    
+    body('title').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined')
+    .escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
+    .isLength({max:30}).withMessage('max length 30'),
+
+    body('shortDescription').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined')
+    .escape().blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
+    .isLength({max:100}).withMessage('min length 3 and max 100'),
+
+    body('content').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined').escape()
+    .blacklist('!@#$%^&*();').isString().withMessage('value not a string').trim()
+    .isLength({max:1000}).withMessage('min length 3 and max 1000'),
+
+];
+
+const getPostsWithIdBlogs = [
+    query('pageNumber').toInt().default(1),
+    query('pageSize').toInt().default(10),
+    query('sortBy')
+        .customSanitizer(value => {
+            let result;
+            for(let i of keysBySortPosts) {
+                if(i === value) {
+                    result = i
+                }
+            }
+            return result
+        })
+        .default('createdAt'),
+    query('sortDirection')
+        .customSanitizer(value => {
+            if(value === 'asc') {
+                return value
+            } else {
+                return value = null
+            }
+        })
+        .default('desc'),
+    param('blogId').exists().withMessage('this field is required').notEmpty().withMessage('field cannot be null or undefined'),
+
+];
+
+
 
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,
     blogsQueryValidation,
-    postsQueryValidation
+    postsQueryValidation,
+    postFromBlogWithId,
+    getPostsWithIdBlogs
 }
 

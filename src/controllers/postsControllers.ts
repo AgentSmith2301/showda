@@ -9,9 +9,6 @@ import { GetQueryPosts } from '../types/dbType';
 
 
 export async function getAllpostsController(req: Request, res: Response) {
-    let queryObject = {...req.query}; //TODO delete this stroke
-    console.log(queryObject, ' <== queryObject из файла postsControlers, 13 строка'); //TODO delete this stroke "queryObject"
-
     let pageNumber = +req.query.pageNumber!;
     let pageSize = +req.query.pageSize!;
     let sortBy = req.query.sortBy?.toString();
