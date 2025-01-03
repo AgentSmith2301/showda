@@ -18,6 +18,7 @@ export const getPostsMetodsDb = {
         let searchItems = await postsCollection
         .find({}, { projection: projection })
         .sort([filter.sortBy!, filter.sortDirection!])
+        .skip((filter.pageNumber! - 1) * filter.pageSize!)
         .limit(filter.pageSize!)
         .toArray();
 
