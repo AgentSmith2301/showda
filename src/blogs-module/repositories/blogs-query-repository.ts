@@ -1,5 +1,6 @@
-import { BlogInputModel, BlogViewModel, GetQueryBlogs, PaginatorBlogViewModel, PaginatorPostViewModel } from '../types/dbType';
-import {blogsCollection} from '../db/mongoDb'
+import { BlogInputModel, BlogViewModel, GetQueryBlogs, PaginatorBlogViewModel } from '../types/dbType';
+import {blogsCollection} from '../../db/mongoDb';
+import {getPostsMetodsDb} from '../../posts-module/repositories/posts-query-repository';
 
 // фильтр для возвращаемых свойтв
 const projection = {
@@ -43,5 +44,13 @@ export const getBlogMethods = {
     async getBlog(id: string): Promise<BlogViewModel | null> {
         return await blogsCollection.findOne({ id },{ projection: projection })
     },
+
+
+    async getAllPostsFromBlogId(blogId: string, filter: any) {
+        // TODO реализовать запрос на посты по id и возврат в нужном типе
+        let result = await getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
+
+        return result;
+    }
 
 }

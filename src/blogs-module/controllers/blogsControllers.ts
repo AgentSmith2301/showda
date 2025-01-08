@@ -1,10 +1,12 @@
 import {Response, Request, NextFunction} from 'express';
-import {errorFromBlogsAndPosts} from '../errors/castomErrorsFromValidate'
+import {errorFromBlogsAndPosts} from '../../errors/castomErrorsFromValidate'
 import {serviceBlogsMethods} from '../service/blogs-service';
 import {getBlogMethods} from '../repositories/blogs-query-repository'
 import {validationResult} from 'express-validator'
-import { BlogPostInputModel, GetQueryBlogs, GetQueryPosts} from '../types/dbType';
-import { getPostsMetodsDb } from '../repositories/posts-query-repository';
+import { BlogPostInputModel, GetQueryBlogs} from '../types/dbType';
+// import {GetQueryPosts} from '../../posts-module/types/dbType';
+import { getPostsMetodsDb } from '../../posts-module/repositories/posts-query-repository';
+// import {getBlogMethods} from '../repositories/blogs-query-repository';
 
 
 export async function createBlogController(req: Request, res: Response) {
@@ -152,30 +154,25 @@ export async function getPostsWithBlogId(req: Request, res: Response) {
         return
     }
 
-    let pageNumber = +req.query.pageNumber!;
-    let pageSize = +req.query.pageSize!;
-    let sortBy = req.query.sortBy!.toString();
+    let pageNumber: number = +req.query.pageNumber!;
+    let pageSize: number = +req.query.pageSize!;
+    let sortBy: string = req.query.sortBy!.toString();
     let sortDirection: 1 | -1 = req.query.sortDirection === 'asc' ? 1 : -1; 
-    let blogId = req.params.blogId;
+    let blogId: string = req.params.blogId;
 
-    let filter: GetQueryPosts = {pageNumber, pageSize, sortBy, sortDirection};
+    let filter = {pageNumber, pageSize, sortBy, sortDirection};
 
     const checkId = await serviceBlogsMethods.checkId(blogId);
     if(checkId === false) {
         res.status(404).send('not faund blogId')
         return
     }
-    let result = await getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
 
-    // result нужно вложить в items
-    console.log(result, ' <=== result')
+    let result = await getBlogMethods.getAllPostsFromBlogId(blogId, filter);
     
-    // тип возвращаемого значения PaginatorPostViewModel в нутри items = PostViewModel
     res.status(200).send(result);
     return
 }
 
-function getAllPostsForBlog(filter: { blogId: string; pageNumber: string | import("qs").ParsedQs | string[] | import("qs").ParsedQs[] | undefined; pageSize: string | import("qs").ParsedQs | string[] | import("qs").ParsedQs[] | undefined; sortBy: string | import("qs").ParsedQs | string[] | import("qs").ParsedQs[] | undefined; sortDirection: string | import("qs").ParsedQs | string[] | import("qs").ParsedQs[] | undefined; }) {
-    throw new Error('Function not implemented.');
-}
+
 

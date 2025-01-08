@@ -1,13 +1,13 @@
-type errorsMessages = {
+type fieldError = { // errorsMessages
     message: string, 
     field: string
 }
 
-type errorsMessagesType = {
-    errorsMessages: errorsMessages[];
+type APIErrorResult = { // errorsMessagesType
+    errorsMessages: fieldError[];
 };
 
-export const errorFromBlogsAndPosts: errorsMessagesType = {
+export const errorFromBlogsAndPosts: APIErrorResult = {
     errorsMessages: [],
 }
 

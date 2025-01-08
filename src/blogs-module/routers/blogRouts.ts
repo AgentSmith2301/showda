@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import {checkAuthorization} from '../middleware/authorizationMiddleware'
-import {objectValidateMetods} from '../middleware/validatorMiddleware'
+import {checkAuthorization} from '../../middleware/authorizationMiddleware'
+import {objectValidateMetods} from '../../middleware/validatorMiddleware'
 import {createBlogController, deleteBlogController, changeBlogController, getBlogFromIdController, getAllBlogsController, createPostFromBlogWithIdController, getPostsWithBlogId} from '../controllers/blogsControllers'
 
 export const blogRouter = Router();

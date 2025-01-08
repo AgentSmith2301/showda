@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import {checkAuthorization} from '../middleware/authorizationMiddleware'
-import {objectValidateMetods} from '../middleware/validatorMiddleware'
+import {checkAuthorization} from '../../middleware/authorizationMiddleware'
+import {objectValidateMetods} from '../../middleware/validatorMiddleware'
 import {getAllpostsController, getPostByIdController, deletePostByIdController, createPostConrtoller, changePostById} from '../controllers/postsControllers'
 
 

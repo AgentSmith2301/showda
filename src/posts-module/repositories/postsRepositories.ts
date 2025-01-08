@@ -1,5 +1,5 @@
 import { PostInputModel, PostViewModel } from '../types/dbType';
-import {postsCollection} from '../db/mongoDb'
+import {postsCollection} from '../../db/mongoDb'
 
 export const metodsPostsDB = {
     async createPost(post: PostViewModel): Promise<void> {

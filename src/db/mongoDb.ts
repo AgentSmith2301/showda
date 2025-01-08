@@ -1,6 +1,8 @@
 import {MongoClient, Collection} from 'mongodb'
 import { SETTINGS } from '../settings';
-import {PostViewModel, BlogViewModel} from '../types/dbType';
+import {BlogViewModel} from '../blogs-module/types/dbType';
+import {PostViewModel} from '../posts-module/types/dbType';
+
 
 const client: MongoClient = new MongoClient(SETTINGS.MONGO_URL) 
 

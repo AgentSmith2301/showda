@@ -1,5 +1,5 @@
-import { BlogInputModel, BlogPostInputModel, BlogViewModel, PostViewModel } from '../types/dbType';
-import {blogsCollection, postsCollection} from '../db/mongoDb'
+import { BlogInputModel, BlogPostInputModel, BlogViewModel } from '../types/dbType';
+import {blogsCollection, postsCollection} from '../../db/mongoDb'
 
 export const metodsBlogsDB = {
     async checkId(id: string): Promise<BlogViewModel | null> {

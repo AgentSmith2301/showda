@@ -1,5 +1,5 @@
 import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../types/dbType';
-import {postsCollection} from '../db/mongoDb'
+import {postsCollection} from '../../db/mongoDb'
 
 const projection = {
     _id: 0, 
@@ -36,7 +36,7 @@ export const getPostsMetodsDb = {
         return await postsCollection.findOne({id}, { projection: projection })
     },
 
-    async getAllPostsForBlog(id: string, filter: GetQueryPosts) {
+    async getAllPostsForBlog(id: string, filter: GetQueryPosts): Promise<PaginatorPostViewModel> {
         let searchItems = await postsCollection.find({blogId:id}, { projection: projection })
         .sort([filter.sortBy!, filter.sortDirection!])
         .skip((filter.pageNumber! - 1) * filter.pageSize!)

@@ -1,10 +1,11 @@
-import { BlogInputModel, BlogPostInputModel, BlogViewModel, PostViewModel } from '../types/dbType';
-import {blogsCollection} from '../db/mongoDb'
+import { BlogInputModel, BlogPostInputModel, BlogViewModel } from '../types/dbType';
+import { PostViewModel } from '../../posts-module/types/dbType';
+import {blogsCollection} from '../../db/mongoDb'
 import {metodsBlogsDB} from '../repositories/blogsRepositories';
 import {getBlogMethods} from '../repositories/blogs-query-repository'
-import { metodsPostsDB } from '../repositories/postsRepositories';
-import { getPostsMetodsDb } from '../repositories/posts-query-repository'
-import { servicePostsMethods } from './posts-service';
+import { metodsPostsDB } from '../../posts-module/repositories/postsRepositories';
+import { getPostsMetodsDb } from '../../posts-module/repositories/posts-query-repository'
+import { servicePostsMethods } from '../../posts-module/service/posts-service';
 
 export const serviceBlogsMethods = {
     async checkId(id: string): Promise<boolean> {
