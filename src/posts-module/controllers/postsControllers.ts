@@ -1,5 +1,5 @@
 import {Response, Request, NextFunction} from 'express';
-import {errorFromBlogsAndPosts} from '../../errors/castomErrorsFromValidate'
+import {castomError} from '../../errors/castomErrorsFromValidate'
 import {servicePostsMethods} from '../service/posts-service';
 import {serviceBlogsMethods} from '../../blogs-module/service/blogs-service';
 import { getPostsMetodsDb } from '../repositories/posts-query-repository'
@@ -52,10 +52,10 @@ export async function createPostConrtoller(req: Request, res: Response, next: Ne
             field: error.path
         }))
         filterErrors.map((value) => {
-            errorFromBlogsAndPosts.errorsMessages.push(value);
+            castomError.errorsMessages.push(value);
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
         return
     } 
     
@@ -65,12 +65,12 @@ export async function createPostConrtoller(req: Request, res: Response, next: Ne
         res.status(201).send(result)
         return
     } else { // если не нашли id блогера то ошибка
-        errorFromBlogsAndPosts.errorsMessages.push({
+        castomError.errorsMessages.push({
             message: 'blogerName not faund',
             field: 'blogerName'
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
         return
     }
 }
@@ -85,10 +85,10 @@ export async function changePostById(req: Request, res: Response, next: NextFunc
             field: error.path
         }))
         filterErrors.map((value) => {
-            errorFromBlogsAndPosts.errorsMessages.push(value);
+            castomError.errorsMessages.push(value);
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
     } else if(result) { // если не нашли id блогера то ошибка
         res.sendStatus(204)
     } else {

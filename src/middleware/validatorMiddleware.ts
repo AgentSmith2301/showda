@@ -136,6 +136,26 @@ const getPostsWithIdBlogs = [
 
 ];
 
+const postUsers = [
+    body('login')
+        .notEmpty().withMessage('the field is required')
+        .trim().isString().withMessage('the field is not string')
+        .isLength({max: 10, min: 3}).withMessage('maximum 10 and minimum 3 simbols')
+        .matches(/^[a-zA-Z0-9_-]*$/).withMessage('not valid login'),
+
+    body('password')
+        .notEmpty().withMessage('the field is required')
+        .isString().withMessage('field must be a string')
+        .isLength({max: 20, min: 6}).withMessage('maximum 20 and minimum 6 simbols'),
+        
+
+    body('email')
+        .notEmpty().withMessage('the field is required')
+        .isString().withMessage('field must be a string')
+        .normalizeEmail().isEmail().withMessage('field is not email')
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address'),
+]
+
 
 
 export const objectValidateMetods = {
@@ -144,6 +164,7 @@ export const objectValidateMetods = {
     blogsQueryValidation,
     postsQueryValidation,
     postFromBlogWithId,
-    getPostsWithIdBlogs
+    getPostsWithIdBlogs,
+    postUsers
 }
 

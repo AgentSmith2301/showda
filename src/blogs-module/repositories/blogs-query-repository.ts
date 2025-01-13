@@ -47,9 +47,7 @@ export const getBlogMethods = {
 
 
     async getAllPostsFromBlogId(blogId: string, filter: any) {
-        // TODO реализовать запрос на посты по id и возврат в нужном типе
         let result = await getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
-
         return result;
     }
 

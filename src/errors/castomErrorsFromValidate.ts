@@ -7,7 +7,7 @@ type APIErrorResult = { // errorsMessagesType
     errorsMessages: fieldError[];
 };
 
-export const errorFromBlogsAndPosts: APIErrorResult = {
+export const castomError: APIErrorResult = {
     errorsMessages: [],
 }
 

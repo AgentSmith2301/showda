@@ -1,5 +1,5 @@
 import {Response, Request, NextFunction} from 'express';
-import {errorFromBlogsAndPosts} from '../../errors/castomErrorsFromValidate'
+import {castomError} from '../../errors/castomErrorsFromValidate'
 import {serviceBlogsMethods} from '../service/blogs-service';
 import {getBlogMethods} from '../repositories/blogs-query-repository'
 import {validationResult} from 'express-validator'
@@ -17,10 +17,10 @@ export async function createBlogController(req: Request, res: Response) {
             field: error.path
         }))
         filterErrors.map((value) => {
-            errorFromBlogsAndPosts.errorsMessages.push(value);
+            castomError.errorsMessages.push(value);
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
         return 
     } else {
         const reult = await serviceBlogsMethods.createBlog(req.body);
@@ -37,10 +37,10 @@ export async function createPostFromBlogWithIdController(req: Request, res: Resp
             field: error.path
         }))
         filterErrors.map((value) => {
-            errorFromBlogsAndPosts.errorsMessages.push(value);
+            castomError.errorsMessages.push(value);
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
         return 
     } else {
         let checkId = req.params.blogId;
@@ -85,10 +85,10 @@ export async function changeBlogController(req: Request, res: Response) {
             field: error.path
         }))
         filterErrors.map((value) => {
-            errorFromBlogsAndPosts.errorsMessages.push(value);
+            castomError.errorsMessages.push(value);
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
         return
     } 
     
@@ -117,10 +117,10 @@ export async function getAllBlogsController(req: Request, res: Response) {
             field: error.path
         }))
         filterErrors.map((value) => {
-            errorFromBlogsAndPosts.errorsMessages.push(value);
+            castomError.errorsMessages.push(value);
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
         return
     }
     
@@ -147,10 +147,10 @@ export async function getPostsWithBlogId(req: Request, res: Response) {
             field: error.path
         }))
         filterErrors.map((value) => {
-            errorFromBlogsAndPosts.errorsMessages.push(value);
+            castomError.errorsMessages.push(value);
         })
-        res.status(400).send(errorFromBlogsAndPosts);
-        errorFromBlogsAndPosts.errorsMessages = []; // очистка ошибок
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
         return
     }
 
