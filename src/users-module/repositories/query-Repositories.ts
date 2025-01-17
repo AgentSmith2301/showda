@@ -1,0 +1,52 @@
+import { usersCollection } from "../../db/mongoDb";
+import {ObjectId} from 'mongodb';
+import { UserViewModel, UserViewModelDB } from "../types/users-type";
+
+export const queryRepositories = {
+    searshFilter(searshLoginTerm: string | null, searchEmailTerm: string | null) {
+        let sortedFilter: {login?: string, email?: string} = {} ;
+        if(searshLoginTerm) {
+            sortedFilter.login = searshLoginTerm
+        } 
+        if(searchEmailTerm) {
+            sortedFilter.email = searchEmailTerm
+        } 
+        return sortedFilter
+    },
+    
+    async countDocuments(searshLoginTerm: string | null, searchEmailTerm: string | null) {
+        const result = queryRepositories.searshFilter(searshLoginTerm, searchEmailTerm)
+        return await usersCollection.countDocuments(result);
+    } ,
+
+    async getUsersById(id: string): Promise<UserViewModel> {
+        const user = await usersCollection.findOne({_id: new ObjectId(id)})
+        let mapUSer ;
+        if(user) {
+            mapUSer = {
+                id: user._id.toString(),
+                login: user.login as string,
+                email: user.email as string,
+                createdAt: user.createdAt as string
+            }
+        }
+        return mapUSer!
+    },
+
+    async getUsersByTerm(filter: any): Promise<UserViewModelDB []> {
+        let sortBy: string = filter.sortBy;
+        let sortUpOrDown: 1| -1 = filter.sortDirection;
+        let pageNumber = filter.pageNumber; 
+        let pageSize: number = filter.pageSize;
+        
+        const searshFilter = queryRepositories.searshFilter(filter.searshLoginTerm, filter.searchEmailTerm)
+        
+        return await usersCollection
+            .find(searshFilter)
+            .sort({sortBy : sortUpOrDown})
+            .limit(pageSize)
+            .skip(Math.ceil((pageNumber -1) * pageSize))
+            .toArray();
+    },
+
+};

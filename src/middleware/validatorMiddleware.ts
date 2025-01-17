@@ -154,7 +154,46 @@ const postUsers = [
         .isString().withMessage('field must be a string')
         .normalizeEmail().isEmail().withMessage('field is not email')
         .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address'),
-]
+];
+
+const deleteUsers = [
+    param('id')
+        .notEmpty().withMessage('not find id')
+        
+];
+
+const validateResolution = ['id', 'login', 'email', 'createdAt']
+
+const getUsersSearch = [
+    query('sortBy')
+        .trim()
+        .customSanitizer(value => {
+            let result = null;
+            validateResolution.find(findvalue => {
+                if(value === findvalue) {
+                    result = value
+                }
+            })
+            return result
+        })
+        .default('createdAt'),
+
+    query('sortDirection')
+        .customSanitizer(value => {
+            if(value === 'asc') {
+                return 'asc'
+            } else {
+                return null
+            }
+        })
+        .default('desc'),
+    query('pageNumber')
+        .toInt()
+        .default(1),
+    query('pageSize')
+        .toInt()
+        .default(10)
+];
 
 
 
@@ -165,6 +204,8 @@ export const objectValidateMetods = {
     postsQueryValidation,
     postFromBlogWithId,
     getPostsWithIdBlogs,
-    postUsers
+    postUsers,
+    deleteUsers,
+    getUsersSearch
 }
 

@@ -1,7 +1,8 @@
 import {usersRepoMethods} from '../repositories/users-repositories';
-import { UserInputModel, UserViewModel } from '../types/users-type';
+import { Paginator, UserInputModel, UserViewModel } from '../types/users-type';
 import {CastomErrors} from '../../errors/castomErrorsObject'
 import { InsertOneResult } from 'mongodb';
+import {queryRepositories} from '../repositories/query-Repositories'
 
 export const usersServiceMethods = {
     async deleteAllUsers() {
@@ -10,36 +11,56 @@ export const usersServiceMethods = {
 
     async createdUser(data: UserInputModel) {
         const createdAt = new Date().toISOString();
-        // TODO на случай если нужна будет где то проверка есть ли такой пользователь то исползуй этот код
-        // const check: boolean = await usersRepoMethods.checkData(data.login, data.email);
-        // if(check === true) { 
-        //     const dilterData = {...data, createdAt};
-        //     result = await usersRepoMethods.createUser(dilterData);
-        // }
-        
+
         const newUserData = {
             login: data.login,
             password: data.password,
             email: data.email,
             createdAt
         };
-
         const result = await usersRepoMethods.createUser(newUserData);
         if(result.acknowledged === true) {
-            return await usersRepoMethods.getUsersById(result.insertedId);
+            return await queryRepositories.getUsersById(result.insertedId.toString());
         } else {
-            return new Error(`{errorsMessages: [{message: 'incorect login or email', field: 'login or email'}]}`)
+            // return new Error(`{errorsMessages: [{message: 'incorect login or email', field: 'login or email'}]}`)
+            return new Error(`{errorsMessages: [{message: 'something went wrong , this is a program error', field: '😡'}]}`)
+
         }
-        
-
-        // createUserOrNot = {errorsMessages: [{message: 'incorect login or email', field: 'login or email'}]}
-
-
     },
 
-    // async getUsers
+    async deleteUserById(id: string) {
+        const result =  await usersRepoMethods.deleteUserById(id);
+        if(result.deletedCount >= 1) {
+            return true
+        } else {
+            return false
+        }
+    },
     
+    async getUsersByTerm(filter: any) {  // : Promise<Paginator<UserViewModel []>>
+        const cauntDocument = await queryRepositories.countDocuments(filter.searshLoginTerm, filter.searchEmailTerm)
+        const result = await queryRepositories.getUsersByTerm(filter)
+        let mapingData: UserViewModel[] = [];
+        for(let i of result) {
+            mapingData.push({
+                id: i._id!.toString(),
+                login:i.login,
+                email: i.email,
+                createdAt: i.createdAt
+            })
+        }
 
+
+        let answer = {
+            pagesCount: Math.ceil(cauntDocument/filter.pageSize),
+            page: filter.pageNumber,
+            pageSize: filter.pageSize,
+            totalCount:  cauntDocument,
+            items: mapingData
+        };
+
+        return answer
+    }
 }
 
 

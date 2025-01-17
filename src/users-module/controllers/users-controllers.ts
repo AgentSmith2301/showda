@@ -1,7 +1,7 @@
 import {Response , Request} from 'express';
 import {validationResult} from 'express-validator';
 import {castomError} from '../../errors/castomErrorsFromValidate';
-import { UserInputModel } from '../types/users-type';
+import { SearchTermUsers, UserInputModel } from '../types/users-type';
 import { usersServiceMethods } from '../service/users-service';
 
 export async function postUsersController(req: Request, res: Response) {
@@ -14,6 +14,7 @@ export async function postUsersController(req: Request, res: Response) {
         filterErrors.map((value) => {
             castomError.errorsMessages.push(value);
         })
+        
         res.status(400).send(castomError);
         castomError.errorsMessages = []; // очистка ошибок
         return
@@ -26,16 +27,50 @@ export async function postUsersController(req: Request, res: Response) {
     }
     
     const result = await usersServiceMethods.createdUser(createUser)
-
-    res.status(201).send(result)
-
-
+    if(result) {
+        res.status(201).send(result)
+        return 
+    } else {
+        res.status(500).send('something went wrong 😡');
+        return
+    }
+    
 }
 
+
 export async function getUsersController(req: Request, res: Response) {
+    let sortDirection: 1| -1 = -1 ;
+    if(req.query.sortDirection === 'asc') {
+        sortDirection = 1;
+    } else {
+        sortDirection = -1;
+    }
+
+    let searshLoginTerm: string | null = null;
+    let searchEmailTerm: string | null = null;
+    if(req.query.searshLoginTerm !== undefined) searshLoginTerm = req.query.searshLoginTerm.toString();
+    if(req.query.searchEmailTerm !== undefined) searchEmailTerm = req.query.searchEmailTerm.toString();
+    
+    let reqFilter: SearchTermUsers = {
+        sortBy: req.query.sortBy as string,
+        sortDirection,
+        pageNumber: Number(req.query.pageNumber),
+        pageSize: +req.query.pageSize!,
+        searshLoginTerm,
+        searchEmailTerm
+    };
+
+    const result = await usersServiceMethods.getUsersByTerm(reqFilter);
+    res.status(200).send(result);
+
 
 }
 
 export async function deleteUserByIdController(req: Request, res: Response) {
-
+    const result: boolean = await usersServiceMethods.deleteUserById(req.params.id);
+    if(result === true) {
+        res.sendStatus(204)
+    } else {
+        res.sendStatus(404)
+    }
 }
