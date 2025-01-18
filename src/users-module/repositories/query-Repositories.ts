@@ -4,12 +4,12 @@ import { UserViewModel, UserViewModelDB } from "../types/users-type";
 
 export const queryRepositories = {
     searshFilter(searshLoginTerm: string | null, searchEmailTerm: string | null) {
-        let sortedFilter: {login?: string, email?: string} = {} ;
+        let sortedFilter: {login?: {$regex: string}, email?: {$regex: string}} = {} ;
         if(searshLoginTerm) {
-            sortedFilter.login = searshLoginTerm
+            sortedFilter.login = {$regex: searshLoginTerm}
         } 
         if(searchEmailTerm) {
-            sortedFilter.email = searchEmailTerm
+            sortedFilter.email = {$regex: searchEmailTerm}
         } 
         return sortedFilter
     },
@@ -35,7 +35,7 @@ export const queryRepositories = {
 
     async getUsersByTerm(filter: any): Promise<UserViewModelDB []> {
         let sortBy: string = filter.sortBy;
-        let sortUpOrDown: 1| -1 = filter.sortDirection;
+        let sortUpOrDown: 1 | -1 = filter.sortDirection;
         let pageNumber = filter.pageNumber; 
         let pageSize: number = filter.pageSize;
         
