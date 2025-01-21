@@ -30,13 +30,12 @@ export async function postUsersController(req: Request, res: Response) {
     if(result) {
         res.status(201).send(result)
         return 
-    } else {
-        res.status(500).send('something went wrong 😡');
+    }  else {
+        res.status(400).json({errorsMessages: [{message: 'incorect login or email', field: 'login or email'}]});
         return
     }
     
 }
-
 
 export async function getUsersController(req: Request, res: Response) {
     let sortDirection: 1| -1 = -1 ;
@@ -59,11 +58,8 @@ export async function getUsersController(req: Request, res: Response) {
         searshLoginTerm,
         searchEmailTerm
     };
-
     const result = await usersServiceMethods.getUsersByTerm(reqFilter);
     res.status(200).send(result);
-
-
 }
 
 export async function deleteUserByIdController(req: Request, res: Response) {

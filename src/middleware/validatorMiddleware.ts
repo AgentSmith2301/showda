@@ -195,8 +195,6 @@ const getUsersSearch = [
         .default(10)
 ];
 
-
-
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,

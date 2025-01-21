@@ -1,20 +1,3 @@
-// export interface PostViewModel {
-//     id: string,
-//     title: string,
-//     shortDescription: string,
-//     content: string,
-//     blogId: string,
-//     blogName: string,
-//     createdAt: string,
-// }
-
-// export interface PostInputModel {
-//     title: string,
-//     shortDescription: string,
-//     content: string,
-//     blogId: string,
-// }
-
 export interface BlogViewModel {
     id: string,
     name: string,
@@ -37,17 +20,6 @@ interface FieldError {
     field: string,
 }
 
-// Типы в базе 
-// interface DBType {
-//     posts: PostViewModel[];
-//     blog: BlogViewModel[];
-// }
-// база postsDB { post: [ PostViewModel ] }
-// export const allDB: DBType = {
-//     posts: [],
-//     blog: [],
-// }
-
 // пагинация
 export interface PaginatorBlogViewModel {
     pagesCount: number,
@@ -56,14 +28,6 @@ export interface PaginatorBlogViewModel {
     totalCount: number,
     items: BlogViewModel[]
 }
-
-// export interface PaginatorPostViewModel {
-//     pagesCount: number,
-//     page: number,
-//     pageSize: number,
-//     totalCount: number,
-//     items: PostViewModel[]
-// }
 
 export interface BlogPostInputModel {
     title: string,

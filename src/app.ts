@@ -7,15 +7,15 @@ import { SETTINGS } from './settings';
 import {methodsDB} from './videos-module/repositories/videosRepository'
 import {metodsPostsDB} from './posts-module/repositories/postsRepositories'
 import {metodsBlogsDB} from './blogs-module/repositories/blogsRepositories'
-// TODO добавить путь к репозиторию к оббъекту для взаимодействия с юзерами
 import {usersRepoMethods} from './users-module/repositories/users-repositories';
+import { userRouter } from './users-module/routers/auth-router'
 
 export const app = express();
 app.use(express.json());
 
 
 app.get('/', (req, res) => {
-    res.status(200).json({version: '4.0'});
+    res.status(200).json({version: '5.0'});
 })
 
 app.delete(SETTINGS.PATH.DELETEALL, async(req: Request, res: Response) => {
@@ -30,5 +30,7 @@ app.use(SETTINGS.PATH.VIDEOS, videoRolter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
+app.use(SETTINGS.PATH.AUTH, userRouter)
+
 
 

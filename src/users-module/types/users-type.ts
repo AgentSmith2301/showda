@@ -17,6 +17,8 @@ export interface UserViewModelDB {
     _id?: ObjectId,
     login?: string,
     email?: string,
+    hash: string,
+    salt: string,
     createdAt?: string
 } 
 
@@ -38,4 +40,15 @@ export interface Paginator<UserViewModel> {
     items: UserViewModel[]
 }
 
+export type CreateUserData = {
+    login: string;
+    email: string;
+    hash: string;
+    salt: string;
+    createdAt: string;
+}
 
+export interface LoginInputModel {
+    loginOrEmail: string,
+    password: string
+}
