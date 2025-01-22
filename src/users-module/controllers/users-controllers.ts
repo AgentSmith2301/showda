@@ -73,7 +73,7 @@ export async function deleteUserByIdController(req: Request, res: Response) {
             castomError.errorsMessages.push(value);
         })
         
-        res.status(400).send(castomError);
+        res.status(404).send(castomError);
         castomError.errorsMessages = []; // очистка ошибок
         return
     } 
