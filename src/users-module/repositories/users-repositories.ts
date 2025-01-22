@@ -20,7 +20,8 @@ export const usersRepoMethods = {
     },
 
     async checkUserById(id: string) {
-        return await usersCollection.findOne({_id: new ObjectId(id)})
+        const result = await usersCollection.findOne({_id: new ObjectId(id)})
+        return result
     },
 
     async checkAuthentication(data: string): Promise<boolean> {
