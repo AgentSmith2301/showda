@@ -64,6 +64,11 @@ export const usersServiceMethods = {
     },
 
     async deleteUserById(id: string) {
+        console.log('ok')
+        const findId = await usersRepoMethods.checkUserById(id);
+        console.log(findId, 'findId')
+
+        if(!findId) return false
         const result =  await usersRepoMethods.deleteUserById(id);
         if(result.deletedCount >= 1) {
             return true

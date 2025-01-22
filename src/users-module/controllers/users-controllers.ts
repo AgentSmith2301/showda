@@ -63,6 +63,21 @@ export async function getUsersController(req: Request, res: Response) {
 }
 
 export async function deleteUserByIdController(req: Request, res: Response) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ 
+            message: error.msg.message || error.msg,
+            field: error.path
+        }))
+        filterErrors.map((value) => {
+            castomError.errorsMessages.push(value);
+        })
+        
+        res.status(400).send(castomError);
+        castomError.errorsMessages = []; // очистка ошибок
+        return
+    } 
+    
     const result: boolean = await usersServiceMethods.deleteUserById(req.params.id);
     if(result === true) {
         res.sendStatus(204)

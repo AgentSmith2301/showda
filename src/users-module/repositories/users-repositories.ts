@@ -19,6 +19,10 @@ export const usersRepoMethods = {
         return result ;
     },
 
+    async checkUserById(id: string) {
+        return await usersCollection.findOne({_id: new ObjectId(id)})
+    },
+
     async checkAuthentication(data: string): Promise<boolean> {
         const filter = {$or: [{login: data}, {email: data}]}
         const result = await usersCollection.find(filter).toArray();

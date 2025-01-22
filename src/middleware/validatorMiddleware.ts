@@ -159,7 +159,7 @@ const postUsers = [
 const deleteUsers = [
     param('id')
         .notEmpty().withMessage('not find id')
-        
+        .isLength({min: 24, max: 24}).withMessage('the id field must be 24 characters long')
 ];
 
 const validateResolution = ['id', 'login', 'email', 'createdAt']
@@ -195,6 +195,15 @@ const getUsersSearch = [
         .default(10)
 ];
 
+const auth = [
+    body('loginOrEmail')
+        .isString().withMessage('loginOrEmail not a string')
+        .notEmpty().withMessage('the field is required'),
+    body('password')
+        .isString().withMessage('password not a string')
+        .notEmpty().withMessage('the field is required')
+];
+
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,
@@ -204,6 +213,7 @@ export const objectValidateMetods = {
     getPostsWithIdBlogs,
     postUsers,
     deleteUsers,
-    getUsersSearch
+    getUsersSearch,
+    auth
 }
 
