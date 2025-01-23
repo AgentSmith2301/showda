@@ -58,6 +58,7 @@ export async function getUsersController(req: Request, res: Response) {
         searshLoginTerm,
         searchEmailTerm
     };
+
     const result = await usersServiceMethods.getUsersByTerm(reqFilter);
     res.status(200).send(result);
 }

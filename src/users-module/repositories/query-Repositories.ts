@@ -1,6 +1,6 @@
 import { usersCollection } from "../../db/mongoDb";
 import {ObjectId} from 'mongodb';
-import { UserViewModel, UserViewModelDB } from "../types/users-type";
+import { SearchTermUsers, UserViewModel, UserViewModelDB } from "../types/users-type";
 
 export const queryRepositories = {
     searshFilter(searshLoginTerm: string | null, searchEmailTerm: string | null) {
@@ -33,17 +33,17 @@ export const queryRepositories = {
         return mapUSer!
     },
 
-    async getUsersByTerm(filter: any): Promise<UserViewModelDB []> {
-        let sortBy: string = filter.sortBy;
-        let sortUpOrDown: 1 | -1 = filter.sortDirection;
+    async getUsersByTerm(filter: SearchTermUsers): Promise<UserViewModelDB []> {
+        let sortBy = filter.sortBy;
+        let sortUpOrDown = filter.sortDirection;
         let pageNumber = filter.pageNumber; 
-        let pageSize: number = filter.pageSize;
+        let pageSize = filter.pageSize;
         
         const searshFilter = queryRepositories.searshFilter(filter.searshLoginTerm, filter.searchEmailTerm)
         
         return await usersCollection
             .find(searshFilter)
-            .sort({sortBy : sortUpOrDown})
+            .sort({[sortBy]: sortUpOrDown}) 
             .limit(pageSize)
             .skip(Math.ceil((pageNumber -1) * pageSize))
             .toArray();
