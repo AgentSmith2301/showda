@@ -28,7 +28,7 @@ export type SearchTermUsers = {
     sortDirection: 1 | -1, 
     pageNumber: number, 
     pageSize: number, 
-    searshLoginTerm: string | null, 
+    searchLoginTerm: string | null, 
     searchEmailTerm: string | null
 }
 

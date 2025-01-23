@@ -38,6 +38,7 @@ export async function postUsersController(req: Request, res: Response) {
 }
 
 export async function getUsersController(req: Request, res: Response) {
+    
     let sortDirection: 1| -1 = -1 ;
     if(req.query.sortDirection === 'asc') {
         sortDirection = 1;
@@ -45,17 +46,17 @@ export async function getUsersController(req: Request, res: Response) {
         sortDirection = -1;
     }
 
-    let searshLoginTerm: string | null = null;
+    let searchLoginTerm: string | null = null;
     let searchEmailTerm: string | null = null;
-    if(req.query.searshLoginTerm !== undefined) searshLoginTerm = req.query.searshLoginTerm.toString();
+    if(req.query.searchLoginTerm !== undefined) searchLoginTerm = req.query.searchLoginTerm.toString();
     if(req.query.searchEmailTerm !== undefined) searchEmailTerm = req.query.searchEmailTerm.toString();
-    
+
     let reqFilter: SearchTermUsers = {
         sortBy: req.query.sortBy as string,
         sortDirection,
         pageNumber: Number(req.query.pageNumber),
         pageSize: +req.query.pageSize!,
-        searshLoginTerm,
+        searchLoginTerm,
         searchEmailTerm
     };
 

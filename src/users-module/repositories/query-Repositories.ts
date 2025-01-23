@@ -39,7 +39,7 @@ export const queryRepositories = {
         let pageNumber = filter.pageNumber; 
         let pageSize = filter.pageSize;
         
-        const searshFilter = queryRepositories.searshFilter(filter.searshLoginTerm, filter.searchEmailTerm)
+        const searshFilter = queryRepositories.searshFilter(filter.searchLoginTerm, filter.searchEmailTerm);
         
         return await usersCollection
             .find(searshFilter)
