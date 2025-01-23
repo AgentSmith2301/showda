@@ -4,12 +4,12 @@ import { SearchTermUsers, UserViewModel, UserViewModelDB } from "../types/users-
 
 export const queryRepositories = {
     searshFilter(searshLoginTerm: string | null, searchEmailTerm: string | null) {
-        let sortedFilter: {login?: {$regex: string, $options: 'i'}, email?: {$regex: string, $options: 'i'}} = {} ;
+        let sortedFilter: {login?: {$regex: string, $options: 'imsx'}, email?: {$regex: string, $options: 'imsx'}} = {} ;
         if(searshLoginTerm) {
-            sortedFilter.login = {$regex: searshLoginTerm, $options: 'i'}
+            sortedFilter.login = {$regex: searshLoginTerm, $options: 'imsx'}
         } 
         if(searchEmailTerm) {
-            sortedFilter.email = {$regex: searchEmailTerm, $options: 'i'}
+            sortedFilter.email = {$regex: searchEmailTerm, $options: 'imsx'}
         } 
         return sortedFilter
     },
