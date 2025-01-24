@@ -1,5 +1,5 @@
 import {usersRepoMethods} from '../repositories/users-repositories';
-import { Paginator, UserInputModel, UserViewModel } from '../types/users-type';
+import { Paginator, SearchTermUsers, UserInputModel, UserViewModel } from '../types/users-type';
 import {CastomErrors} from '../../errors/castomErrorsObject';
 import { InsertOneResult } from 'mongodb';
 import {queryRepositories} from '../repositories/query-Repositories';
@@ -76,8 +76,8 @@ export const usersServiceMethods = {
         }
     },
     
-    async getUsersByTerm(filter: any) {  // : Promise<Paginator<UserViewModel []>>
-        const cauntDocument = await queryRepositories.countDocuments(filter.searshLoginTerm, filter.searchEmailTerm)
+    async getUsersByTerm(filter: SearchTermUsers) {  // : Promise<Paginator<UserViewModel []>>
+        const cauntDocument = await queryRepositories.countDocuments(filter.searchLoginTerm, filter.searchEmailTerm)
         const result = await queryRepositories.getUsersByTerm(filter)
         let mapingData: UserViewModel[] = [];
         for(let i of result) {

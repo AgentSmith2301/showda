@@ -3,25 +3,28 @@ import {ObjectId} from 'mongodb';
 import { SearchTermUsers, UserViewModel, UserViewModelDB } from "../types/users-type";
 
 export const queryRepositories = {
-    searshFilter(searshLoginTerm: string | null, searchEmailTerm: string | null) {
+    searshFilter(searchLoginTerm: string | null, searchEmailTerm: string | null) {
         type sortTerm = {login?: {$regex: string, $options: 'i'}, email?: {$regex: string, $options: 'i'}} |
         {$or: [{login: {$regex: string, $options: 'i'}}, {email: {$regex: string, $options: 'i'}}]}
         let sortedFilter: sortTerm = {} ; 
         
-        if(searshLoginTerm && searchEmailTerm) {
-            sortedFilter = {$or: [{login: {$regex: searshLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]}
-        }
-        else if(searshLoginTerm) {
-            sortedFilter.login = {$regex: searshLoginTerm, $options: 'i'}
-        } 
-        else if(searchEmailTerm) {
+        if(searchLoginTerm && searchEmailTerm) {
+            sortedFilter = {$or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]}
+            return 
+
+        } else if(searchLoginTerm) {
+            sortedFilter.login = {$regex: searchLoginTerm, $options: 'i'}
+
+        } else if(searchEmailTerm) {
             sortedFilter.email = {$regex: searchEmailTerm, $options: 'i'}
+
         } 
+        
         return sortedFilter
     },
     
-    async countDocuments(searshLoginTerm: string | null, searchEmailTerm: string | null) {
-        const result = queryRepositories.searshFilter(searshLoginTerm, searchEmailTerm)
+    async countDocuments(searchLoginTerm: string | null, searchEmailTerm: string | null) {
+        const result = queryRepositories.searshFilter(searchLoginTerm, searchEmailTerm)
         return await usersCollection.countDocuments(result);
     } ,
 
@@ -48,7 +51,7 @@ export const queryRepositories = {
         const searshFilter = queryRepositories.searshFilter(filter.searchLoginTerm, filter.searchEmailTerm);
         
         return await usersCollection
-            .find(searshFilter)
+            .find(searshFilter!)
             .sort({[sortBy]: sortUpOrDown}) 
             .limit(pageSize)
             .skip(Math.ceil((pageNumber -1) * pageSize))
