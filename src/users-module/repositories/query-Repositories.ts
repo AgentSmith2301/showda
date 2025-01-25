@@ -10,16 +10,13 @@ export const queryRepositories = {
         
         if(searchLoginTerm && searchEmailTerm) {
             sortedFilter = {$or: [{login: {$regex: searchLoginTerm, $options: 'i'}}, {email: {$regex: searchEmailTerm, $options: 'i'}}]}
-            return 
+            return sortedFilter
 
         } else if(searchLoginTerm) {
             sortedFilter.login = {$regex: searchLoginTerm, $options: 'i'}
-
         } else if(searchEmailTerm) {
             sortedFilter.email = {$regex: searchEmailTerm, $options: 'i'}
-
         } 
-        
         return sortedFilter
     },
     
