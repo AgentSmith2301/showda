@@ -48,7 +48,3 @@ export type CreateUserData = {
     createdAt: string;
 }
 
-export interface LoginInputModel {
-    loginOrEmail: string,
-    password: string
-}

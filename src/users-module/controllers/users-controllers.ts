@@ -34,7 +34,7 @@ export async function postUsersController(req: Request, res: Response) {
         res.status(400).json({errorsMessages: [{message: 'incorect login or email', field: 'login or email'}]});
         return
     }
-    
+
 }
 
 export async function getUsersController(req: Request, res: Response) {

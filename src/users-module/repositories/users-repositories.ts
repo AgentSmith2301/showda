@@ -1,7 +1,7 @@
 import { usersCollection } from "../../db/mongoDb";
 import {ObjectId} from 'mongodb';
 import { CreateUserData, UserInputModel } from "../types/users-type";
-import { LoginInputModel } from '../types/users-type';
+// import { LoginInputModel } from '../types/users-type';
 
 
 export const usersRepoMethods = {

@@ -4,7 +4,9 @@ import {CastomErrors} from '../../errors/castomErrorsObject';
 import { InsertOneResult } from 'mongodb';
 import {queryRepositories} from '../repositories/query-Repositories';
 import bcrypt from 'bcrypt';
-import { LoginInputModel } from '../types/users-type';
+// import { LoginInputModel } from '../types/users-type';
+import { LoginInputModel } from '../../auth-module/types/auth-type';
+
 
 
 

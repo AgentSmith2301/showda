@@ -10,6 +10,7 @@ export const SETTINGS = {
         POSTS: '/posts',
         USERS: '/users',
         AUTH: '/auth',
+        AUTHLOGIN: '/auth', //  /login
         DELETEALL: '/testing/all-data',
     },
     MONGO_URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',

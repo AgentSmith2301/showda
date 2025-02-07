@@ -20,7 +20,6 @@ blogRouter.get('/:id', getBlogFromIdController)
 // получить к конкретному блогу посты (дополнительно обрабатывая query запросы)
 blogRouter.get('/:blogId/posts', objectValidateMetods.getPostsWithIdBlogs, getPostsWithBlogId)
 
-
 // изменить блог
 blogRouter.put('/:id', checkAuthorization, objectValidateMetods.postAndPutReqvestbodyValBlogs, changeBlogController)
 

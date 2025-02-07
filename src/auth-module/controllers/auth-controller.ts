@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import {usersServiceMethods} from '../service/users-service';
-import { LoginInputModel } from "../types/users-type";
+import {authServiceMethods} from '../service/auth-service';
+import { LoginInputModel } from "../types/auth-type";
 import { validationResult } from "express-validator";
 import {castomError} from '../../errors/castomErrorsFromValidate';
 
@@ -26,15 +26,10 @@ export async function authorization(req: Request, res: Response) {
         password: req.body.password
     }
 
-    const result = await usersServiceMethods.authentication(reqFilter)
+    const result = await authServiceMethods.authentication(reqFilter)
 
     if(!result) res.status(401).json({errorsMessages: [{message: 'incorect login, email or password', field: 'loginOrEmail or password'}]});
     if(result) res.sendStatus(204)
     
 
 }
-
-
-
-
-

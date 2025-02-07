@@ -8,7 +8,8 @@ import {methodsDB} from './videos-module/repositories/videosRepository'
 import {metodsPostsDB} from './posts-module/repositories/postsRepositories'
 import {metodsBlogsDB} from './blogs-module/repositories/blogsRepositories'
 import {usersRepoMethods} from './users-module/repositories/users-repositories';
-import { userRouter } from './users-module/routers/auth-router'
+import { authRouter } from './auth-module/router/auth-router'
+
 
 export const app = express();
 app.use(express.json());
@@ -30,7 +31,7 @@ app.use(SETTINGS.PATH.VIDEOS, videoRolter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
-app.use(SETTINGS.PATH.AUTH, userRouter)
+app.use(SETTINGS.PATH.AUTHLOGIN, authRouter)
 
 
 
