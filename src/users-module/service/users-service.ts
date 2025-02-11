@@ -16,6 +16,7 @@ export const usersServiceMethods = {
     },
 
     async _generateHash(pass: string, salt: string) {
+        // генерация хеша из пароля и соли 
         return await bcrypt.hash(pass, salt)
     },
 
