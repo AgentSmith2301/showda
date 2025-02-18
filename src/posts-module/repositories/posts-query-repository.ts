@@ -1,5 +1,7 @@
 import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../types/dbType';
 import {postsCollection} from '../../db/mongoDb'
+import { getAllCommentsByPostId } from '../controllers/postsControllers';
+import { queryCommentsRepositories } from '../../comments-module/repositories/comments-query-repositoryes';
 
 const projection = {
     _id: 0, 
@@ -53,6 +55,11 @@ export const getPostsMetodsDb = {
             items: searchItems
         };
         return result;
+    },
 
+    async getAllCommentsByPostId(postId: string, filter: GetQueryPosts) {
+        const result = await queryCommentsRepositories.getAllComments(postId, filter)
+        return result;
     }
+
 }

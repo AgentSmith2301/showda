@@ -1,5 +1,7 @@
 import { PostInputModel, PostViewModel } from '../types/dbType';
-import {postsCollection} from '../../db/mongoDb'
+import {postsCollection, commentsCollection} from '../../db/mongoDb'
+import { CommentPostModel, CommentViewModel } from '../../comments-module/types/comments-type';
+
 
 export const metodsPostsDB = {
     async createPost(post: PostViewModel): Promise<void> {
@@ -16,4 +18,5 @@ export const metodsPostsDB = {
     async deleteAll() {
         await postsCollection.deleteMany({})
     },
+
 }

@@ -204,6 +204,42 @@ const auth = [
         .notEmpty().withMessage('the field is required')
 ];
 
+const postComments = [
+    body('content')
+    .notEmpty().withMessage('the field is required')    
+    .isString().withMessage('content not a string')
+    .isLength({min: 20, max: 300}).withMessage('content maximum 300 characters at least 20')
+];
+
+let keysBySortComments = ["id", "content", "createdAt"];
+
+const searchCommentsWithIdPosts = [
+    query('pageNumber').toInt().default(1),
+    query('pageSize').toInt().default(10),
+    query('sortBy')
+        .customSanitizer(value => {
+            let result;
+            for(let i of keysBySortComments) {
+                if(i === value) {
+                    result = i
+                }
+            }
+            return result
+        })
+        .default('createdAt'),
+    query('sortDirection')
+        .customSanitizer(value => {
+            if(value === 'asc') {
+                return value
+            } else {
+                return value = null
+            }
+        })
+        .default('desc'),
+];
+
+
+
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,
@@ -214,6 +250,8 @@ export const objectValidateMetods = {
     postUsers,
     deleteUsers,
     getUsersSearch,
-    auth
+    auth,
+    postComments,
+    searchCommentsWithIdPosts
 }
 

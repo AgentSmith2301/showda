@@ -80,10 +80,10 @@ export interface GetQueryBlogs {
     pageSize?: number
 }
 
-// тип объекта запроса гет для posts
 export interface GetQueryPosts {
     pageNumber?: number,
     pageSize?: number
     sortBy?: string,          
     sortDirection?: 1 | -1 ,   
 }
+

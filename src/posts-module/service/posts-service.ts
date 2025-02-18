@@ -2,6 +2,10 @@ import { PostInputModel, PostViewModel } from '../types/dbType';
 import { getBlogMethods } from '../../blogs-module/repositories/blogs-query-repository';
 import { metodsPostsDB } from '../repositories/postsRepositories';
 import { getPostsMetodsDb } from '../repositories/posts-query-repository'
+import { CommentViewModel } from '../../comments-module/types/comments-type';
+import { authRepoMethods } from '../../auth-module/repositories/auth-repositories';
+import {serviceComments} from '../../comments-module/service/comments-service'
+
 
 export const servicePostsMethods = {
     async createPost(post: PostInputModel): Promise<PostViewModel | null> {
@@ -37,4 +41,26 @@ export const servicePostsMethods = {
     async deleteAll() {
         await metodsPostsDB.deleteAll()
     },
+
+    async commentsFromPost(postId: string, content: string, userId: string):Promise<CommentViewModel | undefined> {
+        const userData = await authRepoMethods.getUserById(userId)
+
+        const comentData =  {
+            postId,
+            content,
+            commentatorInfo: 
+                {
+                    userId, 
+                    userLogin: userData.login ,
+                },
+            createdAt: new Date().toISOString()
+        }
+
+        // создать коммент по посту
+        return await serviceComments.createComment(comentData)
+        
+    },
+
+
+
 }
