@@ -10,6 +10,7 @@ import {metodsBlogsDB} from './blogs-module/repositories/blogsRepositories'
 import {usersRepoMethods} from './users-module/repositories/users-repositories';
 import { authRouter } from './auth-module/router/auth-router'
 import {commentsRouter} from './comments-module/routers/comments-router'
+import { commentsRepositories } from './comments-module/repositories/comments-repository';
 
 export const app = express();
 app.use(express.json());
@@ -24,6 +25,7 @@ app.delete(SETTINGS.PATH.DELETEALL, async(req: Request, res: Response) => {
     metodsBlogsDB.deleteAll();
     metodsPostsDB.deleteAll();
     usersRepoMethods.deleteAll();
+    commentsRepositories.deleteAll();
     res.sendStatus(204);
 })
 

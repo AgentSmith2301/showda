@@ -1,5 +1,5 @@
-import { queryCommentsRepositories } from "../repositories/comments-query-repositoryes";
-import { commentsRepositories } from "../repositories/comments-repositoryes";
+import { queryCommentsRepositories } from "../repositories/comments-query-repository";
+import { commentsRepositories } from "../repositories/comments-repository";
 import { CommentPostModel, CommentViewModel } from "../types/comments-type";
 
 
@@ -10,8 +10,7 @@ export const serviceComments = {
         let answer: undefined | CommentViewModel = undefined;
         if(result.acknowledged) {
             // answer = await queryCommentsRepositories.getCommentById(result.insertedId.toString())
-            answer = await queryCommentsRepositories.getCommentById(result.insertedId)
-
+            answer = await queryCommentsRepositories.getCommentByIdRepositories(result.insertedId.toString())
             
         } else {
             answer = undefined
@@ -19,8 +18,28 @@ export const serviceComments = {
         return answer   
     },
 
-    // async getComments() {
-        
-    // }
+    async deleteCommentByIdService(commentId:string, userId: string): Promise< 403 | 204 | 404 > {
+        const getComment = await queryCommentsRepositories.getCommentByIdRepositories(commentId)
+        if(!getComment) {
+            return 404
+        }
+
+        if(userId !== getComment?.commentatorInfo.userId) {
+            return 403
+        }
+
+        const result = await commentsRepositories.deleteCommentByIdRepository(commentId);
+        if(result.acknowledged) {
+            return 204
+        } else {
+            return 404
+        }
+
+    },
+
+    async updateComment(id: string, comment: string) {
+        return await commentsRepositories.updateComment(id, comment)
+
+    }
 }
 

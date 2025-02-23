@@ -1,23 +1,33 @@
 import {commentsCollection} from '../../db/mongoDb'
 import { GetQueryPosts } from '../../posts-module/types/dbType';
 import { CommentViewModel, PaginatorCommentViewModel } from '../types/comments-type';
+import {ObjectId} from 'mongodb'
 
 export const queryCommentsRepositories = {
+    async getCommentByIdRepositories(id: string): Promise<CommentViewModel | undefined> {
     
-    async getCommentById(id: Object) {
-        let result = await commentsCollection.findOne({_id: id});
-        if(!result) undefined;
-        let maping = {
-            id: result!._id.toString() ,
-            content: result!.content,
-            commentatorInfo: {
-                userId: result!.commentatorInfo.userId,
-                userLogin: result!.commentatorInfo.userLogin
-            },
-            createdAt: result!.createdAt
-        }
+        if(!ObjectId.isValid(id)) {
+            return undefined
+        } 
+        
+        let objectId: ObjectId = new ObjectId(id)
+        let result = await commentsCollection.findOne({_id: objectId});
 
-        return maping
+        if(result) {
+            let maping = {
+                id: result!._id.toString() ,
+                content: result!.content,
+                commentatorInfo: {
+                    userId: result!.commentatorInfo.userId,
+                    userLogin: result!.commentatorInfo.userLogin
+                },
+                createdAt: result!.createdAt
+            }
+            return maping
+        } else {
+            return undefined
+        }
+        
     },
 
     async getAllComments(postId: string, filter: GetQueryPosts) { 
@@ -45,6 +55,5 @@ export const queryCommentsRepositories = {
 
         return result;
     },
-
 
 }

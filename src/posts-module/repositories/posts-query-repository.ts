@@ -1,7 +1,7 @@
 import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../types/dbType';
 import {postsCollection} from '../../db/mongoDb'
 import { getAllCommentsByPostId } from '../controllers/postsControllers';
-import { queryCommentsRepositories } from '../../comments-module/repositories/comments-query-repositoryes';
+import { queryCommentsRepositories } from '../../comments-module/repositories/comments-query-repository';
 
 const projection = {
     _id: 0, 

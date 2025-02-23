@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import {Request} from 'express'
 
 export interface CommentInputModel {
     content: string
@@ -31,5 +32,8 @@ export interface PaginatorCommentViewModel {
     totalCount: number,
     items: CommentViewModel[]
 }
+
+// для расширения типа запроса (так же в место этого можно использовать declare создав файл index.d.ts)
+// export interface CastomRequest extends Request {userId: string | null}
 
 

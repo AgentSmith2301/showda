@@ -238,6 +238,12 @@ const searchCommentsWithIdPosts = [
         .default('desc'),
 ];
 
+const updateCommentsValidator = [
+    body('content')
+        .notEmpty().withMessage('content can not to by empty')
+        .isString().withMessage('content not a string')
+        .isLength({min: 20, max: 300}).withMessage('content maximum 300 characters at least 20')
+];
 
 
 export const objectValidateMetods = {
@@ -252,6 +258,7 @@ export const objectValidateMetods = {
     getUsersSearch,
     auth,
     postComments,
-    searchCommentsWithIdPosts
+    searchCommentsWithIdPosts,
+    updateCommentsValidator
 }
 
