@@ -73,7 +73,7 @@ export async function updateCommentController(req: Request, res: Response) {
         return
     }
     
-    const result = await serviceComments.updateComment(req.params.comeentId, req.body.comment);
+    const result = await serviceComments.updateComment(req.params.comeentId, req.body.content);
     if(result.modifiedCount) {
         res.sendStatus(204);
         return
