@@ -83,8 +83,5 @@ export async function updateCommentController(req: Request, res: Response) {
         res.status(500).send('something wrong with the server');
         return
     }
-
-
-
 }
 
