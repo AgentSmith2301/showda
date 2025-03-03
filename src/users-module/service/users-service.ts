@@ -8,8 +8,6 @@ import bcrypt from 'bcrypt';
 import { LoginInputModel } from '../../auth-module/types/auth-type';
 
 
-
-
 export const usersServiceMethods = {
     async deleteAllUsers() {
         await usersRepoMethods.deleteAll()

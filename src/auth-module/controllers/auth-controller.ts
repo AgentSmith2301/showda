@@ -4,7 +4,7 @@ import { LoginInputModel, MeViewModel } from "../types/auth-type";
 import { validationResult } from "express-validator";
 import {castomError} from '../../errors/castomErrorsFromValidate';
 import {jwtService} from '../application/jwt-service'
-import {CastomRequest} from '../types/auth-type'
+// import {CastomRequest} from '../types/auth-type'
 
 
 export async function authorization(req: Request, res: Response) {
@@ -37,7 +37,7 @@ export async function authorization(req: Request, res: Response) {
 
 }
 
-export async function getDataById(req: CastomRequest, res: Response) {
+export async function getDataById(req: Request, res: Response) { // CastomRequest
     const result = await authServiceMethods.getUserById(req.userId as string);
     res.status(200).send(result)
 }

@@ -33,7 +33,7 @@ app.use(SETTINGS.PATH.VIDEOS, videoRolter)
 app.use(SETTINGS.PATH.POSTS, postRouter)
 app.use(SETTINGS.PATH.BLOGS, blogRouter)
 app.use(SETTINGS.PATH.USERS, usersRouter)
-app.use(SETTINGS.PATH.AUTHLOGIN, authRouter)
+app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 
 

@@ -1,7 +1,7 @@
 import {SETTINGS} from '../settings';
 import { Request, Response, NextFunction } from 'express';
 import {jwtService} from '../auth-module/application/jwt-service'
-import {CastomRequest} from '../auth-module/types/auth-type'
+// import {CastomRequest} from '../auth-module/types/auth-type'
 
 export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
     if(Buffer.from(SETTINGS.ADMIN_AUTH).toString('base64') === req.headers.authorization?.substring(6)) {
@@ -12,7 +12,7 @@ export const checkAuthorization = (req: Request, res: Response, next: NextFuncti
     }
 }
 
-export const  bearerAuthorization = async(req: CastomRequest, res: Response, next: NextFunction) => {
+export const  bearerAuthorization = async(req: Request, res: Response, next: NextFunction) => { // CastomRequest
     if(!req.headers.authorization) {
         res.sendStatus(401)
         return

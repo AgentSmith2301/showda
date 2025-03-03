@@ -25,8 +25,8 @@ export async function postUsersController(req: Request, res: Response) {
         password: req.body.password,
         email: req.body.email
     }
-    
     const result = await usersServiceMethods.createdUser(createUser)
+
     if(result) {
         res.status(201).send(result)
         return 

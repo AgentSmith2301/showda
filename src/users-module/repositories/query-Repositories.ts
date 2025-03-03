@@ -26,7 +26,7 @@ export const queryRepositories = {
     } ,
 
     async getUsersById(id: string): Promise<UserViewModel> {
-        const user = await usersCollection.findOne({_id: new ObjectId(id)})
+        const user = await usersCollection.findOne({_id: new ObjectId(id)});
         let mapUSer ;
         if(user) {
             mapUSer = {

@@ -10,7 +10,16 @@ export const usersRepoMethods = {
     },
 
     async createUser(data: CreateUserData) {
-        const result = await usersCollection.insertOne({...data})
+        let dataForCreate = {
+            login: data.login,
+            email: data.email,
+            hash: data.hash,
+            salt: data.salt,
+            createdAt: data.createdAt
+        }
+        const result = await usersCollection.insertOne(dataForCreate)
+
+        // const result = await usersCollection.insertOne({...data})
         return result 
     },
 
