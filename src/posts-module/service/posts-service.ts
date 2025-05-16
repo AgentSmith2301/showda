@@ -42,8 +42,9 @@ export const servicePostsMethods = {
         await metodsPostsDB.deleteAll()
     },
 
-    async commentsFromPost(postId: string, content: string, userId: string):Promise<CommentViewModel | undefined> {
-        const userData = await authRepoMethods.getUserById(userId)
+    async commentsFromPost(postId: string, content: string, userId: string):Promise<CommentViewModel | null> {
+        const userData = await authRepoMethods.getUserById(userId);
+        if(!userData) return null
 
         const comentData =  {
             postId,

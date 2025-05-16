@@ -2,7 +2,11 @@ import { usersCollection } from "../../db/mongoDb";
 import {ObjectId} from 'mongodb';
 import { SearchTermUsers, UserViewModel, UserViewModelDB } from "../types/users-type";
 
-export const queryRepositories = {
+export const queryUserRepositories = {
+    async checkUserById(id: string) {
+        return await usersCollection.findOne({_id: new ObjectId(id)})
+    },
+    
     searshFilter(searchLoginTerm: string | null, searchEmailTerm: string | null) {
         type sortTerm = {login?: {$regex: string, $options: 'i'}, email?: {$regex: string, $options: 'i'}} |
         {$or: [{login: {$regex: string, $options: 'i'}}, {email: {$regex: string, $options: 'i'}}]}
@@ -21,7 +25,7 @@ export const queryRepositories = {
     },
     
     async countDocuments(searchLoginTerm: string | null, searchEmailTerm: string | null) {
-        const result = queryRepositories.searshFilter(searchLoginTerm, searchEmailTerm)
+        const result = queryUserRepositories.searshFilter(searchLoginTerm, searchEmailTerm)
         return await usersCollection.countDocuments(result);
     } ,
 
@@ -45,7 +49,7 @@ export const queryRepositories = {
         let pageNumber = filter.pageNumber; 
         let pageSize = filter.pageSize;
         
-        const searshFilter = queryRepositories.searshFilter(filter.searchLoginTerm, filter.searchEmailTerm);
+        const searshFilter = queryUserRepositories.searshFilter(filter.searchLoginTerm, filter.searchEmailTerm);
         
         return await usersCollection
             .find(searshFilter!)

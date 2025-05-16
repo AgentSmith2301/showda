@@ -4,10 +4,10 @@ import { CommentViewModel, PaginatorCommentViewModel } from '../types/comments-t
 import {ObjectId} from 'mongodb'
 
 export const queryCommentsRepositories = {
-    async getCommentByIdRepositories(id: string): Promise<CommentViewModel | undefined> {
+    async getCommentByIdRepositories(id: string): Promise<CommentViewModel | null> {
     
         if(!ObjectId.isValid(id)) {
-            return undefined
+            return null
         } 
         
         let objectId: ObjectId = new ObjectId(id)
@@ -25,7 +25,7 @@ export const queryCommentsRepositories = {
             }
             return maping
         } else {
-            return undefined
+            return null
         }
         
     },
