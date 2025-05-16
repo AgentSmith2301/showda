@@ -245,6 +245,25 @@ const updateCommentsValidator = [
         .isLength({min: 20, max: 300}).withMessage('content maximum 300 characters at least 20')
 ];
 
+const registrationValidator = [
+    body('login')
+        .notEmpty().withMessage('login can not to by empty')
+        .isString().withMessage('login not a string')
+        .isLength({max: 10, min:3}).withMessage('Login should not be more than 10 or less than 3 characters')
+        .matches(/^[a-zA-Z0-9_-]*$/).withMessage('not valid login'),
+
+    body('password')
+        .notEmpty().withMessage('password can not to by empty')
+        .isString().withMessage('password not a string')
+        .isLength({max: 20, min: 6}).withMessage('password should not be more than 20 or less than 6 characters'),
+        
+    body('email')
+        .notEmpty().withMessage('email can not to by empty')
+        .isString().withMessage('email not a string')
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address')
+];
+
+
 
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
@@ -259,6 +278,7 @@ export const objectValidateMetods = {
     auth,
     postComments,
     searchCommentsWithIdPosts,
-    updateCommentsValidator
+    updateCommentsValidator,
+    registrationValidator
 }
 

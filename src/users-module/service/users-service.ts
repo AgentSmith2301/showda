@@ -1,11 +1,15 @@
 import {usersRepoMethods} from '../repositories/users-repositories';
-import { Paginator, SearchTermUsers, UserInputModel, UserViewModel } from '../types/users-type';
+import { CreateUserData, Paginator, SearchTermUsers, UserInputModel, UserViewModel } from '../types/users-type';
 import {CastomErrors} from '../../errors/castomErrorsObject';
 import { InsertOneResult } from 'mongodb';
-import {queryRepositories} from '../repositories/query-Repositories';
+import {queryUserRepositories} from '../repositories/query-Repositories';
 import bcrypt from 'bcrypt';
 // import { LoginInputModel } from '../types/users-type';
 import { LoginInputModel } from '../../auth-module/types/auth-type';
+import {v4} from 'uuid';
+import {addHours} from 'date-fns'
+
+
 
 
 export const usersServiceMethods = {
@@ -32,7 +36,8 @@ export const usersServiceMethods = {
         return true 
     },
 
-    async createdUser(data: UserInputModel) {
+    // добавить аргумент shem для реализации одного из 2 сценариев 
+    async createdUser(data: UserInputModel, shem = 0) {
         const checkLogin = await usersRepoMethods.checkAuthentication(data.login)
         const checkMail = await usersRepoMethods.checkAuthentication(data.email);
         if(checkLogin || checkMail) return false;
@@ -41,24 +46,39 @@ export const usersServiceMethods = {
         let salt;
         let hash;
         try {
-        // генерация соли
-        salt = await bcrypt.genSalt(10);
-        // генерация хеша из соли и пароля
-        hash = await this._generateHash(data.password, salt)
+            salt = await bcrypt.genSalt(10);
+            hash = await this._generateHash(data.password, salt)
         } catch {
             throw new Error(`{errorsMessages: [{message: 'error when generating hash or salt', field: '😡'}]}`)
         }
 
-        const newUserData = {
-            login: data.login,
-            email: data.email,
-            hash,
-            salt,
-            createdAt
-        };
+        let newUserData: CreateUserData;
+        if(shem === 1) {
+            newUserData = {
+                login: data.login,
+                email: data.email,
+                hash,
+                salt ,
+                createdAt,
+                emailConfirmation: {   
+                    confirmationCode: v4(), 
+                    expirationDate: addHours(new Date(), 1), 
+                    isConfirmed: false
+                }
+            }
+        } else {
+            newUserData = {
+                login: data.login,
+                email: data.email,
+                hash,
+                salt,
+                createdAt
+            }
+        }
+
         const result = await usersRepoMethods.createUser(newUserData);
         if(result.acknowledged === true) {
-            return await queryRepositories.getUsersById(result.insertedId.toString());
+            return await queryUserRepositories.getUsersById(result.insertedId.toString());
         } else {
             throw new Error(`{errorsMessages: [{message: 'something went wrong , this is a program error', field: '😡'}]}`)
         }
@@ -66,7 +86,7 @@ export const usersServiceMethods = {
 
     async deleteUserById(id: string) {
 
-        const findId = await usersRepoMethods.checkUserById(id);
+        const findId = await queryUserRepositories.checkUserById(id);
 
         if(!findId) return false
         const result =  await usersRepoMethods.deleteUserById(id);
@@ -78,9 +98,11 @@ export const usersServiceMethods = {
     },
     
     async getUsersByTerm(filter: SearchTermUsers) {  // : Promise<Paginator<UserViewModel []>>
-        const cauntDocument = await queryRepositories.countDocuments(filter.searchLoginTerm, filter.searchEmailTerm)
-        const result = await queryRepositories.getUsersByTerm(filter)
+        const cauntDocument = await queryUserRepositories.countDocuments(filter.searchLoginTerm, filter.searchEmailTerm)
+        const result = await queryUserRepositories.getUsersByTerm(filter)
         let mapingData: UserViewModel[] = [];
+
+        
         for(let i of result) {
             mapingData.push({
                 id: i._id!.toString(),
@@ -101,6 +123,8 @@ export const usersServiceMethods = {
         return answer
     }
 }
+
+
 
 
 

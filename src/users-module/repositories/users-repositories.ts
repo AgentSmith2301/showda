@@ -10,28 +10,28 @@ export const usersRepoMethods = {
     },
 
     async createUser(data: CreateUserData) {
-        let dataForCreate = {
-            login: data.login,
-            email: data.email,
-            hash: data.hash,
-            salt: data.salt,
-            createdAt: data.createdAt
-        }
-        const result = await usersCollection.insertOne(dataForCreate)
-
-        // const result = await usersCollection.insertOne({...data})
-        return result 
+        // let dataForCreate = {
+        //     login: data.login,
+        //     email: data.email,
+        //     hash: data.hash,
+        //     salt: data.salt,
+        //     createdAt: data.createdAt
+        // }
+        return await usersCollection.insertOne(data)
     },
+
+    // async userRegistration(user: CreateUserData) {
+    //     return await usersCollection.insertOne(user);
+    // },
 
     async deleteUserById(id: string) {
         const result = await usersCollection.deleteOne({_id: new ObjectId(id)});
         return result ;
     },
 
-    async checkUserById(id: string) {
-        const result = await usersCollection.findOne({_id: new ObjectId(id)})
-        return result
-    },
+    // async checkUserById(id: string) {
+    //     return await usersCollection.findOne({_id: new ObjectId(id)})
+    // },
 
     async checkAuthentication(data: string): Promise<boolean> {
         const filter = {$or: [{login: data}, {email: data}]}
@@ -41,7 +41,7 @@ export const usersRepoMethods = {
         } else {
             return false
         }
-    },
+    }, 
 
     async credential(data: string): Promise<{hash: string, salt: string}>  {
         const filter = {$or: [{login: data}, {email: data}]}
