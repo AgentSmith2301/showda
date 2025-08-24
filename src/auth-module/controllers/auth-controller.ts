@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {authServiceMethods} from '../service/auth-service';
 import { APIErrorResult, LoginInputModel, LoginSuccessViewModel, MeViewModel } from "../types/auth-type";
+import { APIErrorResult, LoginInputModel, LoginSuccessViewModel, MeViewModel } from "../types/auth-type";
 import { validationResult } from "express-validator";
 import {castomError} from '../../errors/castomErrorsFromValidate';
 import {jwtService} from '../application/jwt-service'
@@ -12,6 +13,7 @@ import {CastomErrors} from '../../errors/castomErrorsObject';
 
 
 export async function authorization(req: Request, res: Response) { 
+export async function authorization(req: Request, res: Response) { 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ 
@@ -22,6 +24,7 @@ export async function authorization(req: Request, res: Response) {
             castomError.errorsMessages.push(value);
         })
         
+        res.status(HttpStatusCode.BadRequest_400).send(castomError);
         res.status(HttpStatusCode.BadRequest_400).send(castomError);
         castomError.errorsMessages = []; // очистка ошибок
         return
@@ -37,9 +40,14 @@ export async function authorization(req: Request, res: Response) {
     if(response.data) {
         const token = await jwtService.createJwtTocen(response.data.id);
         res.status(resultStatusToHttpCode(response.status!)).send(token)
+    if(!response.data) res.status(resultStatusToHttpCode(response.status!)).json({errorsMessages: [response.extensions![0]]});
+    if(response.data) {
+        const token = await jwtService.createJwtTocen(response.data.id);
+        res.status(resultStatusToHttpCode(response.status!)).send(token)
     }
 }
 
+export async function getDataById(req: Request, res: Response) { 
 export async function getDataById(req: Request, res: Response) { 
     const result = await authServiceMethods.getUserById(req.userId as string);
     if(!result.data) {

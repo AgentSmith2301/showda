@@ -9,7 +9,6 @@ export const usersRepoMethods = {
         await usersCollection.deleteMany({})
     },
 
-    // TODO поставить возвращаемый объект ответа базы при создании данных (Promise<????>)
     async createUser(data: CreateUserData) {
         return await usersCollection.insertOne(data)
     },
@@ -22,9 +21,10 @@ export const usersRepoMethods = {
         return await usersCollection.deleteOne({_id: new ObjectId(id)})
     },
 
-    // async getUserById(id: string): Promise<WithId<UserViewModelDB> | null> {
-    //     return await usersCollection.findOne({_id: new ObjectId(id)});
-    // },
+    async checkUserById(id: string) {
+        const result = await usersCollection.findOne({_id: new ObjectId(id)})
+        return result
+    },
 
     async checkAuthentication(data: string): Promise<boolean> {
         const filter = {$or: [{login: data}, {email: data}]};

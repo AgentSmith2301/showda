@@ -23,7 +23,6 @@ export const  bearerAuthorization = async(req: Request, res: Response, next: Nex
         res.sendStatus(401)
         return
     } 
-
     req.userId = authToken;
     next(); 
 }
