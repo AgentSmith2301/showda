@@ -1,5 +1,4 @@
 import {APIErrorResult, LoginInputModel, MailInfo, MeViewModel} from '../types/auth-type'
-import {APIErrorResult, LoginInputModel, MailInfo, MeViewModel} from '../types/auth-type'
 import {authRepoMethods} from '../repositories/auth-repositories'
 import bcrypt from 'bcrypt';
 import {Result} from '../../types/resultObject-type'
@@ -41,24 +40,8 @@ export const authServiceMethods = {
         }
         // получить хеш , соль и id
         const credention = await authRepoMethods.credential(data.loginOrEmail);
-        const credention = await authRepoMethods.credential(data.loginOrEmail);
 
         // сравнение хешей
-        const compareHash = await bcrypt.compare(data.password, credention.hash);
-        if(!compareHash) {
-            return {
-                status: ResultStatus.Unauthorized , 
-                errorsMessages: 'password incorrect', 
-                extensions: [{message: 'incorect login, email or password', field: 'loginOrEmail or password'}], 
-                data: null 
-            }
-        }
-
-        return {
-            status: ResultStatus.Success , 
-            extensions: [], 
-            data: {id: credention.id} 
-        }
         const compareHash = await bcrypt.compare(data.password, credention.hash);
         if(!compareHash) {
             return {

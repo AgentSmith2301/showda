@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import {authServiceMethods} from '../service/auth-service';
 import { APIErrorResult, LoginInputModel, LoginSuccessViewModel, MeViewModel } from "../types/auth-type";
-import { APIErrorResult, LoginInputModel, LoginSuccessViewModel, MeViewModel } from "../types/auth-type";
 import { validationResult } from "express-validator";
 import {castomError} from '../../errors/castomErrorsFromValidate';
 import {jwtService} from '../application/jwt-service'
@@ -12,7 +11,6 @@ import {CastomErrors} from '../../errors/castomErrorsObject';
 // import {CastomRequest} from '../types/auth-type'
 
 
-export async function authorization(req: Request, res: Response) { 
 export async function authorization(req: Request, res: Response) { 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
@@ -46,8 +44,8 @@ export async function authorization(req: Request, res: Response) {
         res.status(resultStatusToHttpCode(response.status!)).send(token)
     }
 }
+}
 
-export async function getDataById(req: Request, res: Response) { 
 export async function getDataById(req: Request, res: Response) { 
     const result = await authServiceMethods.getUserById(req.userId as string);
     if(!result.data) {
@@ -191,7 +189,4 @@ export async function frontend_Side_Registration(req: Request, res: Response) {
         res.status(200).send(page);
     }
 }
-
-
-
 

@@ -4,6 +4,7 @@ export interface UserInputModel {
     login: string;
     password: string;
     email: string;
+
 } 
 
 export interface UserViewModel {
@@ -11,6 +12,7 @@ export interface UserViewModel {
     login?: string;
     email?: string;
     createdAt?: string;
+
 } 
 //  это промежуточный тип который мы сами написали что бы мы могли заменить _id на id 
 export interface UserViewModelDB {
