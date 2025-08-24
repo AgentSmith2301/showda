@@ -11,9 +11,9 @@ export const auth_Query_RepoMethods = {
         return {email: user.email!, login: user.login!, userId: id}
     },
 
-    async getComfirmationCode() {
+    // async getComfirmationCode() {
         
-    }
+    // }
     
 }
 

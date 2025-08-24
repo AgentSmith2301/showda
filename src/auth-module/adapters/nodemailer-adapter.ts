@@ -1,28 +1,28 @@
 import nodemailer from 'nodemailer'
 import {APIErrorResult, MailInfo} from '../types/auth-type'
+import { SETTINGS } from '../../settings';
+
 
 const transport = nodemailer.createTransport({
     host: "smtp.mail.ru",
     port: 465, 
     secure: true, 
-    // service: 'yandex',
     auth: {
         user: "tamerlan346_95@mail.ru",
         pass: "3mZ9VumzzYbTCbyfdRYa"
     }
 });
 
-//TODO в дальнейшем перенеси функцию отправки писем в managers
+
 export async function sendEmail(to: string, subject: string, html: string): Promise<MailInfo | APIErrorResult> {
     try {
         const info = await transport.sendMail({
-            from: "CONFIRMATION CODE <tamerlan346_95@mail.ru>",
+            from: `SHOWDA <${SETTINGS.EMAIL_SEND_FROM}>`,
             to,
             subject,
             html,
             text: 'перейдите по ссылке для подтверждения https://showda.vercel.app/'
         })
-
 
         return {
             accepted: info.accepted,
@@ -40,5 +40,3 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
         }
     }
 }
-
-// sendEmail('tamerlan346@gmail.com', 'this is main email for you', '<b>message from yandex</b>')

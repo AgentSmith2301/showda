@@ -24,8 +24,6 @@ export const  bearerAuthorization = async(req: Request, res: Response, next: Nex
         return
     } 
 
-
-
     req.userId = authToken;
     next(); 
 }

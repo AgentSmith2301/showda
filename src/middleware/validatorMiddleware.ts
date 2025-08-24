@@ -263,6 +263,17 @@ const registrationValidator = [
         .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address')
 ];
 
+const confirmationCOde = [
+    body('code')
+        .isString().withMessage('code is not a string')
+];
+
+const emailResending = [
+    body('email')
+        .notEmpty().withMessage('email can not to by empty')
+        .isString().withMessage('email not a string')
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address')
+];
 
 
 export const objectValidateMetods = {
@@ -279,6 +290,8 @@ export const objectValidateMetods = {
     postComments,
     searchCommentsWithIdPosts,
     updateCommentsValidator,
-    registrationValidator
+    registrationValidator,
+    confirmationCOde,
+    emailResending
 }
 

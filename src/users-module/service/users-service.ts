@@ -1,7 +1,7 @@
 import {usersRepoMethods} from '../repositories/users-repositories';
-import { CreateUserData, Paginator, SearchTermUsers, UserInputModel, UserViewModel } from '../types/users-type';
+import { ConfirmationInfo, CreateUserData, Paginator, SearchTermUsers, UserByTerm, UserInputModel, UserViewModel, UserViewModelDB, SearchObject, User_info_From_Busines } from '../types/users-type';
 import {CastomErrors} from '../../errors/castomErrorsObject';
-import { InsertOneResult } from 'mongodb';
+import { InsertOneResult, WithId } from 'mongodb';
 import {queryUserRepositories} from '../repositories/query-Repositories';
 import bcrypt from 'bcrypt';
 // import { LoginInputModel } from '../types/users-type';
@@ -10,19 +10,18 @@ import {v4} from 'uuid';
 import {addHours} from 'date-fns'
 
 
-
-
 export const usersServiceMethods = {
-    async deleteAllUsers() {
+    
+    async deleteAllUsers(): Promise<void> {
         await usersRepoMethods.deleteAll()
     },
 
-    async _generateHash(pass: string, salt: string) {
+    async _generateHash(pass: string, salt: string): Promise<string> {
         // генерация хеша из пароля и соли 
         return await bcrypt.hash(pass, salt)
     },
 
-    async authentication(data: LoginInputModel) {
+    async authentication(data: LoginInputModel): Promise<boolean> {
         // проверка на существование пользователя с логином или почтой
         const result = await usersRepoMethods.checkAuthentication(data.loginOrEmail)
         if(!result) return false
@@ -37,7 +36,7 @@ export const usersServiceMethods = {
     },
 
     // добавить аргумент shem для реализации одного из 2 сценариев 
-    async createdUser(data: UserInputModel, shem = 0) {
+    async createdUser(data: UserInputModel, shem = 0): Promise<false | UserViewModel> {
         const checkLogin = await usersRepoMethods.checkAuthentication(data.login)
         const checkMail = await usersRepoMethods.checkAuthentication(data.email);
         if(checkLogin || checkMail) return false;
@@ -61,7 +60,7 @@ export const usersServiceMethods = {
                 salt ,
                 createdAt,
                 emailConfirmation: {   
-                    confirmationCode: v4(), 
+                    confirmationCode: v4(),
                     expirationDate: addHours(new Date(), 1), 
                     isConfirmed: false
                 }
@@ -84,7 +83,7 @@ export const usersServiceMethods = {
         }
     },
 
-    async deleteUserById(id: string) {
+    async deleteUserById(id: string): Promise<boolean> {
 
         const findId = await queryUserRepositories.checkUserById(id);
 
@@ -97,7 +96,7 @@ export const usersServiceMethods = {
         }
     },
     
-    async getUsersByTerm(filter: SearchTermUsers) {  // : Promise<Paginator<UserViewModel []>>
+    async getUsersByTerm(filter: SearchTermUsers): Promise<UserByTerm> {
         const cauntDocument = await queryUserRepositories.countDocuments(filter.searchLoginTerm, filter.searchEmailTerm)
         const result = await queryUserRepositories.getUsersByTerm(filter)
         let mapingData: UserViewModel[] = [];
@@ -121,6 +120,41 @@ export const usersServiceMethods = {
         };
 
         return answer
+    },
+
+    async trustedCode(code: string):Promise<ConfirmationInfo | null> {
+        return await queryUserRepositories.confirm_Code(code);
+    },
+
+    async confirmedDane(code: string): Promise<boolean> {
+        return await usersRepoMethods.confirm(code);
+    },
+
+    async getUserById(id: string): Promise<{confirmationCode: string; email: string} | null> {
+        const anser: WithId<UserViewModelDB> | null = await queryUserRepositories.checkUserById(id);
+        
+        if(!anser) {
+            return null
+        }
+        
+        return {
+            confirmationCode: anser.emailConfirmation!.confirmationCode,
+            email: anser.email!
+        }
+    },
+
+    async terminate_User_If_Not_Email(id: string): Promise<boolean> {
+        const result = await usersRepoMethods.deleteUserById(id);
+
+        if(result.deletedCount >= 1) {
+            return true
+        } else {
+            return false
+        }
+    },
+
+    async get_User_By_Field(field: SearchObject): Promise<User_info_From_Busines | null> {
+        return await queryUserRepositories.search_From_Field(field);
     }
 }
 

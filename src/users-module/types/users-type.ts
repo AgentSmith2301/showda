@@ -45,29 +45,40 @@ export interface Paginator<UserViewModel> {
     items: UserViewModel[];
 }
 
+export interface ConfirmationInfo {
+    confirmationCode: string;
+    expirationDate: Date;
+    isConfirmed: boolean;
+}
+
 export type CreateUserData = {
     login: string;
     email: string;
     hash: string;
     salt: string;
     createdAt: string;
-    emailConfirmation?: {   
-        confirmationCode: string; 
-        expirationDate: Date; 
-        isConfirmed: boolean;
-    }
+    emailConfirmation?: ConfirmationInfo;
 }
 
-// export interface UserDB {
-//     login: string;
-//     email: string;
-//     hash: string;
-//     salt: string;
-//     createdAt: string;
-//     emailConfirmation: {   
-//         confirmationCode: string; 
-//         expirationDate: Date; 
-//         isConfirmed: boolean;
-//     }
-// }
+export interface UserByTerm {
+    pagesCount: number;
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    items: UserViewModel[];
+}
 
+// объект для поиска с свойствами которые есть у юзера , но все значения не обязательны
+type SearchUserData = "email" | "login";
+export interface SearchObject extends Partial<Record<SearchUserData, string>> {}
+
+// объект для бизнеса с информацией о пользователе
+export interface User_info_From_Busines {
+    id: string;
+    login: string;
+    email: string;
+    hash: string;
+    salt: string;
+    createdAt: string;
+    emailConfirmation: ConfirmationInfo;
+}

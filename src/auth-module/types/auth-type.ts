@@ -27,3 +27,4 @@ export interface MailInfo {
     rejected: (string | {name: string; adress?: string;}) [];
     response: string;
 }
+

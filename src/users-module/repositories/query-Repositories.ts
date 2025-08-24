@@ -1,6 +1,7 @@
 import { usersCollection } from "../../db/mongoDb";
-import {ObjectId} from 'mongodb';
-import { SearchTermUsers, UserViewModel, UserViewModelDB } from "../types/users-type";
+import {ObjectId, WithId} from 'mongodb';
+import { ConfirmationInfo, SearchTermUsers, User_info_From_Busines, UserViewModel, UserViewModelDB } from "../types/users-type";
+import {SearchObject} from '../types/users-type'
 
 export const queryUserRepositories = {
     async checkUserById(id: string) {
@@ -59,4 +60,43 @@ export const queryUserRepositories = {
             .toArray();
     },
 
+    async confirm_Code(code: string): Promise<ConfirmationInfo | null> {
+        const result = await usersCollection.findOne({'emailConfirmation.confirmationCode': code});
+        
+        if(!result) {
+            console.error('WARNING --> confirmationCode empty');
+            return null;
+        }
+        
+        const info_DTO_confirmation = {
+            confirmationCode: result!.emailConfirmation!.confirmationCode,
+            expirationDate: result!.emailConfirmation!.expirationDate,
+            isConfirmed: result!.emailConfirmation!.isConfirmed
+        };
+        
+        return info_DTO_confirmation;
+    },
+
+    // поиск по отдельному свойству (или группе свойств)
+    async search_From_Field(searchOdject: SearchObject): Promise<User_info_From_Busines | null> {
+        const result =  await usersCollection.findOne(searchOdject);
+        if(!result) return null
+        const User_Busines_DTO: User_info_From_Busines = {
+            id: result!._id.toString(),
+            login: result!.login!,
+            email: result!.email!,
+            hash: result!.hash,
+            salt: result!.salt,
+            createdAt: result!.createdAt!,
+            emailConfirmation: result!.emailConfirmation!
+        };
+        
+        return User_Busines_DTO
+        
+    }
+
 };
+
+
+    
+    
