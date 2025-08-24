@@ -21,8 +21,7 @@ export async function authorization(req: Request, res: Response) {
         filterErrors.map((value) => {
             castomError.errorsMessages.push(value);
         })
-        
-        res.status(HttpStatusCode.BadRequest_400).send(castomError);
+
         res.status(HttpStatusCode.BadRequest_400).send(castomError);
         castomError.errorsMessages = []; // очистка ошибок
         return
@@ -38,12 +37,9 @@ export async function authorization(req: Request, res: Response) {
     if(response.data) {
         const token = await jwtService.createJwtTocen(response.data.id);
         res.status(resultStatusToHttpCode(response.status!)).send(token)
-    if(!response.data) res.status(resultStatusToHttpCode(response.status!)).json({errorsMessages: [response.extensions![0]]});
-    if(response.data) {
-        const token = await jwtService.createJwtTocen(response.data.id);
-        res.status(resultStatusToHttpCode(response.status!)).send(token)
+        // return
+
     }
-}
 }
 
 export async function getDataById(req: Request, res: Response) { 
@@ -149,7 +145,8 @@ export async function resendEmail(req: Request, res: Response) {
             break;
 
         case ResultStatus.ServerError :
-            res.sendStatus(400).end(data.errorsMessages)
+            res.sendStatus(400).end(data.errorsMessages);
+            break;
         
     }
 }

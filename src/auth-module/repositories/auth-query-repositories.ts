@@ -10,11 +10,5 @@ export const auth_Query_RepoMethods = {
         if(!user) return undefined
         return {email: user.email!, login: user.login!, userId: id}
     },
-
-    // async getComfirmationCode() {
-        
-    // }
     
 }
-
-// TODO этот файл не задействован , нужно переключить гет запросы сюда (файл содержит все запросы которые должны быть)

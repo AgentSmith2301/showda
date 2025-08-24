@@ -1,6 +1,5 @@
 export interface LoginInputModel {
     loginOrEmail: string;
-    loginOrEmail: string;
     password: string
 }
 
@@ -9,8 +8,6 @@ export interface LoginSuccessViewModel {
 }
 
 export interface MeViewModel {
-    email: string;
-    login: string;
     email: string;
     login: string;
     userId: string

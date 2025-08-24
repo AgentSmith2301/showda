@@ -107,11 +107,7 @@ export const authServiceMethods = {
             }
         } else {
             //TODO сделать счетчик запросов после чего определенного кол-во запросов удалить пользователя
-            // или после уустарения expirationDate в базе.
-            // удалить пользователя , не смог отправить письмо
-            // const terminateUser: boolean = await usersServiceMethods.terminate_User_If_Not_Email(check.id!)
-            // const apruve: string = terminateUser? 'terminate': 'live';
-            // console.log(`user is ${apruve}`);
+            // или после устарения expirationDate в базе.
 
             return {
                     status: ResultStatus.ServerError, 
