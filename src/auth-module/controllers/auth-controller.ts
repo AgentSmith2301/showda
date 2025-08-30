@@ -112,7 +112,9 @@ export async function confirmation_User_Fron_Code(req: Request, res: Response) {
         // castomError.errorsMessages = [{message: 'something wrong', field:'code'}]
         // res.status(400).send(castomError)
 
-        res.status(400).send(castomError.errorsMessages = [{message: 'not correct code', field:'code'}]);
+        castomError.errorsMessages = [{message: 'not correct code', field:'code'}]
+
+        res.status(400).send(castomError);
         castomError.errorsMessages = []; // очистка ошибок
         
     }
