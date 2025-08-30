@@ -67,6 +67,18 @@ export const authServiceMethods = {
     },
 
     async registrationUserService(login: string, password: string, email: string, hostName: string): Promise<Partial<Result>> { 
+        // TODO выяснить что именно существует email или login (для отправки точной ошибки)
+        const checkLogin = await usersRepoMethods.checkAuthentication(login)
+        const checkMail = await usersRepoMethods.checkAuthentication(email);
+        let field_Name: string = '' ;
+        if(checkLogin) {
+            field_Name = 'login';
+        } 
+
+        if(checkMail) {
+            field_Name = 'email';
+        }
+        
         // создать пользователя 
         const check = await usersServiceMethods.createdUser({login, password, email}, 1)
         // пользователь существует , возвращаем ошибку если существует
@@ -78,7 +90,7 @@ export const authServiceMethods = {
                     [
                         {
                             message: 'incorect login or email', 
-                            field: 'Login or email'
+                            field: field_Name,
                         }
                     ], 
             }
