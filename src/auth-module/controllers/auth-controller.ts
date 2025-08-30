@@ -72,7 +72,8 @@ export async function registrationUserController(req: Request, res: Response) {
 
     switch(result.status) {
         case ResultStatus.BadRequest : 
-            res.status(400).send(result.extensions)
+            // TODO найди почему возращается такой вид ошибки (почему нужны костыли!)
+            res.status(400).send({'errorsMessages': result.extensions})
             break;
         
         case ResultStatus.ServerError : 

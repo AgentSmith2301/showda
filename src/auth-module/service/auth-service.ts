@@ -114,7 +114,6 @@ export const authServiceMethods = {
                     errorsMessages: `${information.errorsMessages}` , 
             }
         }
-    
     },
 
     // если код подтверждения confirmationCode верный в базе данных меняем свойство isConfirmed с false на true
