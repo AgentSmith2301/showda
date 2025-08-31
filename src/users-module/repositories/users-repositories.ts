@@ -13,9 +13,14 @@ export const usersRepoMethods = {
         return await usersCollection.insertOne(data)
     },
 
-    // async userRegistration(user: CreateUserData) {
-    //     return await usersCollection.insertOne(user);
-    // },
+    async change_Confirm_Code_Repo(newCode: string, oldCode: string): Promise<string | undefined> {
+        const result =  await usersCollection.findOneAndUpdate({'emailConfirmation.confirmationCode': oldCode}, {$set: {'emailConfirmation.confirmationCode': newCode}});
+        if(!result) {
+            return undefined;
+        } else {
+            return result.emailConfirmation!.confirmationCode
+        }
+    },
 
     async deleteUserById(id: string): Promise<{acknowledged: boolean; deletedCount: number;}> {
         return await usersCollection.deleteOne({_id: new ObjectId(id)})

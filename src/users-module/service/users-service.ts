@@ -130,6 +130,11 @@ export const usersServiceMethods = {
         return await usersRepoMethods.confirm(code);
     },
 
+    async chenge_Conferm_Code(oldCode: string): Promise<string | undefined> {
+        const new_Code = v4();
+        return await usersRepoMethods.change_Confirm_Code_Repo(new_Code, oldCode);
+    },
+
     async getUserById(id: string): Promise<{confirmationCode: string; email: string} | null> {
         const anser: WithId<UserViewModelDB> | null = await queryUserRepositories.checkUserById(id);
         

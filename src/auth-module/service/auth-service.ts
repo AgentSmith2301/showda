@@ -146,8 +146,17 @@ export const authServiceMethods = {
             errorsMessages: 'user not faund',
         }
 
+        // замена кода подтверждения 
+        const newCode: string | undefined = await usersServiceMethods.chenge_Conferm_Code(user_Exist.emailConfirmation.confirmationCode);
+        if(!newCode) {
+            return {
+                status: ResultStatus.BadRequest,
+                errorsMessages: `Bad request` , 
+            }
+        }
+
         // формируем объект для отправки письма 
-        const emailDTO = {confirmationCode: user_Exist!.emailConfirmation.confirmationCode, email, host}
+        const emailDTO = {confirmationCode: newCode, email, host}
         // если пользователь с такой почтой есть то отправляем ему письмо 
         const information = await nodemailer_Managers.confirmation_Mail(emailDTO);
 

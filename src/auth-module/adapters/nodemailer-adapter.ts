@@ -31,7 +31,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
         }
 
     } catch (err) {
-        console.error(err, '<==== err')
+
         return {
             errorsMessages: [{
                 message: `Mail Error: ${err}`,

@@ -150,6 +150,10 @@ export async function resendEmail(req: Request, res: Response) {
         case ResultStatus.ServerError :
             res.sendStatus(400).end(data.errorsMessages);
             break;
+
+        case ResultStatus.BadRequest :
+            res.sendStatus(400).end(data.errorsMessages);
+            break;
         
     }
 }
