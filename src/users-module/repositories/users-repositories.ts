@@ -14,7 +14,7 @@ export const usersRepoMethods = {
     },
 
     async change_Confirm_Code_Repo(newCode: string, oldCode: string): Promise<string | undefined> {
-        const result =  await usersCollection.findOneAndUpdate({'emailConfirmation.confirmationCode': oldCode}, {$set: {'emailConfirmation.confirmationCode': newCode}});
+        const result =  await usersCollection.findOneAndUpdate({'emailConfirmation.confirmationCode': oldCode}, {$set: {'emailConfirmation.confirmationCode': newCode}}, {returnDocument: 'after'});
         if(!result) {
             return undefined;
         } else {
