@@ -139,9 +139,6 @@ export async function resendEmail(req: Request, res: Response) {
     
     const data = await authServiceMethods.resendMail(req.body.email, req.headers.host!);
     switch (data.status) {
-        case ResultStatus.NotFound :
-            res.sendStatus(404).end(data.errorsMessages);
-            break;
         
         case ResultStatus.NoContent :
             res.sendStatus(204);

@@ -142,8 +142,16 @@ export const authServiceMethods = {
         // найти пользователя по почте 
         const user_Exist: User_info_From_Busines | null = await usersServiceMethods.get_User_By_Field({email});
         if(!user_Exist) return {
-            status: ResultStatus.NotFound,
-            errorsMessages: 'user not faund',
+            status: ResultStatus.BadRequest,
+            errorsMessages: '{errorsMessages: [{ message: "email not faund" , field: "email" }]}',
+        }
+
+        // если пользователь подтвержден возвращаем ошибку
+        if(user_Exist.emailConfirmation.isConfirmed) {
+            return {
+                status: ResultStatus.BadRequest,
+                errorsMessages: '{errorsMessages: [{ message: "The mail has already been confirmed" , field: "email" }]}',
+            }
         }
 
         // замена кода подтверждения 
