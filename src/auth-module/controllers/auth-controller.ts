@@ -175,6 +175,7 @@ export async function frontend_Side_Registration(req: Request, res: Response) {
     const samCode: string = req.query.code as string;
     const hostName = req.headers.host;
 
+
     const responseFetch = await fetch(`http://${hostName}/auth/registration-confirmation`, {
         method: 'post',
         headers:{'Content-Type': 'application/json'},
@@ -182,7 +183,7 @@ export async function frontend_Side_Registration(req: Request, res: Response) {
     });
 
     if(!responseFetch.ok) {
-        console.error('WARNING , request fetch not worked');
+        console.error(`WARNING , ${responseFetch.statusText}`); 
         res.set('Content-Type', 'text/html');
         res.status(400).send(pageFailed);
     } else {
