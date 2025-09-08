@@ -144,7 +144,8 @@ export const authServiceMethods = {
         if(!user_Exist) {
             return {
                 status: ResultStatus.BadRequest,
-                errorsMessages: '{errorsMessages: [{ message: "email not faund" , field: "email" }]}',
+                // errorsMessages: '{errorsMessages: [{ message: "email not faund" , field: "email" }]}',
+                extensions: [{ message: "email not faund" , field: "email" }],
             }
         }
 
@@ -152,12 +153,14 @@ export const authServiceMethods = {
         if(user_Exist.emailConfirmation.isConfirmed) {
             return {
                 status: ResultStatus.BadRequest,
-                errorsMessages: '{errorsMessages: [{ message: "The mail has already been confirmed" , field: "email" }]}',
+                // errorsMessages: 
+                extensions: [{ message: "The mail has already been confirmed" , field: "email" }],
             }
         }
 
         // замена кода подтверждения 
         const newCode: string | undefined = await usersServiceMethods.chenge_Conferm_Code(user_Exist.emailConfirmation.confirmationCode);
+        // если код не заменен
         if(!newCode) {
             return {
                 status: ResultStatus.BadRequest,
