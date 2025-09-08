@@ -141,9 +141,11 @@ export const authServiceMethods = {
     async resendMail(email: string, host: string): Promise<Partial<Result>> {
         // найти пользователя по почте 
         const user_Exist: User_info_From_Busines | null = await usersServiceMethods.get_User_By_Field({email});
-        if(!user_Exist) return {
-            status: ResultStatus.BadRequest,
-            errorsMessages: '{errorsMessages: [{ message: "email not faund" , field: "email" }]}',
+        if(!user_Exist) {
+            return {
+                status: ResultStatus.BadRequest,
+                errorsMessages: '{errorsMessages: [{ message: "email not faund" , field: "email" }]}',
+            }
         }
 
         // если пользователь подтвержден возвращаем ошибку
@@ -159,7 +161,8 @@ export const authServiceMethods = {
         if(!newCode) {
             return {
                 status: ResultStatus.BadRequest,
-                errorsMessages: `Bad request` , 
+                errorsMessages: `error in database` , 
+                extensions: [{ message: "something went wrong in the database" , field: "email" }]
             }
         }
 
@@ -179,7 +182,7 @@ export const authServiceMethods = {
                 errorsMessages: `${information.errorsMessages}` , 
             }
         }
-
+        
     } 
 
 }

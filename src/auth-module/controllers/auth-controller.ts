@@ -145,11 +145,11 @@ export async function resendEmail(req: Request, res: Response) {
             break;
 
         case ResultStatus.ServerError :
-            res.sendStatus(400).end(data.errorsMessages);
+            res.status(400).end(data.errorsMessages);
             break;
 
         case ResultStatus.BadRequest :
-            res.sendStatus(400).end(data.errorsMessages);
+            res.status(400).end(data.errorsMessages);
             break;
         
     }
@@ -174,7 +174,7 @@ export async function frontend_Side_Registration(req: Request, res: Response) {
 
     const samCode: string = req.query.code as string;
     const hostName = req.headers.host;
-
+    
 
     const responseFetch = await fetch(`http://${hostName}/auth/registration-confirmation`, {
         method: 'post',
