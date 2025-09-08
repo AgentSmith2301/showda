@@ -145,11 +145,11 @@ export async function resendEmail(req: Request, res: Response) {
             break;
 
         case ResultStatus.ServerError :
-            res.status(400).end(data.errorsMessages);
+            res.status(400).json(data.errorsMessages);
             break;
 
         case ResultStatus.BadRequest :
-            res.status(400).end(data.errorsMessages);
+            res.status(400).json(data.errorsMessages);
             break;
         
     }
