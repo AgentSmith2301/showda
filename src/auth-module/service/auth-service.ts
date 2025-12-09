@@ -260,7 +260,33 @@ export const authServiceMethods = {
                 data: null 
             }
 
+        } 
+        
+        const checkTokenFromDb = await authRepoMethods.checkBlackList(validTokenOrNot.id, token);
+        if(checkTokenFromDb.length !== 0) {
+            return {
+                status: ResultStatus.Unauthorized , 
+                errorsMessages: 'user is not unauthorized', 
+                extensions: [{message: 'not valid refresh token', field: 'refresh token'}], 
+                data: null 
+            }
+
         } else {
+
+            // время плюс один час
+            let timeNow = new Date();
+            const timePlusOneHour = new Date(timeNow.setHours(timeNow.getHours() + 1))
+
+            const sessionDTO: Sessions_Info = {
+                userId: validTokenOrNot.id,
+                ip,
+                refreshToken: token,
+                createdAt: validTokenOrNot.iat,
+                expiresAt: validTokenOrNot.exp,
+                revokedAt: timePlusOneHour,
+            }
+
+            await authRepoMethods.createSession(sessionDTO);
             
             return {
                 status: ResultStatus.NoContent,

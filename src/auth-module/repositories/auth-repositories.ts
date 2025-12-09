@@ -4,7 +4,6 @@ import { MeViewModel, Sessions_Info } from "../types/auth-type";
 
 export const authRepoMethods = {
     
-    // TODO дописать 
     async createSession(sessions: Sessions_Info): Promise<boolean> {
         const anser = await sessionsCollection.insertOne(sessions);
         return anser.acknowledged
