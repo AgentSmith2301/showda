@@ -4,8 +4,7 @@ import {LoginSuccessViewModel, PayloadFromToken}from '../types/auth-type'
 
 export const jwtService = {
     async createJwtToken(id: string): Promise<LoginSuccessViewModel> {
-        // TODO изменить время жизни на 10
-        const token = jwt.sign({id}, SETTINGS.JWT_SECRET, {expiresIn: '1000s'})
+        const token = jwt.sign({id}, SETTINGS.JWT_SECRET, {expiresIn: '10s'})
         return {accessToken: token}
     },
 
@@ -45,8 +44,7 @@ export const jwtService = {
     },
 
     async createRefreshToken(id: string): Promise<string> {
-        // TODO изменить время жизни на 20
-        return jwt.sign({id},SETTINGS.JWT_SECRET, {expiresIn: '20000s'})
+        return jwt.sign({id},SETTINGS.JWT_SECRET, {expiresIn: '20s'})
     },
     
     async getInfoFromToken(token: string): Promise<{id:string; iat: number; exp: number}> {

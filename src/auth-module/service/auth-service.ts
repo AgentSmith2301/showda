@@ -204,7 +204,7 @@ export const authServiceMethods = {
         const blackList = await authRepoMethods.checkBlackList(payloadFromToken.id, token.refreshToken);
         if(blackList.length !== 0) {
             return {
-                status: ResultStatus.BadRequest , 
+                status: ResultStatus.Unauthorized , 
                 errorsMessages: 'bad request', 
                 extensions: [{message: 'token has in black list', field: 'refresh token'}], 
                 data: null 
