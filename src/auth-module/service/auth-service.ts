@@ -1,4 +1,4 @@
-import {APIErrorResult, LoginInputModel, MailInfo, MeViewModel} from '../types/auth-type'
+import {APIErrorResult, CookieWithRefreshToken, LoginInputModel, MailInfo, MeViewModel, Sessions_Info, PayloadFromToken} from '../types/auth-type'
 import {authRepoMethods} from '../repositories/auth-repositories'
 import bcrypt from 'bcrypt';
 import {Result} from '../../types/resultObject-type'
@@ -14,22 +14,16 @@ import { SETTINGS } from '../../settings';
 import { usersServiceMethods } from '../../users-module/service/users-service';
 import { queryUserRepositories } from '../../users-module/repositories/query-Repositories';
 import { nodemailer_Managers } from '../managers/nodemailer-managers';
+import {jwtService} from '../application/jwt-service'
+import { ObjectId } from 'mongodb';
 // import { UserDB } from '../../users-module/types/users-type';
 
 
 export const authServiceMethods = {
     
-    async authentication(data: LoginInputModel): Promise<Partial<Result<{id: string} | null>>> { 
+    async authentication(data: LoginInputModel, ip: string | undefined): Promise<Partial<Result<{access: {accessToken: string}; refresh: string} | null>>> { 
         // проверка на существование пользователя с логином или почтой
         const result = await authRepoMethods.checkAuthentication(data.loginOrEmail)
-        if(!result) {
-            return {
-                status: ResultStatus.Unauthorized , 
-                errorsMessages: 'not found login or email', 
-                extensions: [{message: 'incorect login, email or password', field: 'loginOrEmail or password'}], 
-                data: null 
-            }
-        }
         if(!result) {
             return {
                 status: ResultStatus.Unauthorized , 
@@ -52,10 +46,14 @@ export const authServiceMethods = {
             }
         }
 
+        const accessToken = await jwtService.createJwtToken(credention.id);
+        const refreshToken: string = await jwtService.createRefreshToken(credention.id);
+
+
         return {
             status: ResultStatus.Success , 
             extensions: [], 
-            data: {id: credention.id} 
+            data: {access: accessToken, refresh: refreshToken} 
         }
     },
 
@@ -67,7 +65,8 @@ export const authServiceMethods = {
     },
 
     async registrationUserService(login: string, password: string, email: string, hostName: string): Promise<Partial<Result>> { 
-        // TODO выяснить что именно существует email или login (для отправки точной ошибки)
+        // проверка на существование
+        // TODO запрос должен идти из authService --> userService --> usersRepoMethods
         const checkLogin = await usersRepoMethods.checkAuthentication(login)
         const checkMail = await usersRepoMethods.checkAuthentication(email);
         let field_Name: string = '' ;
@@ -110,6 +109,7 @@ export const authServiceMethods = {
             email: result.email!,
             host: hostName
         };
+        // отправка письма в менеджер
         const information: MailInfo | APIErrorResult = await nodemailer_Managers.confirmation_Mail(resultDTO);
         
         if('response' in information) {
@@ -123,7 +123,7 @@ export const authServiceMethods = {
 
             return {
                     status: ResultStatus.ServerError, 
-                    errorsMessages: `${information.errorsMessages}` , 
+                    errorsMessages: `${information.errorsMessages[0].message}` , 
             }
         }
     },
@@ -186,7 +186,116 @@ export const authServiceMethods = {
             }
         }
         
-    } 
+    },
+    
+    async refreshToken(token: CookieWithRefreshToken, ip: string): Promise<Result<{accessToken: string; refreshToken: string}| null>> { 
+        // проверика токена
+        const payloadFromToken = await jwtService.getPayloadByToken(token.refreshToken);
+        if(!payloadFromToken) { 
+            return {
+                status: ResultStatus.Unauthorized , 
+                errorsMessages: 'user is not unauthorized', 
+                extensions: [{message: 'not valid refresh token', field: 'refresh token'}], 
+                data: null 
+            }
+        }
+
+        // запрос в базу для проверки сессии в блек лист 
+        const blackList = await authRepoMethods.checkBlackList(payloadFromToken.id, token.refreshToken);
+        if(blackList.length !== 0) {
+            return {
+                status: ResultStatus.BadRequest , 
+                errorsMessages: 'bad request', 
+                extensions: [{message: 'token has in black list', field: 'refresh token'}], 
+                data: null 
+            }
+        }
+
+        // время плюс один час
+        let timeNow = new Date();
+        const timePlusOneHour = new Date(timeNow.setHours(timeNow.getHours() + 1))
+
+        const sessionDTO: Sessions_Info = {
+            userId: payloadFromToken.id,
+            ip,
+            refreshToken: token.refreshToken,
+            createdAt: payloadFromToken.iat,
+            expiresAt: payloadFromToken.exp,
+            revokedAt: timePlusOneHour,
+        }
+
+        const sessionInfo = await authRepoMethods.createSession(sessionDTO);
+        if(!sessionInfo) {
+            return {
+                status: ResultStatus.ServerError , 
+                errorsMessages: 'something went wrong, please try again', 
+                extensions: [{message: 'the database is not responding', field: 'DB'}], 
+                data: null 
+            }
+
+        } else {
+
+            const accessToken = await jwtService.createJwtToken(payloadFromToken.id);
+            const refreshToken: string = await jwtService.createRefreshToken(payloadFromToken.id);
+            return {
+                status: ResultStatus.Success,
+                errorsMessages: '', 
+                extensions: [],
+                data: {
+                    accessToken: accessToken.accessToken,
+                    refreshToken
+                }
+            }
+        }
+    
+    },
+
+    async logoutWithToken(token: string, ip: string): Promise<Result<PayloadFromToken | null>> {
+        const validTokenOrNot = await jwtService.getPayloadByToken(token);
+        if(!validTokenOrNot) {
+            return {
+                status: ResultStatus.Unauthorized , 
+                errorsMessages: 'user is not unauthorized', 
+                extensions: [{message: 'not valid refresh token', field: 'refresh token'}], 
+                data: null 
+            }
+
+        } else {
+            // время плюс один час
+            let timeNow = new Date();
+            const timePlusOneHour = new Date(timeNow.setHours(timeNow.getHours() + 1))
+
+            const sessionDTO: Sessions_Info = {
+                userId: validTokenOrNot.id,
+                ip,
+                refreshToken: token,
+                createdAt: validTokenOrNot.iat,
+                expiresAt: validTokenOrNot.exp,
+                revokedAt: timePlusOneHour,
+            }
+
+            const sessionInfo = await authRepoMethods.createSession(sessionDTO);
+            if(!sessionInfo) {
+                return {
+                    status: ResultStatus.ServerError , 
+                    errorsMessages: 'something went wrong, please try again', 
+                    extensions: [{message: 'the database is not responding', field: 'DB'}], 
+                    data: null 
+                }
+
+            } else {
+
+                return {
+                    status: ResultStatus.NoContent,
+                    errorsMessages: '', 
+                    extensions: [],
+                    data: validTokenOrNot
+                }
+            }
+        
+        }
+    },
+
 
 }
 

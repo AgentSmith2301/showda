@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {authServiceMethods} from '../service/auth-service';
-import { APIErrorResult, LoginInputModel, LoginSuccessViewModel, MeViewModel } from "../types/auth-type";
+import { APIErrorResult, LoginInputModel, LoginSuccessViewModel, MeViewModel, CookieWithRefreshToken } from "../types/auth-type";
 import { validationResult } from "express-validator";
 import {castomError} from '../../errors/castomErrorsFromValidate';
 import {jwtService} from '../application/jwt-service'
@@ -8,6 +8,7 @@ import {HttpStatusCode} from '../../types/httpStatus-enum'
 import {resultStatusToHttpCode} from '../../helpers/resultStatusToHttpCode'
 import { ResultStatus } from "../../types/resultStatus-enum";
 import {CastomErrors} from '../../errors/castomErrorsObject';
+import { cookiesGuard } from "../helpers/refreshTokenTypeGuard";
 // import {CastomRequest} from '../types/auth-type'
 
 
@@ -32,13 +33,12 @@ export async function authorization(req: Request, res: Response) {
         password: req.body.password
     }
 
-    const response = await authServiceMethods.authentication(reqFilter)
+    const response = await authServiceMethods.authentication(reqFilter, req.ip)
     if(!response.data) res.status(resultStatusToHttpCode(response.status!)).json({errorsMessages: [response.extensions![0]]});
     if(response.data) {
-        const token = await jwtService.createJwtTocen(response.data.id);
-        res.status(resultStatusToHttpCode(response.status!)).send(token)
-        // return
-
+        res.cookie('refreshToken', response.data.refresh, {httpOnly: true, secure: true})
+        res.status(resultStatusToHttpCode(response.status!)).send(response.data.access)
+        
     }
 }
 
@@ -68,6 +68,7 @@ export async function registrationUserController(req: Request, res: Response) {
         return
     } 
     
+
     const result = await authServiceMethods.registrationUserService(req.body.login, req.body.password, req.body.email, req.headers.host!);
 
     switch(result.status) {
@@ -153,6 +154,48 @@ export async function resendEmail(req: Request, res: Response) {
             break;
     
     }
+}
+
+export async function refresh(req: Request, res: Response): Promise<void> {
+    const refreshCookie = req.cookies;
+    const ip = req.ip === undefined ? 'not info' : req.ip
+    // if cookie empty
+    if(!refreshCookie) res.sendStatus(401);
+    // привидение к типу
+    if(cookiesGuard(refreshCookie)) {
+        const info = await authServiceMethods.refreshToken(refreshCookie, ip)
+        if(info.status === ResultStatus.BadRequest) res.status(400).send(info.errorsMessages);
+        if(info.status === ResultStatus.Unauthorized) res.status(401).send(info.errorsMessages);
+        if(info.status === ResultStatus.Success) {
+            res.cookie('refreshToken',info.data?.refreshToken, {httpOnly: true, secure: true} )
+            res.status(200).send({accessToken: info.data?.accessToken})
+            return
+        }
+
+    } else {
+        res.sendStatus(401)
+    }
+
+}
+
+export async function logout(req: Request, res: Response) {
+    const token = req.cookies ;
+    const ip = req.ip === undefined ? 'not info' : req.ip
+    // if cookie empty
+    if(!token) res.sendStatus(401);
+    // привидение к типу
+    if(cookiesGuard(token)) {
+        const responseFromService = await authServiceMethods.logoutWithToken(token.refreshToken, ip);
+        if(responseFromService.status === "Unauthorized") res.sendStatus(401);
+        if(responseFromService.status === "NoContent") res.sendStatus(204);
+
+    } else {
+        res.sendStatus(401)
+    }
+
+
+
+
 }
 
 // =========================== FRONT ============================

@@ -9,11 +9,14 @@ const transport = nodemailer.createTransport({
     secure: true, 
     auth: {
         user: "tamerlan346_95@mail.ru",
-        pass: "3mZ9VumzzYbTCbyfdRYa"
+        // pass: "3mZ9VumzzYbTCbyfdRYa",
+        pass: "kpvFldXP2LkRZMFdA6EP"
     }
 });
 
-
+// Димыч сделал метод для письма синхронным что бы не ждать ответа от сервера ,
+// это дает приимущество в скорости , так как нам не обязательно ждать получения ответа
+// но мы сделаем ассинхронной функцию 
 export async function sendEmail(to: string, subject: string, html: string): Promise<MailInfo | APIErrorResult> {
     try {
         const info = await transport.sendMail({

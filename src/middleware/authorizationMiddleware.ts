@@ -4,6 +4,7 @@ import {jwtService} from '../auth-module/application/jwt-service'
 // import {CastomRequest} from '../auth-module/types/auth-type'
 
 export const checkAuthorization = (req: Request, res: Response, next: NextFunction) => {
+    // преобразовать строку в base64 и сравнить с пришедшим запросом
     if(Buffer.from(SETTINGS.ADMIN_AUTH).toString('base64') === req.headers.authorization?.substring(6)) {
         next();
     } else {

@@ -11,8 +11,10 @@ import {usersRepoMethods} from './users-module/repositories/users-repositories';
 import { authRouter } from './auth-module/router/auth-router'
 import {commentsRouter} from './comments-module/routers/comments-router'
 import { commentsRepositories } from './comments-module/repositories/comments-repository';
+import cookieParser from 'cookie-parser';
 
 export const app = express();
+app.use(cookieParser());
 app.use(express.json());
 
 

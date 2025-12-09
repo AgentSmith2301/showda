@@ -7,11 +7,8 @@ export const nodemailer_Managers = {
         const baseUrl = host.split(':');
         if(baseUrl[0] === 'localhost' || baseUrl[0] === '127.0.0.1') { // host === 'localhost:3003'
             return `http://localhost:3003/auth/frontend/check-email?code=${code}`;
-        } else {
-            // return `https://showda.vercel.app/auth/registration-confirmation?code=${code}`; 
-            
+        } else {          
             return `https://showda.vercel.app/auth/frontend/check-email?code=${code}`; 
-
         }
     },
     

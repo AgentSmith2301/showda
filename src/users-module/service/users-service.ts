@@ -12,6 +12,10 @@ import {addHours} from 'date-fns'
 
 export const usersServiceMethods = {
     
+    async userSessionFromId() {
+        
+    },
+    
     async deleteAllUsers(): Promise<void> {
         await usersRepoMethods.deleteAll()
     },
@@ -77,7 +81,8 @@ export const usersServiceMethods = {
 
         const result = await usersRepoMethods.createUser(newUserData);
         if(result.acknowledged === true) {
-            return await queryUserRepositories.getUsersById(result.insertedId.toString());
+            const userById = await queryUserRepositories.getUsersById(result.insertedId.toString());
+            return userById
         } else {
             throw new Error(`{errorsMessages: [{message: 'something went wrong , this is a program error', field: '😡'}]}`)
         }

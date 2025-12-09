@@ -4,7 +4,7 @@ import {castomError} from '../../errors/castomErrorsFromValidate';
 import { SearchTermUsers, UserInputModel } from '../types/users-type';
 import { usersServiceMethods } from '../service/users-service';
 
-export async function postUsersController(req: Request, res: Response) {
+export async function postUsersController(req: Request, res: Response) { 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         const filterErrors = errors.array({onlyFirstError: true}).map((error: any) => ({ 

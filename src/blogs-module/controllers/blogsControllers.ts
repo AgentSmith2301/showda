@@ -75,7 +75,7 @@ export async function deleteBlogController(req: Request, res: Response) {
 export async function changeBlogController(req: Request, res: Response) {
     const checkId = await serviceBlogsMethods.checkId(req.params.id);
     if(checkId === false) {
-        res.send(404)
+        res.sendStatus(404)
         return
     }
     const errors = validationResult(req);
@@ -94,9 +94,9 @@ export async function changeBlogController(req: Request, res: Response) {
     
     let result = await serviceBlogsMethods.updateBlog(req.params.id, req.body);
     if(result) {
-        res.send(204)
+        res.sendStatus(204)
     } else {
-        res.send(404)
+        res.sendStatus(404)
     }
 }
 
@@ -105,7 +105,7 @@ export async function getBlogFromIdController(req: Request, res: Response) {
     if(result) {
         res.status(200).send(result)
     } else {
-        res.send(404);
+        res.sendStatus(404);
     }
 }
 
