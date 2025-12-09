@@ -261,36 +261,12 @@ export const authServiceMethods = {
             }
 
         } else {
-            // время плюс один час
-            let timeNow = new Date();
-            const timePlusOneHour = new Date(timeNow.setHours(timeNow.getHours() + 1))
-
-            const sessionDTO: Sessions_Info = {
-                userId: validTokenOrNot.id,
-                ip,
-                refreshToken: token,
-                createdAt: validTokenOrNot.iat,
-                expiresAt: validTokenOrNot.exp,
-                revokedAt: timePlusOneHour,
-            }
-
-            const sessionInfo = await authRepoMethods.createSession(sessionDTO);
-            if(!sessionInfo) {
-                return {
-                    status: ResultStatus.ServerError , 
-                    errorsMessages: 'something went wrong, please try again', 
-                    extensions: [{message: 'the database is not responding', field: 'DB'}], 
-                    data: null 
-                }
-
-            } else {
-
-                return {
-                    status: ResultStatus.NoContent,
-                    errorsMessages: '', 
-                    extensions: [],
-                    data: validTokenOrNot
-                }
+            
+            return {
+                status: ResultStatus.NoContent,
+                errorsMessages: '', 
+                extensions: [],
+                data: validTokenOrNot
             }
         
         }
