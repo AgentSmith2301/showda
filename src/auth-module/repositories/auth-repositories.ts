@@ -1,17 +1,29 @@
 import { ObjectId, WithId } from "mongodb";
 import { usersCollection, sessionsCollection } from "../../db/mongoDb";
-import { MeViewModel, Sessions_Info } from "../types/auth-type";
+import { MeViewModel, Refresh_Session_Token, Sessions_Info } from "../types/auth-type";
 
 export const authRepoMethods = {
-    
+    async getSessionsInfo(userId: string, deviceId: string): Promise<Sessions_Info | null> {
+        return await sessionsCollection.findOne({userId, deviceId}, {projection: {_id: 0}})
+    },
+
+    async deleteToken(userId: string, deviceId: string): Promise<void> {
+        await sessionsCollection.deleteOne({userId, deviceId});
+    },
+
     async createSession(sessions: Sessions_Info): Promise<boolean> {
         const anser = await sessionsCollection.insertOne(sessions);
         return anser.acknowledged
     },
 
+    // TODO удалить функцию 
     async checkBlackList(id: string, token: string): Promise<Sessions_Info[] | []> {
         return await sessionsCollection.find({$and: [{userId: {$eq: id}}, {refreshToken: {$eq: token}}]}).toArray();
+    },
 
+    async updateSession(token: Sessions_Info): Promise<boolean> {
+        const anser = await sessionsCollection.updateOne({userId: token.userId, diviceId: token.deviceId}, {$set: {iat: token.iat, exp: token.exp}});
+        return anser.modifiedCount > 0 ? true : false
     },
     
     async checkAuthentication(data: string): Promise<boolean> {
@@ -39,15 +51,5 @@ export const authRepoMethods = {
         if(!user) return undefined
         return {email: user.email!, login: user.login!, userId: id}
     },
-
-    // async сheckingForUniqueness(login: string, email: string) {
-    //     const checkLogin = await usersCollection.find({login}).toArray();
-    //     const checkEmail = await usersCollection.find({email}).toArray();
-    //     if(checkLogin.length > 0 || checkEmail.length > 0) {
-    //         return true
-    //     } else {
-    //         return false
-    //     }
-    // },
     
 }

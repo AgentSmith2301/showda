@@ -36,12 +36,21 @@ export interface CookieWithRefreshToken {
 
 export interface Sessions_Info {
     userId: string;
+    deviceId: string;
+    iat: Date;
+    exp: Date;
+    deviceName: string | undefined;
     ip: string | undefined;
-    refreshToken: string; 
-    createdAt: number; 
-    expiresAt: number;
-    revokedAt:  Date | null;
 }
+
+export interface Refresh_Session_Token {
+    userId: string;
+    deviceId: string;
+    iat: number;
+    exp: number;
+}
+
+
 
 // TODO инфа о сессии (на замену существующему)
 // export interface Sessions_Info {

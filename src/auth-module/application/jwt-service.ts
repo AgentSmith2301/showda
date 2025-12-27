@@ -1,10 +1,11 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import {SETTINGS} from '../../settings'
-import {LoginSuccessViewModel, PayloadFromToken}from '../types/auth-type'
+import {LoginSuccessViewModel, PayloadFromToken, Refresh_Session_Token}from '../types/auth-type'
+import { refreshTokenGuard } from '../helpers/refreshTokenTypeGuard'
 
 export const jwtService = {
     async createJwtToken(id: string): Promise<LoginSuccessViewModel> {
-        const token = jwt.sign({id}, SETTINGS.JWT_SECRET, {expiresIn: '10s'})
+        const token = jwt.sign({id}, SETTINGS.JWT_SECRET, {expiresIn: '1000s'}) //TODO 10 
         return {accessToken: token}
     },
 
@@ -43,12 +44,30 @@ export const jwtService = {
         
     },
 
-    async createRefreshToken(id: string): Promise<string> {
-        return jwt.sign({id},SETTINGS.JWT_SECRET, {expiresIn: '20s'})
+    async check_Refresh_Token_And_Return_Payload(token: string): Promise<Refresh_Session_Token | undefined> {
+        try {
+            const payload = jwt.verify(token, SETTINGS.JWT_SECRET);   
+            if(refreshTokenGuard(payload)) {
+                return payload
+            } else {
+                return undefined
+            }
+        } catch(err) {
+            if(err instanceof jwt.JsonWebTokenError) {
+                console.log('токен не валидный')
+            } else if(err instanceof jwt.TokenExpiredError) {
+                console.log('токен протух')
+            }
+            return undefined
+        }
+    },
+
+    async createRefreshToken(id: string, device: string): Promise<string> {
+        return jwt.sign({userId: id, deviceId: device},SETTINGS.JWT_SECRET, {expiresIn: '20000s'}) //TODO 20
     },
     
-    async getInfoFromToken(token: string): Promise<{id:string; iat: number; exp: number}> {
-        // payload можно было получить и с помощью метода jwt.verify()
+    async getInfoFromToken(token: string): Promise<{userId:string; diviceId: string; iat: number; exp: number}> {
+        // payload можно было получить и с помощью метода jwt.decode()
         const partOfTheToken = token.split('.');
         const lifeTime = Buffer.from(partOfTheToken[1], 'base64').toString('utf-8');
         return JSON.parse(lifeTime)

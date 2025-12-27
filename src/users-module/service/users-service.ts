@@ -12,9 +12,9 @@ import {addHours} from 'date-fns'
 
 export const usersServiceMethods = {
     
-    async userSessionFromId() {
+    // async userSessionFromId() {
         
-    },
+    // },
     
     async deleteAllUsers(): Promise<void> {
         await usersRepoMethods.deleteAll()
