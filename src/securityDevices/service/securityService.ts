@@ -35,14 +35,14 @@ export const securityService = {
         
         const allSessions = await authServiceMethods.getInfoByDeviceId(deviceId);
         // проверка на 404 (нет такого deviceId)
-        if(!allSessions.data) {
+        if(!allSessions.data.length) {
             const serviceAnserDTO: Result = {
                 status: ResultStatus.NotFound, 
                 errorsMessages: 'device not faund', 
                 extensions: [
                     {field: 'deviceId', message: 'deviceId does not exist in the database'}
                 ],
-                data: allSessions.data
+                data: null
             }
             return serviceAnserDTO
         }
