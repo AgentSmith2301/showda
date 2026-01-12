@@ -39,28 +39,13 @@ export interface Sessions_Info {
     deviceId: string;
     iat: Date;
     exp: Date;
-    deviceName: string | undefined;
-    ip: string | undefined;
+    deviceName: string;
+    ip: string;
 }
 
-export interface Refresh_Session_Token {
-    userId: string;
-    deviceId: string;
-    iat: number;
-    exp: number;
+export interface API_Info {
+    IP: string;
+    URL: string;
+    date: Date;
 }
 
-
-
-// TODO инфа о сессии (на замену существующему)
-// export interface Sessions_Info {
-//     _id: string;
-//     userId: ObjectId; // ссылка на пользователя
-//     deviceId: string; // имя устройства 
-//     userAgent: string; 
-//     ip: string;  // откуда пользователь вошел
-//     refreshToken: string; // рефреш токен 
-//     createdAt: string; // время создания 
-//     expiresAt: string; // время протухания
-//     revokedAt:  string| null // время отзыва токена , если он аннулирован 
-// }

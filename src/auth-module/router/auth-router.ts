@@ -1,19 +1,19 @@
 import {Router} from 'express';
-import { authorization, getDataById, registrationUserController, frontend_Side_Registration, confirmation_User_Fron_Code, resendEmail } from '../controllers/auth-controller'
-// , refresh, logout
+import { authorization, getDataById, registrationUserController, frontend_Side_Registration, confirmation_User_Fron_Code, resendEmail, refresh, logout} from '../controllers/auth-controller'
 import { objectValidateMetods } from '../../middleware/validatorMiddleware';
-import {bearerAuthorization} from '../../middleware/authorizationMiddleware'
+import {bearerAuthorization} from '../../middleware/authorizationMiddleware';
+import {rateLimiteMiddleware} from '../middleware/rateLimiteMiddleware';
+import {checkRefreshToken} from '../../middleware/checkTokenMiddleware';
 
 export const authRouter = Router();
 
-//TODO реализовать отслеживание запросов по ip (больше 5 запросов за 10 сек ошибка 429)
-authRouter.post('/login', objectValidateMetods.auth , authorization) 
+authRouter.post('/login', objectValidateMetods.auth, rateLimiteMiddleware, authorization) 
 authRouter.post('/registration', objectValidateMetods.registrationValidator, registrationUserController)
 authRouter.post('/registration-confirmation', objectValidateMetods.confirmationCOde, confirmation_User_Fron_Code)
 authRouter.post('/registration-email-resending', objectValidateMetods.emailResending, resendEmail)
 authRouter.get('/me', bearerAuthorization, getDataById)
-// authRouter.post('/refresh-token', refresh) 
-// authRouter.post('/logout', logout)
+authRouter.post('/refresh-token', checkRefreshToken, refresh) 
+authRouter.post('/logout', checkRefreshToken, logout) 
 
 // =========================== (маршрут для проверки фронта) ===========================
 authRouter.get('/frontend/check-email', frontend_Side_Registration)

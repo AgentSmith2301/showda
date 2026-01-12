@@ -1,4 +1,5 @@
-import { CookieWithRefreshToken, Refresh_Session_Token } from "../types/auth-type";
+import { CookieWithRefreshToken} from "../types/auth-type";
+import {Refresh_Session_Token} from '../../types/refreshTokenType'
 
 
 export function cookiesGuard(token: any): token is CookieWithRefreshToken {

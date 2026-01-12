@@ -9,6 +9,7 @@ import {resultStatusToHttpCode} from '../../helpers/resultStatusToHttpCode'
 import { ResultStatus } from "../../types/resultStatus-enum";
 import {CastomErrors} from '../../errors/castomErrorsObject';
 import { cookiesGuard } from "../helpers/refreshTokenTypeGuard";
+import { Refresh_Session_Token } from "../../types/refreshTokenType";
 // import {CastomRequest} from '../types/auth-type'
 
 
@@ -33,10 +34,11 @@ export async function authorization(req: Request, res: Response) {
         password: req.body.password
     }
 
-    const userAgent = req.get('User-agent');
+    const userAgent = req.get('User-agent') ?? 'not faund' ;
     const refreshTokenJwt: string | undefined = req.cookies.refreshtoken;
+    const ip = req.ip ?? 'not info';
 
-    const response = await authServiceMethods.authentication(reqFilter, req.ip, userAgent, refreshTokenJwt) 
+    const response = await authServiceMethods.authentication(reqFilter, ip, userAgent, refreshTokenJwt) 
     if(!response.data) res.status(resultStatusToHttpCode(response.status!)).json({errorsMessages: [response.extensions![0]]});
     if(response.data) {
         res.cookie('refreshToken', response.data.refresh, {httpOnly: true, secure: true})
@@ -71,21 +73,20 @@ export async function registrationUserController(req: Request, res: Response) {
         return
     } 
     
-
     const result = await authServiceMethods.registrationUserService(req.body.login, req.body.password, req.body.email, req.headers.host!);
 
     switch(result.status) {
         case ResultStatus.BadRequest : 
             // TODO найди почему возращается такой вид ошибки (почему нужны костыли!)
-            res.status(400).send({errorsMessages: result.extensions})
+            res.status(HttpStatusCode.BadRequest_400).send({errorsMessages: result.extensions})
             break;
         
         case ResultStatus.ServerError : 
-            res.status(500).send(result.extensions)
+            res.status(HttpStatusCode.ServerError_500).send(result.extensions)
             break;
 
         case ResultStatus.NoContent :
-            res.sendStatus(204)
+            res.sendStatus(HttpStatusCode.NoContent_204)
             break;
     }
 }
@@ -108,7 +109,7 @@ export async function confirmation_User_Fron_Code(req: Request, res: Response) {
 
     const isConfirmed = await authServiceMethods.code_Is_Confirmed(req.body.code);
     if(isConfirmed) {
-        res.sendStatus(204);
+        res.sendStatus(HttpStatusCode.NoContent_204);
     } else {
         // TODO можно изменить возвращаемую ошибку , сейчас возвращается только массив.
         // если пропишем так то ошибка будет возвращаться правильно
@@ -118,7 +119,7 @@ export async function confirmation_User_Fron_Code(req: Request, res: Response) {
 
         castomError.errorsMessages = [{message: 'not correct code', field:'code'}]
 
-        res.status(400).send(castomError);
+        res.status(HttpStatusCode.BadRequest_400).send(castomError);
         castomError.errorsMessages = []; // очистка ошибок
         
     }
@@ -145,64 +146,54 @@ export async function resendEmail(req: Request, res: Response) {
     switch (data.status) {
         
         case ResultStatus.NoContent :
-            res.sendStatus(204);
+            res.sendStatus(HttpStatusCode.NoContent_204);
             break;
 
         case ResultStatus.ServerError :
-            res.status(400).json({errorsMessages: data.extensions});
+            res.status(HttpStatusCode.BadRequest_400).json({errorsMessages: data.extensions});
             break;
 
         case ResultStatus.BadRequest :
-            res.status(400).json({errorsMessages: data.extensions});
+            res.status(HttpStatusCode.BadRequest_400).json({errorsMessages: data.extensions});
             break;
     
     }
 }
 
-// TODO здесь закомментированно 2 пути
-// export async function refresh(req: Request, res: Response): Promise<void> {
-//     const refreshCookie = req.cookies;
-//     const ip = req.ip === undefined ? 'not info' : req.ip
-//     // if cookie empty
-//     if(!refreshCookie) res.sendStatus(401);
-//     // привидение к типу
-//     if(cookiesGuard(refreshCookie)) {
-//         const userAgent = req.get('User-agent');
-//         const info = await authServiceMethods.refreshToken(refreshCookie, ip, userAgent)
-//         if(info.status === ResultStatus.BadRequest) res.status(400).send(info.errorsMessages);
-//         if(info.status === ResultStatus.Unauthorized) res.status(401).send(info.errorsMessages);
-//         if(info.status === ResultStatus.Success) {
-//             res.cookie('refreshToken',info.data?.refreshToken, {httpOnly: true, secure: true} )
-//             res.status(200).send({accessToken: info.data?.accessToken})
-//             return
-//         }
+export async function refresh(req: Request, res: Response): Promise<void> {
+    const tokenPayload: Refresh_Session_Token = req.tokenPayload;
+    const ip = req.ip === undefined ? 'not info' : req.ip
+    // if cookie empty
+    if(!tokenPayload) res.sendStatus(HttpStatusCode.Unauthorized_401);
 
-//     } else {
-//         res.sendStatus(401)
-//     }
+    const userAgent = req.get('User-agent') ?? 'not faund';
+    const info = await authServiceMethods.refreshToken(tokenPayload, ip, userAgent)
+    if(info.status === ResultStatus.BadRequest) res.status(HttpStatusCode.BadRequest_400).send(info.errorsMessages);
+    if(info.status === ResultStatus.Unauthorized) res.status(HttpStatusCode.Unauthorized_401).send(info.errorsMessages);
+    if(info.status === ResultStatus.ServerError) res.status(HttpStatusCode.ServerError_500).send(info.errorsMessages);
+    if(info.status === ResultStatus.Success) {
+        res.cookie('refreshToken',info.data?.refreshToken, {httpOnly: true, secure: true} )
+        res.status(HttpStatusCode.Success_200).send({accessToken: info.data?.accessToken})
+        return
+    }
+}
 
-// }
+export async function logout(req: Request, res: Response) {
+    const token = req.cookies ;
+    const ip = req.ip === undefined ? 'not info' : req.ip
+    // if cookie empty
+    if(!token) res.sendStatus(HttpStatusCode.Unauthorized_401);
+    // привидение к типу
+    if(cookiesGuard(token)) {
+        const responseFromService = await authServiceMethods.logoutWithToken(token.refreshToken);
+        if(responseFromService.status === "Unauthorized") res.sendStatus(HttpStatusCode.Unauthorized_401);
+        if(responseFromService.status === "NoContent") res.sendStatus(HttpStatusCode.NoContent_204);
 
-// TODO вернуть этот путь  
-// export async function logout(req: Request, res: Response) {
-//     const token = req.cookies ;
-//     const ip = req.ip === undefined ? 'not info' : req.ip
-//     // if cookie empty
-//     if(!token) res.sendStatus(401);
-//     // привидение к типу
-//     if(cookiesGuard(token)) {
-//         const responseFromService = await authServiceMethods.logoutWithToken(token.refreshToken, ip);
-//         if(responseFromService.status === "Unauthorized") res.sendStatus(401);
-//         if(responseFromService.status === "NoContent") res.sendStatus(204);
+    } else {
+        res.sendStatus(HttpStatusCode.Unauthorized_401)
+    }
 
-//     } else {
-//         res.sendStatus(401)
-//     }
-
-
-
-
-// }
+}
 
 // =========================== FRONT ============================
 

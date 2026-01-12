@@ -1,6 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import {SETTINGS} from '../../settings'
-import {LoginSuccessViewModel, PayloadFromToken, Refresh_Session_Token}from '../types/auth-type'
+import {LoginSuccessViewModel, PayloadFromToken}from '../types/auth-type'
+import {Refresh_Session_Token} from '../../types/refreshTokenType'
 import { refreshTokenGuard } from '../helpers/refreshTokenTypeGuard'
 
 export const jwtService = {
@@ -19,12 +20,12 @@ export const jwtService = {
         }
     },
 
-    async getPayloadByToken(token: string): Promise<PayloadFromToken | null> {
+    async getPayloadByToken(token: string): Promise<Refresh_Session_Token | null> {
         try {
             const payload = jwt.verify(token, SETTINGS.JWT_SECRET);
             // функция гуард (приведение к типу)
-            function checkPayload(obj: any): obj is PayloadFromToken {
-                return typeof obj.id === 'string'
+            function checkPayload(obj: any): obj is Refresh_Session_Token {
+                return typeof obj.userId === 'string'
             }
 
             if(checkPayload(payload)) {
@@ -72,10 +73,5 @@ export const jwtService = {
         const lifeTime = Buffer.from(partOfTheToken[1], 'base64').toString('utf-8');
         return JSON.parse(lifeTime)
     },
-
-    // async getNewTokens(oldToken: string) {
-    //     // const userId = await this.getIdByToken(oldToken);
-
-    // },
 
 }

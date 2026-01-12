@@ -11,7 +11,8 @@ export const SETTINGS = {
         USERS: '/users',
         AUTH: '/auth',
         DELETEALL: '/testing/all-data',
-        COMMENTS: '/comments'
+        COMMENTS: '/comments',
+        SECURITY: '/security'
     },
     MONGO_URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',
     DB_NAME: process.env.DB_NAME || '',

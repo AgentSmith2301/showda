@@ -1,4 +1,5 @@
-import {APIErrorResult, CookieWithRefreshToken, LoginInputModel, MailInfo, MeViewModel, Sessions_Info, PayloadFromToken, Refresh_Session_Token, LoginSuccessViewModel} from '../types/auth-type'
+import {APIErrorResult, CookieWithRefreshToken, LoginInputModel, MailInfo, MeViewModel, Sessions_Info, PayloadFromToken, LoginSuccessViewModel} from '../types/auth-type'
+import {Refresh_Session_Token} from '../../types/refreshTokenType'
 import {authRepoMethods} from '../repositories/auth-repositories'
 import bcrypt from 'bcrypt';
 import {Result} from '../../types/resultObject-type'
@@ -21,7 +22,7 @@ import { ObjectId } from 'mongodb';
 
 export const authServiceMethods = {
     
-    async authentication(data: LoginInputModel, ip: string | undefined, userAgent: string | undefined, refreshTokenJwt: string | undefined): Promise<Partial<Result<{access: {accessToken: string}; refresh: string} | null>>> { 
+    async authentication(data: LoginInputModel, ip: string, userAgent: string , refreshTokenJwt: string | undefined): Promise<Partial<Result<{access: {accessToken: string}; refresh: string} | null>>> { 
         // Checking the existence of a user with a login or email
         const result = await authRepoMethods.checkAuthentication(data.loginOrEmail)
         if(!result) {
@@ -169,9 +170,6 @@ export const authServiceMethods = {
                 data: null, 
             }
         } else {
-            //TODO сделать счетчик запросов после чего определенного кол-во запросов удалить пользователя
-            // или после устарения expirationDate в базе.
-
             return {
                     status: ResultStatus.ServerError, 
                     errorsMessages: `${information.errorsMessages[0].message}` , 
@@ -239,118 +237,121 @@ export const authServiceMethods = {
         
     },
     
-    // TODO изменить рефреш токен
-    // async refreshToken(token: CookieWithRefreshToken, ip: string, userAgent: string | undefined): Promise<Result<{accessToken: string; refreshToken: string}| null>> { 
-    //     // проверика токена
-    //     const payloadFromToken = await jwtService.getPayloadByToken(token.refreshToken);
-    //     if(!payloadFromToken) { 
-    //         return {
-    //             status: ResultStatus.Unauthorized , 
-    //             errorsMessages: 'user is not unauthorized', 
-    //             extensions: [{message: 'not valid refresh token', field: 'refresh token'}], 
-    //             data: null 
-    //         }
-    //     }
+    async refreshToken(token: Refresh_Session_Token, ip: string, userAgent: string): Promise<Result<{accessToken: string; refreshToken: string}| null>> { 
 
-    //     // запрос в базу для проверки сессии в блек лист 
-    //     const blackList = await authRepoMethods.checkBlackList(payloadFromToken.id, token.refreshToken);
-    //     if(blackList.length !== 0) {
-    //         return {
-    //             status: ResultStatus.Unauthorized , 
-    //             errorsMessages: 'bad request', 
-    //             extensions: [{message: 'token has in black list', field: 'refresh token'}], 
-    //             data: null 
-    //         }
-    //     }
+        const accessToken = await jwtService.createJwtToken(token.userId);
+        const refreshToken: string = await jwtService.createRefreshToken(token.userId, token.deviceId);
+        const refreshPayload = await jwtService.check_Refresh_Token_And_Return_Payload(refreshToken);
 
-    //     // время плюс один час
-    //     let timeNow = new Date();
-    //     const timePlusOneHour = new Date(timeNow.setHours(timeNow.getHours() + 1))
+        const sessionDTO: Sessions_Info = {
+            userId: token.userId, 
+            deviceId: token.deviceId,  
+            iat: new Date(refreshPayload!.iat * 1000),
+            exp: new Date(refreshPayload!.exp * 1000),
+            deviceName: userAgent,
+            ip,
+        }
 
-    //     const sessionDTO: Sessions_Info = {
-    //         userId: payloadFromToken.id,
-    //         // diviceId: string;
-    //         iat: new Date(payloadFromToken.iat),
-    //         exp: new Date(payloadFromToken.exp),
-    //         deviceName: userAgent,
-    //         ip,
-    //     }
+        const sessionInfo = await authRepoMethods.updateSession(sessionDTO);
+        if(!sessionInfo) {
+            return {
+                status: ResultStatus.Unauthorized , 
+                errorsMessages: 'something went wrong, please try again', 
+                extensions: [{message: 'the database is not responding', field: 'DB'}], 
+                data: null 
+            }
+        } else {
+            return {
+                status: ResultStatus.Success,
+                errorsMessages: '', 
+                extensions: [],
+                data: {
+                    accessToken: accessToken.accessToken,
+                    refreshToken
+                }
+            }
+        }
+    },
 
-    //     const sessionInfo = await authRepoMethods.createSession(sessionDTO);
-    //     if(!sessionInfo) {
-    //         return {
-    //             status: ResultStatus.ServerError , 
-    //             errorsMessages: 'something went wrong, please try again', 
-    //             extensions: [{message: 'the database is not responding', field: 'DB'}], 
-    //             data: null 
-    //         }
+    async logoutWithToken(token: string): Promise<Result<boolean>> {
+        const validTokenOrNot = await jwtService.getPayloadByToken(token);
+        if(!validTokenOrNot) {
+            return {
+                status: ResultStatus.Unauthorized , 
+                errorsMessages: 'user is not unauthorized', 
+                extensions: [{message: 'not valid refresh token', field: 'refresh token'}], 
+                data: false 
+            }
+        } 
 
-    //     } else {
+        const result = await authRepoMethods.deleteToken(validTokenOrNot.userId, validTokenOrNot.deviceId);
+        if(!result) console.log('something went wrong, the database is not responding')
+        return {
+            status: ResultStatus.NoContent , 
+            errorsMessages: '', 
+            extensions: [], 
+            data: true 
+        }
+    },
 
-    //         const accessToken = await jwtService.createJwtToken(payloadFromToken.id);
-    //         const refreshToken: string = await jwtService.createRefreshToken(payloadFromToken.id);
-    //         return {
-    //             status: ResultStatus.Success,
-    //             errorsMessages: '', 
-    //             extensions: [],
-    //             data: {
-    //                 accessToken: accessToken.accessToken,
-    //                 refreshToken
-    //             }
-    //         }
-    //     }
-    
-    // },
+    async getAllSessionsForUser(userId: string): Promise<Result<Sessions_Info[]>> {
+        const data = await authRepoMethods.getAllSessionsForUser(userId);
+        return {
+            status: ResultStatus.Success , 
+            errorsMessages: '', 
+            extensions: [], 
+            data: data 
+        }
+    },
 
-    // TODO пришлось тоже отключить пока не изменим рефреш
-    // async logoutWithToken(token: string, ip: string): Promise<Result<PayloadFromToken | null>> {
-    //     const validTokenOrNot = await jwtService.getPayloadByToken(token);
-    //     if(!validTokenOrNot) {
-    //         return {
-    //             status: ResultStatus.Unauthorized , 
-    //             errorsMessages: 'user is not unauthorized', 
-    //             extensions: [{message: 'not valid refresh token', field: 'refresh token'}], 
-    //             data: null 
-    //         }
+    async deleteAllOtherSessions(userId: string, deviceId: string): Promise<Result<boolean>> {
+        const data = await authRepoMethods.deleteAllOtherSessions(userId, deviceId)
+        if(data) {
+            return {
+                status: ResultStatus.NoContent , 
+                errorsMessages: '', 
+                extensions: [], 
+                data: true 
+            }
+        } else {
+            return {
+                status: ResultStatus.ServerError , 
+                errorsMessages: 'Something went wrong, please try again.', 
+                extensions: [{field: 'check conect with DB', message: 'the database did not confirm the request'}], 
+                data: false 
+            }
+        }
+    },
 
-    //     } 
-        
-    //     const checkTokenFromDb = await authRepoMethods.checkBlackList(validTokenOrNot.id, token);
-    //     if(checkTokenFromDb.length !== 0) {
-    //         return {
-    //             status: ResultStatus.Unauthorized , 
-    //             errorsMessages: 'user is not unauthorized', 
-    //             extensions: [{message: 'not valid refresh token', field: 'refresh token'}], 
-    //             data: null 
-    //         }
+    async closeSession(userId: string, deviceId: string): Promise<Result<boolean>> {
+        const data = await authRepoMethods.closeSession(userId, deviceId);
+        if(data) {
+            return {
+                status: ResultStatus.NoContent , 
+                errorsMessages: '', 
+                extensions: [], 
+                data: true 
+            }
+        } else {
+            return {
+                status: ResultStatus.ServerError , 
+                errorsMessages: 'Something went wrong, please try again.', 
+                extensions: [{field: 'check conect with DB', message: 'the database did not confirm the request'}],
+                data: false 
+            }
+        }
+    },
 
-    //     } else {
 
-    //         // время плюс один час
-    //         let timeNow = new Date();
-    //         const timePlusOneHour = new Date(timeNow.setHours(timeNow.getHours() + 1))
-
-    //         const sessionDTO: Sessions_Info = {
-    //             userId: validTokenOrNot.id,
-    //             ip,
-    //             refreshToken: token,
-    //             createdAt: validTokenOrNot.iat,
-    //             expiresAt: validTokenOrNot.exp,
-    //             revokedAt: timePlusOneHour,
-    //         }
-
-    //         await authRepoMethods.createSession(sessionDTO);
-            
-    //         return {
-    //             status: ResultStatus.NoContent,
-    //             errorsMessages: '', 
-    //             extensions: [],
-    //             data: validTokenOrNot
-    //         }
-        
-    //     }
-    // },
-
+    async getInfoByDeviceId(deviceId: string): Promise<Result<Sessions_Info[]>> {
+        const data = await authRepoMethods.getInfoByDeviceId(deviceId);
+        return {
+            status: ResultStatus.NoContent , 
+            errorsMessages: '', 
+            extensions: [], 
+            data     
+        }
+    }
 
 }
 
