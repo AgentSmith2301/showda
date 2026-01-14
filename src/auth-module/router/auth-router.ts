@@ -4,6 +4,7 @@ import { objectValidateMetods } from '../../middleware/validatorMiddleware';
 import {bearerAuthorization} from '../../middleware/authorizationMiddleware';
 import {rateLimiteMiddleware} from '../middleware/rateLimiteMiddleware';
 import {checkRefreshToken} from '../../middleware/checkTokenMiddleware';
+import { sessionMiddleware } from '../../middleware/checkSessionMiddleware';
 
 export const authRouter = Router();
 
@@ -13,7 +14,7 @@ authRouter.post('/registration-confirmation', objectValidateMetods.confirmationC
 authRouter.post('/registration-email-resending', objectValidateMetods.emailResending, resendEmail)
 authRouter.get('/me', bearerAuthorization, getDataById)
 authRouter.post('/refresh-token', checkRefreshToken, refresh) 
-authRouter.post('/logout', checkRefreshToken, logout) 
+authRouter.post('/logout', checkRefreshToken, sessionMiddleware, logout) 
 
 // =========================== (маршрут для проверки фронта) ===========================
 authRouter.get('/frontend/check-email', frontend_Side_Registration)

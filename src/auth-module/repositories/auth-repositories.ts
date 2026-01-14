@@ -5,6 +5,7 @@ import {MeViewModel, Sessions_Info} from '../types/auth-type'
 
 
 export const authRepoMethods = {
+    // TODO этот путь должен быть в query репозитории 
     async getSessionsInfo(userId: string, deviceId: string): Promise<Sessions_Info | null> {
         return await sessionsCollection.findOne({userId, deviceId}, {projection: {_id: 0}})
     },
@@ -28,7 +29,7 @@ export const authRepoMethods = {
         // если ответ на вопрос выше "нет" то используй эту проверку
         // return anser.matchedCount > 0 ? true : false
     },
-    
+     // TODO этот путь должен быть в query репозитории 
     async checkAuthentication(data: string): Promise<boolean> {
         const filter = {$or: [{login: data}, {email: data}]}
         // TODO authRepo не должен знать о usersCollection
