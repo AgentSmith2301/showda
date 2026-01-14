@@ -13,7 +13,7 @@ authRouter.post('/registration', objectValidateMetods.registrationValidator, reg
 authRouter.post('/registration-confirmation', objectValidateMetods.confirmationCOde, confirmation_User_Fron_Code)
 authRouter.post('/registration-email-resending', objectValidateMetods.emailResending, resendEmail)
 authRouter.get('/me', bearerAuthorization, getDataById)
-authRouter.post('/refresh-token', checkRefreshToken, refresh) 
+authRouter.post('/refresh-token', checkRefreshToken, sessionMiddleware, refresh) 
 authRouter.post('/logout', checkRefreshToken, sessionMiddleware, logout) 
 
 // =========================== (маршрут для проверки фронта) ===========================
