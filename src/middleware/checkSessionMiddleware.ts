@@ -9,10 +9,14 @@ export async function sessionMiddleware(req: Request, res: Response, next: NextF
     // в таком случае сравниваются числа
     // и это быстрее 
     // или даже через +info!.iat !== vercionToken.valueOf()
-    if(info!.iat.toISOString() !== vercionToken.toISOString()) {
+    if(!info) {
+        res.sendStatus(401)
+        return
+    } else if(info.iat.toISOString() !== vercionToken.toISOString()) {
         res.sendStatus(401)
         return
     }
+    
     next()
 }
 
