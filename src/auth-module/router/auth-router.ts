@@ -9,9 +9,9 @@ import { sessionMiddleware } from '../../middleware/checkSessionMiddleware';
 export const authRouter = Router();
 
 authRouter.post('/login', objectValidateMetods.auth, rateLimiteMiddleware, authorization) 
-authRouter.post('/registration', objectValidateMetods.registrationValidator, rateLimiteMiddleware, registrationUserController) //TODO rateLimiteMiddleware
-authRouter.post('/registration-confirmation', objectValidateMetods.confirmationCOde, rateLimiteMiddleware, confirmation_User_Fron_Code) //TODO rateLimiteMiddleware
-authRouter.post('/registration-email-resending', objectValidateMetods.emailResending, rateLimiteMiddleware, resendEmail) //TODO rateLimiteMiddleware
+authRouter.post('/registration', objectValidateMetods.registrationValidator, rateLimiteMiddleware, registrationUserController) 
+authRouter.post('/registration-confirmation', objectValidateMetods.confirmationCOde, rateLimiteMiddleware, confirmation_User_Fron_Code) 
+authRouter.post('/registration-email-resending', objectValidateMetods.emailResending, rateLimiteMiddleware, resendEmail) 
 authRouter.get('/me', bearerAuthorization, getDataById)
 authRouter.post('/refresh-token', checkRefreshToken, sessionMiddleware, refresh) 
 authRouter.post('/logout', checkRefreshToken, sessionMiddleware, logout) 
