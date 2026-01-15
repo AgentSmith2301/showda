@@ -6,7 +6,7 @@ import { refreshTokenGuard } from '../helpers/refreshTokenTypeGuard'
 
 export const jwtService = {
     async createJwtToken(id: string): Promise<LoginSuccessViewModel> {
-        const token = jwt.sign({id}, SETTINGS.JWT_SECRET, {expiresIn: '1000s'}) //TODO 10 
+        const token = jwt.sign({id}, SETTINGS.JWT_SECRET, {expiresIn: '10s'})
         return {accessToken: token}
     },
 
@@ -64,7 +64,7 @@ export const jwtService = {
     },
 
     async createRefreshToken(id: string, device: string): Promise<string> {
-        return jwt.sign({userId: id, deviceId: device},SETTINGS.JWT_SECRET, {expiresIn: '20000s'}) //TODO 20
+        return jwt.sign({userId: id, deviceId: device},SETTINGS.JWT_SECRET, {expiresIn: '20s'}) 
     },
     
     async getInfoFromToken(token: string): Promise<{userId:string; diviceId: string; iat: number; exp: number}> {
