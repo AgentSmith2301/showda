@@ -12,11 +12,12 @@ export async function rateLimiteMiddleware(req: Request, res: Response, next: Ne
     let checkDate = new Date(dateNow.valueOf() - 10000) 
     const result = await rateLimiteRepositories.check_Request_Caunt(ip, url, dateNow, checkDate); 
 
-    if(result < 5) {
+    if(result <= 5) {
         await rateLimiteRepositories.create_Url_Info(ip , url, dateNow)
         next()
     } else {
         res.sendStatus(429)
+        return
     }
 
 
