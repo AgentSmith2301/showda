@@ -7,12 +7,12 @@ export const rateLimiteRepositories = {
 
     },
 
-    async check_Request_Caunt(ip: string, url: string, checkDate: Date): Promise<number> {
+    async check_Request_Caunt(ip: string, checkDate: Date): Promise<number> { // url: string, 
         // верхнюю границу не указываем так как она не нужна, документы и так вернутся до текущего момента
         //                      👇 считаем ТОЛЬКО ЭТО
         // ────────────────┆════════════════╗
         //                -10s               NOW
-        return await apiRequestsCollection.countDocuments({IP:ip, URL:url, date: {$gte: checkDate}}) 
+        return await apiRequestsCollection.countDocuments({IP:ip, date: {$gte: checkDate}}) // URL:url, 
     },
 };
 
