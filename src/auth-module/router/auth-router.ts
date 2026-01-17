@@ -5,13 +5,14 @@ import {bearerAuthorization} from '../../middleware/authorizationMiddleware';
 import {rateLimiteMiddleware} from '../middleware/rateLimiteMiddleware';
 import {checkRefreshToken} from '../../middleware/checkTokenMiddleware';
 import { sessionMiddleware } from '../../middleware/checkSessionMiddleware';
+import {requestTrack} from '../middleware/request_Tracking'
 
 export const authRouter = Router();
-
-authRouter.post('/login', rateLimiteMiddleware, objectValidateMetods.auth, authorization) 
-authRouter.post('/registration', rateLimiteMiddleware, objectValidateMetods.registrationValidator, registrationUserController) 
-authRouter.post('/registration-confirmation', rateLimiteMiddleware, objectValidateMetods.confirmationCOde, confirmation_User_Fron_Code) 
-authRouter.post('/registration-email-resending', rateLimiteMiddleware, objectValidateMetods.emailResending, resendEmail) 
+// TODO delete tracker requestTrack & file in middleware request_Tracking andspy Data
+authRouter.post('/login', requestTrack, rateLimiteMiddleware, objectValidateMetods.auth, authorization) 
+authRouter.post('/registration', requestTrack, rateLimiteMiddleware, objectValidateMetods.registrationValidator, registrationUserController) 
+authRouter.post('/registration-confirmation', requestTrack, rateLimiteMiddleware, objectValidateMetods.confirmationCOde, confirmation_User_Fron_Code) 
+authRouter.post('/registration-email-resending', requestTrack, rateLimiteMiddleware, objectValidateMetods.emailResending, resendEmail) 
 authRouter.get('/me', bearerAuthorization, getDataById)
 authRouter.post('/refresh-token', checkRefreshToken, sessionMiddleware, refresh) 
 authRouter.post('/logout', checkRefreshToken, sessionMiddleware, logout) 
