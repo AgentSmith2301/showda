@@ -47,5 +47,6 @@ export interface API_Info {
     IP: string;
     URL: string;
     date: Date;
+    body?: any; //TODO удалить после получения данных body
 }
 

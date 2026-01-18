@@ -16,10 +16,11 @@ export async function rateLimiteMiddleware(req: Request, res: Response, next: Ne
         return
     } 
 
-    await rateLimiteRepositories.create_Url_Info(ip , url, dateNow)
+    await rateLimiteRepositories.create_Url_Info(ip , url, dateNow, req.body) //TODO удалить после получения данных body
     next()
     return
 }
+
 
 
 
