@@ -2,8 +2,8 @@ import {apiRequestsCollection } from "../../db/mongoDb";
 import { API_Info } from "../types/auth-type";
 
 export const rateLimiteRepositories = {
-    async create_Url_Info(ip: string, url: string, dateTime: Date, body: any ): Promise<void> { //TODO удалить после получения данных body
-        await apiRequestsCollection.insertOne({IP: ip, URL: url, date: dateTime, body}) //TODO удалить после получения данных body
+    async create_Url_Info(ip: string, url: string, dateTime: Date): Promise<void> {
+        await apiRequestsCollection.insertOne({IP: ip, URL: url, date: dateTime})
 
     },
 
