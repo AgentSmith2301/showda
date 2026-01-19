@@ -8,18 +8,18 @@ export async function rateLimiteMiddleware(req: Request, res: Response, next: Ne
     let dateNow = new Date(); 
     let checkDate = new Date(dateNow.valueOf() - 10000);
     
-    await rateLimiteRepositories.create_Url_Info(ip , url, dateNow)
     const result = await rateLimiteRepositories.check_Request_Caunt(ip, url, checkDate); 
 
     // при быстрых асинхронных запросах count может отставать, поэтому в rate limit всегда проверяют >= limit, 
     // чтобы не пропустить лишний запрос
     // +1 потому что мы считаем и этот запрос
-    if(result > 5) {
+    if(result >= 5) {
         res.sendStatus(429);
         return
     } 
-
-    res.sendStatus(204)
+    
+    await rateLimiteRepositories.create_Url_Info(ip , url, dateNow)
+    next()
 }
 
 
