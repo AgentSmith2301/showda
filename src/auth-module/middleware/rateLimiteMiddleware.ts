@@ -18,8 +18,8 @@ export async function rateLimiteMiddleware(req: Request, res: Response, next: Ne
         res.sendStatus(429);
         return
     } 
-    
-    next()
+
+    res.sendStatus(204)
 }
 
 
