@@ -260,7 +260,7 @@ const registrationValidator = [
     body('email')
         .notEmpty().withMessage('email can not to by empty')
         .isString().withMessage('email not a string')
-        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address')
+        // .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address') //TODO вернуть проверку
 ];
 
 const confirmationCOde = [
@@ -272,7 +272,7 @@ const emailResending = [
     body('email')
         .notEmpty().withMessage('email can not to by empty')
         .isString().withMessage('email not a string')
-        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address')
+        // .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address')  //TODO вернуть проверку
 ];
 
 
