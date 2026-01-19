@@ -11,7 +11,8 @@ export async function rateLimiteMiddleware(req: Request, res: Response, next: Ne
 
     // при быстрых асинхронных запросах count может отставать, поэтому в rate limit всегда проверяют >= limit, 
     // чтобы не пропустить лишний запрос
-    if(result >= 5) {
+    // +1 потому что мы считаем и этот запрос
+    if(result + 1 > 5) {
         res.sendStatus(429);
         return
     } 
