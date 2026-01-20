@@ -82,7 +82,7 @@ export async function registrationUserController(req: Request, res: Response) {
             break;
         
         case ResultStatus.ServerError : 
-            res.status(HttpStatusCode.ServerError_500).send(result.extensions)
+            res.status(501).send(result.extensions) // HttpStatusCode.ServerError_500
             break;
 
         case ResultStatus.NoContent :

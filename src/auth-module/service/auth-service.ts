@@ -171,11 +171,8 @@ export const authServiceMethods = {
             }
         } else {
             return {
-                    // status: ResultStatus.ServerError, 
-                    // errorsMessages: `${information.errorsMessages[0].message}` , 
-                    // TODO delete
-                                    status: ResultStatus.NoContent, 
-                data: null, 
+                    status: ResultStatus.ServerError, 
+                    errorsMessages: `${information.errorsMessages[0].message}` , 
             }
         }
     },
