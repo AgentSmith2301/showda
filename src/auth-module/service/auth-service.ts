@@ -161,20 +161,25 @@ export const authServiceMethods = {
             email: result.email!,
             host: hostName
         };
-        // отправка письма в менеджер
-        const information: MailInfo | APIErrorResult = await nodemailer_Managers.confirmation_Mail(resultDTO);
         
-        if('response' in information) {
+        // =====================================================================================================
+        // TODO включи обратно отправку письма
+        // отправка письма в менеджер
+        // const information: MailInfo | APIErrorResult = await nodemailer_Managers.confirmation_Mail(resultDTO);
+        
+        // if('response' in information) {
             return {
                 status: ResultStatus.NoContent, 
                 data: null, 
             }
-        } else {
-            return {
-                    status: ResultStatus.ServerError, 
-                    errorsMessages: `${information.errorsMessages[0].message}` , 
-            }
-        }
+        // } else {
+        //     return {
+        //             status: ResultStatus.ServerError, 
+        //             errorsMessages: `${information.errorsMessages[0].message}` , 
+        //     }
+        // }
+        // =====================================================================================================
+
     },
 
     // если код подтверждения confirmationCode верный в базе данных меняем свойство isConfirmed с false на true
@@ -220,20 +225,23 @@ export const authServiceMethods = {
 
         // формируем объект для отправки письма 
         const emailDTO = {confirmationCode: newCode, email, host}
+        
+        // =====================================================================================================
+        // TODO включи обратно отправку письма
         // если пользователь с такой почтой есть то отправляем ему письмо 
-        const information = await nodemailer_Managers.confirmation_Mail(emailDTO);
+        // const information = await nodemailer_Managers.confirmation_Mail(emailDTO);
 
-        if('response' in information) {
+        // if('response' in information) {
             return {
                 status: ResultStatus.NoContent, 
                 data: null, 
             }
-        } else {
-            return {
-                status: ResultStatus.ServerError, 
-                errorsMessages: `${information.errorsMessages}` , 
-            }
-        }
+        // } else {
+        //     return {
+        //         status: ResultStatus.ServerError, 
+        //         errorsMessages: `${information.errorsMessages}` , 
+        //     }
+        // }
         
     },
     
