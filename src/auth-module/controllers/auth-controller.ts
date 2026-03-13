@@ -263,7 +263,7 @@ export class AuthController {
                 break
 
             case ResultStatus.BadRequest :
-                res.status(HttpStatusCode.BadRequest_400).json({errorsMessages: result.errorsMessages});
+                res.status(HttpStatusCode.BadRequest_400).json({errorsMessages: result.extensions});
                 break
         }
 
