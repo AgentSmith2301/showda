@@ -275,6 +275,22 @@ const emailResending = [
         .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address')
 ];
 
+const emailRecovery = [
+    body('email')
+        .notEmpty().withMessage('email can not to by empty')
+        .isString().withMessage('email not a string')
+        .matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/).withMessage('not valid email address')
+];
+
+const newPassword = [
+    body('newPassword')
+        .notEmpty().withMessage('password can not to by empty')
+        .isString().withMessage('password not a string')
+        .isLength({max: 20, min: 6}).withMessage('password should not be more than 20 or less than 6 characters'),
+
+    body('recoveryCode')
+        .isString().withMessage('recoveryCode is not a string')
+];
 
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
@@ -292,6 +308,8 @@ export const objectValidateMetods = {
     updateCommentsValidator,
     registrationValidator,
     confirmationCOde,
-    emailResending
+    emailResending,
+    emailRecovery,
+    newPassword
 }
 

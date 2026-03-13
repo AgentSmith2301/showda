@@ -19,6 +19,23 @@ export const nodemailer_Managers = {
         let textEmail = '<b style="font-size: 20px">для завершения регистрации</b> <a href= ' + confirmLink + ' style="font-size: 20px">нажмите здесь</a>';
         return await sendEmail(emailConfirmation.email, 'CONFIRMATION CODE', textEmail);
     },
+
+    async recoveryPassword(emailConfirmation: {confirmationCode: string; email: string, host: string}) {
+
+        const confirmLink: string = this.recovery_Path(emailConfirmation.host, emailConfirmation!.confirmationCode);
+
+        let textEmail = '<b style="font-size: 20px">для смены пароля</b> <a href= ' + confirmLink + ' style="font-size: 20px">нажмите здесь</a>';
+        return await sendEmail(emailConfirmation.email, 'PASSWORD RECOVERY', textEmail);
+    },
+
+    recovery_Path(host: string, code: string): string {
+        const baseUrl = host.split(':');
+        if(baseUrl[0] === 'localhost' || baseUrl[0] === '127.0.0.1') { // host === 'localhost:3003'
+            return `http://localhost:3003/auth/frontend/password-recovery?recoveryCode=${code}`;
+        } else {          
+            return `https://showda.vercel.app/auth/frontend/password-recovery?recoveryCode=${code}`; 
+        }
+    },
 }
 
 

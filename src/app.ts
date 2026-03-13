@@ -5,14 +5,21 @@ import { postRouter } from './posts-module/routers/postRouts';
 import {usersRouter} from './users-module/routers/users-routers';
 import { SETTINGS } from './settings';
 import {methodsDB} from './videos-module/repositories/videosRepository'
-import {metodsPostsDB} from './posts-module/repositories/postsRepositories'
-import {metodsBlogsDB} from './blogs-module/repositories/blogsRepositories'
-import {usersRepoMethods} from './users-module/repositories/users-repositories';
+import {MetodsPostsDB} from './posts-module/repositories/postsRepositories'
+import {BlogsRepositories} from './blogs-module/repositories/blogsRepositories'
+import {container} from './composition-root';
+
+import {UsersRepoMethods} from './users-module/repositories/users-repositories';
 import { authRouter } from './auth-module/router/auth-router'
 import {commentsRouter} from './comments-module/routers/comments-router'
 import { commentsRepositories } from './comments-module/repositories/comments-repository';
 import cookieParser from 'cookie-parser';
 import {securityRouter} from './securityDevices/router/securityDevicesRouter';
+import { AuthRepoMethods } from './auth-module/repositories/auth-repositories';
+import 'reflect-metadata';
+import { BlogsControllers } from './blogs-module/controllers/blogsControllers';
+
+// const metodsBlogsDB = new BlogsRepositories();
 
 export const app = express();
 app.use(cookieParser());
@@ -26,9 +33,12 @@ app.get('/', (req, res) => {
 
 app.delete(SETTINGS.PATH.DELETEALL, async(req: Request, res: Response) => {
     methodsDB.deleteAll();
-    metodsBlogsDB.deleteAll();
-    metodsPostsDB.deleteAll();
-    usersRepoMethods.deleteAll();
+    // удаляем все блоги через контейнер Inversify
+    // мы не создаем экземпляр класса , а только получаем его из контейнера
+    container.get(BlogsRepositories).deleteAll(); 
+    container.get(MetodsPostsDB).deleteAll();
+    container.get(AuthRepoMethods).deleteAll();
+    container.get(UsersRepoMethods).deleteAll();
     commentsRepositories.deleteAll();
     res.sendStatus(204);
 })
@@ -40,5 +50,6 @@ app.use(SETTINGS.PATH.USERS, usersRouter)
 app.use(SETTINGS.PATH.AUTH, authRouter)
 app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 app.use(SETTINGS.PATH.SECURITY, securityRouter)
+
 
 

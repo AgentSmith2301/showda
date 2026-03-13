@@ -1,6 +1,6 @@
 import {APIErrorResult, CookieWithRefreshToken, LoginInputModel, MailInfo, MeViewModel, Sessions_Info, PayloadFromToken, LoginSuccessViewModel} from '../types/auth-type'
 import {Refresh_Session_Token} from '../../types/refreshTokenType'
-import {authRepoMethods} from '../repositories/auth-repositories'
+import {AuthRepoMethods} from '../repositories/auth-repositories'
 import bcrypt from 'bcrypt';
 import {Result} from '../../types/resultObject-type'
 import { ResultStatus } from '../../types/resultStatus-enum';
@@ -8,23 +8,36 @@ import { auth_Query_RepoMethods } from '../repositories/auth-query-repositories'
 // import { randomUUID } from 'crypto';
 import {v4} from 'uuid'
 // import {addHours} from 'date-fns'
-import { usersRepoMethods } from '../../users-module/repositories/users-repositories';
+import { UsersRepoMethods } from '../../users-module/repositories/users-repositories';
 import { CreateUserData, User_info_From_Busines } from '../../users-module/types/users-type';
 import { sendEmail } from '../adapters/nodemailer-adapter';
 import { SETTINGS } from '../../settings';
-import { usersServiceMethods } from '../../users-module/service/users-service';
+import { UsersServiceMethods } from '../../users-module/service/users-service';
 import { queryUserRepositories } from '../../users-module/repositories/query-Repositories';
 import { nodemailer_Managers } from '../managers/nodemailer-managers';
 import {jwtService} from '../application/jwt-service'
 import { ObjectId } from 'mongodb';
 // import { UserDB } from '../../users-module/types/users-type';
 // import {addSeconds} from 'date-fns'
+import { injectable, inject } from "inversify";
 
-export const authServiceMethods = {
+
+// const usersServiceMethods = new UsersServiceMethods();
+// const usersRepoMethods = new UsersRepoMethods();
+
+@injectable()
+export class AuthServiceMethods {
     
+    constructor(
+        @inject(AuthRepoMethods) public authRepoMethods: AuthRepoMethods,
+        @inject(UsersServiceMethods) public usersServiceMethods: UsersServiceMethods,
+        @inject(UsersRepoMethods) public usersRepoMethods: UsersRepoMethods
+
+    ) {}
+
     async authentication(data: LoginInputModel, ip: string, userAgent: string , refreshTokenJwt: string | undefined): Promise<Partial<Result<{access: {accessToken: string}; refresh: string} | null>>> { 
         // Checking the existence of a user with a login or email
-        const result = await authRepoMethods.checkAuthentication(data.loginOrEmail)
+        const result = await this.authRepoMethods.checkAuthentication(data.loginOrEmail)
         if(!result) {
             return {
                 status: ResultStatus.Unauthorized , 
@@ -34,7 +47,7 @@ export const authServiceMethods = {
             }
         }
         // get hash, salt, and id
-        const credention = await authRepoMethods.credential(data.loginOrEmail);
+        const credention = await this.authRepoMethods.credential(data.loginOrEmail);
 
         // hash comparison
         const compareHash = await bcrypt.compare(data.password, credention.hash);
@@ -73,7 +86,7 @@ export const authServiceMethods = {
                 }
             } else {
                 // Checking if a session exists in the database
-                const session = await authRepoMethods.getSessionsInfo(payload.userId, payload.deviceId);
+                const session = await this.authRepoMethods.getSessionsInfo(payload.userId, payload.deviceId);
                 // We check the token and session in the database for compliance
                 if(session?.iat.getTime() !== payload.iat * 1000) {
                     // If there is no session in the database, an error occurs.
@@ -86,13 +99,13 @@ export const authServiceMethods = {
 
                 } else {
                     // If the data matches, we delete the session.
-                    await authRepoMethods.deleteToken(payload.userId, payload.deviceId)
+                    await this.authRepoMethods.deleteToken(payload.userId, payload.deviceId)
                 }
             }
             
         }
         
-        const isCreated = await authRepoMethods.createSession(objectDTOsession);
+        const isCreated = await this.authRepoMethods.createSession(objectDTOsession);
         if(isCreated) {
             return {
                 status: ResultStatus.Success , 
@@ -107,20 +120,20 @@ export const authServiceMethods = {
             }
         }  
 
-    },
+    }
 
     async getUserById(id: string): Promise<Partial<Result<MeViewModel>>> {
-        const result = await authRepoMethods.getUserById(id);
+        const result = await this.authRepoMethods.getUserById(id);
         if(!result) return {status: ResultStatus.Unauthorized , errorsMessages: 'id not found', data: undefined} 
         return {status: ResultStatus.Success , data: result}
 
-    },
+    }
 
     async registrationUserService(login: string, password: string, email: string, hostName: string): Promise<Partial<Result>> { 
         // проверка на существование
         // TODO запрос должен идти из authService --> userService --> usersRepoMethods
-        const checkLogin = await usersRepoMethods.checkAuthentication(login)
-        const checkMail = await usersRepoMethods.checkAuthentication(email);
+        const checkLogin = await this.usersRepoMethods.checkAuthentication(login)
+        const checkMail = await this.usersRepoMethods.checkAuthentication(email);
         let field_Name: string = '' ;
         if(checkLogin) {
             field_Name = 'login';
@@ -131,7 +144,7 @@ export const authServiceMethods = {
         }
         
         // создать пользователя 
-        const check = await usersServiceMethods.createdUser({login, password, email}, 1)
+        const check = await this.usersServiceMethods.createdUser({login, password, email}, 1)
         // пользователь существует , возвращаем ошибку если существует
         if(!check) { 
             return {
@@ -147,7 +160,7 @@ export const authServiceMethods = {
             }
         }
         // проверяем создался ли пользователь
-        const result = await usersServiceMethods.getUserById(check.id!)
+        const result = await this.usersServiceMethods.getUserById(check.id!)
         if(!result) {
             return {
                 status: ResultStatus.ServerError, 
@@ -162,39 +175,36 @@ export const authServiceMethods = {
             host: hostName
         };
         
-        // =====================================================================================================
-        // TODO включи обратно отправку письма
         // отправка письма в менеджер
-        // const information: MailInfo | APIErrorResult = await nodemailer_Managers.confirmation_Mail(resultDTO);
+        const information: MailInfo | APIErrorResult = await nodemailer_Managers.confirmation_Mail(resultDTO);
         
-        // if('response' in information) {
+        if('response' in information) {
             return {
                 status: ResultStatus.NoContent, 
                 data: null, 
             }
-        // } else {
-        //     return {
-        //             status: ResultStatus.ServerError, 
-        //             errorsMessages: `${information.errorsMessages[0].message}` , 
-        //     }
-        // }
-        // =====================================================================================================
+        } else {
+            return {
+                    status: ResultStatus.ServerError, 
+                    errorsMessages: `${information.errorsMessages[0].message}` , 
+            }
+        }
 
-    },
+    }
 
     // если код подтверждения confirmationCode верный в базе данных меняем свойство isConfirmed с false на true
     async code_Is_Confirmed(code: string): Promise<boolean> {
-        const isTrusted = await usersServiceMethods.trustedCode(code);
+        const isTrusted = await this.usersServiceMethods.trustedCode(code);
         if(!isTrusted) return false
         if(isTrusted.isConfirmed) return false
         if(new Date() > isTrusted.expirationDate) return false
-        return await usersServiceMethods.confirmedDane(code);
-    },
+        return await this.usersServiceMethods.confirmedDane(code);
+    }
     
     // переотправка письма 
     async resendMail(email: string, host: string): Promise<Partial<Result>> {
         // найти пользователя по почте 
-        const user_Exist: User_info_From_Busines | null = await usersServiceMethods.get_User_By_Field({email});
+        const user_Exist: User_info_From_Busines | null = await this.usersServiceMethods.get_User_By_Field({email});
         if(!user_Exist) {
             return {
                 status: ResultStatus.BadRequest,
@@ -213,7 +223,7 @@ export const authServiceMethods = {
         }
 
         // замена кода подтверждения 
-        const newCode: string | undefined = await usersServiceMethods.chenge_Conferm_Code(user_Exist.emailConfirmation.confirmationCode);
+        const newCode: string | undefined = await this.usersServiceMethods.chenge_Conferm_Code(user_Exist.emailConfirmation.confirmationCode);
         // если код не заменен
         if(!newCode) {
             return {
@@ -226,24 +236,22 @@ export const authServiceMethods = {
         // формируем объект для отправки письма 
         const emailDTO = {confirmationCode: newCode, email, host}
         
-        // =====================================================================================================
-        // TODO включи обратно отправку письма
         // если пользователь с такой почтой есть то отправляем ему письмо 
-        // const information = await nodemailer_Managers.confirmation_Mail(emailDTO);
+        const information = await nodemailer_Managers.confirmation_Mail(emailDTO);
 
-        // if('response' in information) {
+        if('response' in information) {
             return {
                 status: ResultStatus.NoContent, 
                 data: null, 
             }
-        // } else {
-        //     return {
-        //         status: ResultStatus.ServerError, 
-        //         errorsMessages: `${information.errorsMessages}` , 
-        //     }
-        // }
+        } else {
+            return {
+                status: ResultStatus.ServerError, 
+                errorsMessages: `${information.errorsMessages}` , 
+            }
+        }
         
-    },
+    }
     
     async refreshToken(token: Refresh_Session_Token, ip: string, userAgent: string): Promise<Result<{accessToken: string; refreshToken: string}| null>> { 
 
@@ -260,7 +268,7 @@ export const authServiceMethods = {
             ip,
         }
 
-        const sessionInfo = await authRepoMethods.updateSession(sessionDTO);
+        const sessionInfo = await this.authRepoMethods.updateSession(sessionDTO);
         if(!sessionInfo) {
             return {
                 status: ResultStatus.Unauthorized , 
@@ -279,7 +287,7 @@ export const authServiceMethods = {
                 }
             }
         }
-    },
+    }
 
     async logoutWithToken(token: string): Promise<Result<boolean>> {
         const validTokenOrNot = await jwtService.getPayloadByToken(token);
@@ -292,7 +300,7 @@ export const authServiceMethods = {
             }
         } 
 
-        const result = await authRepoMethods.deleteToken(validTokenOrNot.userId, validTokenOrNot.deviceId);
+        const result = await this.authRepoMethods.deleteToken(validTokenOrNot.userId, validTokenOrNot.deviceId);
         if(!result) console.log('something went wrong, the database is not responding')
         return {
             status: ResultStatus.NoContent , 
@@ -300,20 +308,20 @@ export const authServiceMethods = {
             extensions: [], 
             data: true 
         }
-    },
+    }
 
     async getAllSessionsForUser(userId: string): Promise<Result<Sessions_Info[]>> {
-        const data = await authRepoMethods.getAllSessionsForUser(userId);
+        const data = await this.authRepoMethods.getAllSessionsForUser(userId);
         return {
             status: ResultStatus.Success , 
             errorsMessages: '', 
             extensions: [], 
             data: data 
         }
-    },
+    }
 
     async deleteAllOtherSessions(userId: string, deviceId: string): Promise<Result<boolean>> {
-        const data = await authRepoMethods.deleteAllOtherSessions(userId, deviceId)
+        const data = await this.authRepoMethods.deleteAllOtherSessions(userId, deviceId)
         if(data) {
             return {
                 status: ResultStatus.NoContent , 
@@ -329,10 +337,10 @@ export const authServiceMethods = {
                 data: false 
             }
         }
-    },
+    }
 
     async closeSession(userId: string, deviceId: string): Promise<Result<boolean>> {
-        const data = await authRepoMethods.closeSession(userId, deviceId);
+        const data = await this.authRepoMethods.closeSession(userId, deviceId);
         if(data) {
             return {
                 status: ResultStatus.NoContent , 
@@ -348,17 +356,84 @@ export const authServiceMethods = {
                 data: false 
             }
         }
-    },
+    }
 
 
     async getInfoByDeviceId(deviceId: string): Promise<Result<Sessions_Info[]>> {
-        const data = await authRepoMethods.getInfoByDeviceId(deviceId);
+        const data = await this.authRepoMethods.getInfoByDeviceId(deviceId);
         return {
             status: ResultStatus.NoContent , 
             errorsMessages: '', 
             extensions: [], 
             data     
         }
+    }
+
+    async passwordRecovery(email: string, host: string): Promise<Partial<Result>> {
+        const user = await this.usersServiceMethods.get_User_By_Field({email});
+        if(!user) {
+            return {
+                // положительный ответ , даже кога пользователь не найден , 
+                // что бы не давать информацию о том есть ли пользователь с таким email или нет
+                status: ResultStatus.NoContent,
+                
+            }
+        }
+
+        const newCode: string | undefined = await this.usersServiceMethods.chenge_Conferm_Code(user.emailConfirmation.confirmationCode);
+        if(!newCode) {
+            return {
+                status: ResultStatus.BadRequest,
+                errorsMessages: `error in database` , 
+                extensions: [{ message: "something went wrong in the database" , field: "email" }]
+            }
+        }
+
+        const emailDTO = {confirmationCode: newCode, email, host}
+        const information = await nodemailer_Managers.recoveryPassword(emailDTO);
+
+        if('response' in information) {
+            return {
+                status: ResultStatus.NoContent, 
+                data: null, 
+            }
+        } else {
+            return {
+                status: ResultStatus.ServerError, 
+                errorsMessages: `${information.errorsMessages}` , 
+            }
+        }
+
+
+    }    
+
+    async new_Password_New_Code(newPassword: string, code: string): Promise<Partial<Result>> {
+        // проверяем есть ли пользователь с таким кодом для востановления пароля
+        const user = await this.usersServiceMethods.get_User_By_confirmationCode({confirmationCode: code});
+        if(!user) {
+            return {
+                status: ResultStatus.BadRequest,
+                errorsMessages: 'code is not valid', 
+                extensions: [{message: 'code is not valid or expired', field: 'recoveryCode'}], 
+            }
+        }
+
+        // если код совпадает то меняем пароль
+        const result = await this.usersServiceMethods.new_Password_From_Code(newPassword, code);
+
+        if(result) {
+            return {
+                status: ResultStatus.NoContent, 
+                data: null, 
+            }
+        } else {
+            return {
+                status: ResultStatus.BadRequest, 
+                errorsMessages: 'something went wrong, please try again', 
+                extensions: [{message: 'not found code or expired', field: 'DB'}], 
+            }
+        }
+
     }
 
 }

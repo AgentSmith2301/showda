@@ -7,6 +7,7 @@ export enum ResultStatus {
     Unauthorized = 'Unauthorized',
     Forbidden = 'Forbidden',
     NotFound = 'NotFound',
+    TooManyRequests = 'TooManyRequests',
     ServerError = 'ServerError',
 }
 

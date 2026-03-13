@@ -19,6 +19,15 @@ const transport = nodemailer.createTransport({
 // но мы сделаем ассинхронной функцию 
 export async function sendEmail(to: string, subject: string, html: string): Promise<MailInfo | APIErrorResult> {
     try {
+        // В тестовой среде не отправляем письма, просто возвращаем успех
+        if(process.env.NODE_ENV === 'test') {
+            return {
+                accepted: [to],
+                rejected: [],
+                response: '250 Message accepted',
+            }
+        }
+
         const info = await transport.sendMail({
             from: `SHOWDA <${SETTINGS.EMAIL_SEND_FROM}>`,
             to,

@@ -1,4 +1,4 @@
-import {usersRepoMethods} from '../repositories/users-repositories';
+import {UsersRepoMethods} from '../repositories/users-repositories';
 import { ConfirmationInfo, CreateUserData, Paginator, SearchTermUsers, UserByTerm, UserInputModel, UserViewModel, UserViewModelDB, SearchObject, User_info_From_Busines } from '../types/users-type';
 import {CastomErrors} from '../../errors/castomErrorsObject';
 import { InsertOneResult, WithId } from 'mongodb';
@@ -8,37 +8,40 @@ import bcrypt from 'bcrypt';
 import { LoginInputModel } from '../../auth-module/types/auth-type';
 import {v4} from 'uuid';
 import {addHours} from 'date-fns'
+import { injectable, inject } from 'inversify';
 
 
-export const usersServiceMethods = {
-    
+@injectable()
+export class UsersServiceMethods {
+    constructor(@inject(UsersRepoMethods) public usersRepoMethods: UsersRepoMethods) {}
+
     async deleteAllUsers(): Promise<void> {
-        await usersRepoMethods.deleteAll()
-    },
+        await this.usersRepoMethods.deleteAll()
+    }
 
     async _generateHash(pass: string, salt: string): Promise<string> {
         // генерация хеша из пароля и соли 
         return await bcrypt.hash(pass, salt)
-    },
+    }
 
     async authentication(data: LoginInputModel): Promise<boolean> {
         // проверка на существование пользователя с логином или почтой
-        const result = await usersRepoMethods.checkAuthentication(data.loginOrEmail)
+        const result = await this.usersRepoMethods.checkAuthentication(data.loginOrEmail)
         if(!result) return false
 
         // для получения хеша из базы
-        const credention = await usersRepoMethods.credential(data.loginOrEmail)
+        const credention = await this.usersRepoMethods.credential(data.loginOrEmail)
 
         // сравнение хешей
         const compareHash = await bcrypt.compare(data.password, credention.hash)
         if(!compareHash) return false
         return true 
-    },
+    }
 
     // добавить аргумент shem для реализации одного из 2 сценариев 
     async createdUser(data: UserInputModel, shem = 0): Promise<false | UserViewModel> {
-        const checkLogin = await usersRepoMethods.checkAuthentication(data.login)
-        const checkMail = await usersRepoMethods.checkAuthentication(data.email);
+        const checkLogin = await this.usersRepoMethods.checkAuthentication(data.login)
+        const checkMail = await this.usersRepoMethods.checkAuthentication(data.email);
         if(checkLogin || checkMail) return false;
 
         const createdAt = new Date().toISOString();
@@ -75,27 +78,27 @@ export const usersServiceMethods = {
             }
         }
 
-        const result = await usersRepoMethods.createUser(newUserData);
+        const result = await this.usersRepoMethods.createUser(newUserData);
         if(result.acknowledged === true) {
             const userById = await queryUserRepositories.getUsersById(result.insertedId.toString());
             return userById
         } else {
             throw new Error(`{errorsMessages: [{message: 'something went wrong , this is a program error', field: '😡'}]}`)
         }
-    },
+    }
 
     async deleteUserById(id: string): Promise<boolean> {
 
         const findId = await queryUserRepositories.checkUserById(id);
 
         if(!findId) return false
-        const result =  await usersRepoMethods.deleteUserById(id);
+        const result =  await this.usersRepoMethods.deleteUserById(id);
         if(result.deletedCount >= 1) {
             return true
         } else {
             return false
         }
-    },
+    }
     
     async getUsersByTerm(filter: SearchTermUsers): Promise<UserByTerm> {
         const cauntDocument = await queryUserRepositories.countDocuments(filter.searchLoginTerm, filter.searchEmailTerm)
@@ -121,20 +124,21 @@ export const usersServiceMethods = {
         };
 
         return answer
-    },
+    }
 
     async trustedCode(code: string):Promise<ConfirmationInfo | null> {
         return await queryUserRepositories.confirm_Code(code);
-    },
+    }
 
     async confirmedDane(code: string): Promise<boolean> {
-        return await usersRepoMethods.confirm(code);
-    },
-
+        return await this.usersRepoMethods.confirm(code);
+    }
+    
     async chenge_Conferm_Code(oldCode: string): Promise<string | undefined> {
         const new_Code = v4();
-        return await usersRepoMethods.change_Confirm_Code_Repo(new_Code, oldCode);
-    },
+        const expirationDate = addHours(new Date(), 1);
+        return await this.usersRepoMethods.change_Confirm_Code_Repo(new_Code, oldCode, expirationDate);
+    }
 
     async getUserById(id: string): Promise<{confirmationCode: string; email: string} | null> {
         const anser: WithId<UserViewModelDB> | null = await queryUserRepositories.checkUserById(id);
@@ -147,21 +151,39 @@ export const usersServiceMethods = {
             confirmationCode: anser.emailConfirmation!.confirmationCode,
             email: anser.email!
         }
-    },
+    }
 
     async terminate_User_If_Not_Email(id: string): Promise<boolean> {
-        const result = await usersRepoMethods.deleteUserById(id);
+        const result = await this.usersRepoMethods.deleteUserById(id);
 
         if(result.deletedCount >= 1) {
             return true
         } else {
             return false
         }
-    },
+    }
 
     async get_User_By_Field(field: SearchObject): Promise<User_info_From_Busines | null> {
         return await queryUserRepositories.search_From_Field(field);
     }
+
+    async get_User_By_confirmationCode(filter: {confirmationCode: string}): Promise<boolean> {
+        return await queryUserRepositories.find_By_Filter(filter);
+    }
+
+    async new_Password_From_Code(password: string, code: string): Promise<Partial<boolean>> {
+        // проверить код на существоование и протухание
+        const isExpired = await queryUserRepositories.confirm_Code(code);
+        if(!isExpired) return false
+        if(isExpired.expirationDate < new Date()) {
+            return false
+        }
+        
+        // приобразовать пароль в хэш и записать в базу
+        const hash = await this._generateHash(password, await bcrypt.genSalt(10))
+        return await this.usersRepoMethods.new_Password_With_Code(hash, code);
+    }
+
 }
 
 

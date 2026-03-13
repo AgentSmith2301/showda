@@ -1,6 +1,9 @@
 import {Request, Response, NextFunction} from 'express'
-import {authRepoMethods} from '../auth-module/repositories/auth-repositories'
+import {AuthRepoMethods} from '../auth-module/repositories/auth-repositories'
+import {container} from '../composition-root';
 
+// антипатерн Service Locator (не нужно передавать зависимость в конструктор класса)
+const authRepoMethods = container.get(AuthRepoMethods);
 
 export async function sessionMiddleware(req: Request, res: Response, next: NextFunction) {
     const info = await authRepoMethods.getSessionsInfo(req.tokenPayload.userId, req.tokenPayload.deviceId);
@@ -19,7 +22,6 @@ export async function sessionMiddleware(req: Request, res: Response, next: NextF
     
     next()
 }
-
 
 
 

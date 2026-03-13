@@ -4,6 +4,7 @@ import { ConfirmationInfo, SearchTermUsers, User_info_From_Busines, UserViewMode
 import {SearchObject} from '../types/users-type'
 
 export const queryUserRepositories = {
+    
     async checkUserById(id: string) {
         return await usersCollection.findOne({_id: new ObjectId(id)})
     },
@@ -93,10 +94,15 @@ export const queryUserRepositories = {
         
         return User_Busines_DTO
         
-    }
+    },
 
+    async find_By_Filter(filter: {confirmationCode: string}): Promise<boolean> {
+        const transformFilter = {'emailConfirmation.confirmationCode': filter.confirmationCode}
+        const result =  await usersCollection.findOne(transformFilter);
+        if(result) return true
+        return false
+    }
 };
 
 
-    
-    
+

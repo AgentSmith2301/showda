@@ -1,9 +1,16 @@
 import {DeviceViewModel} from '../types/securityTypes';
-import {authServiceMethods} from '../../auth-module/service/auth-service'
+import {AuthServiceMethods} from '../../auth-module/service/auth-service'
 import { Sessions_Info } from '../../auth-module/types/auth-type';
 import { Result } from '../../types/resultObject-type';
 import { ResultStatus } from '../../types/resultStatus-enum';
+import {container} from '../../composition-root'
 
+//TODO Service Locator паттерн (нужно передать зависимость в конструктор класса)
+// из securityService сделать класс и зарегистрировать composition-root
+// container.bind(SecurityService).toSelf();
+// container.bind(SecurityControllers).toSelf();
+// как показанно выше
+const authServiceMethods = container.get(AuthServiceMethods);
 
 export const securityService = {
     
