@@ -153,7 +153,8 @@ const postUsers = [
         .notEmpty().withMessage('the field is required')
         .isString().withMessage('field must be a string')
         .normalizeEmail().isEmail().withMessage('field is not email')
-        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address'),
+        // .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).withMessage('not valid email address'),
+        .matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/).withMessage('not valid email address')
 ];
 
 const deleteUsers = [
