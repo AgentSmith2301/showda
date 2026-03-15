@@ -30,7 +30,7 @@ export class UsersController {
             password: req.body.password,
             email: req.body.email
         }
-        const result = await this.usersServiceMethods.createdUser(createUser)
+        const result = await this.usersServiceMethods.createdUser(createUser, 1)
 
         if(result) {
             res.status(201).send(result)
