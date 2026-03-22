@@ -408,31 +408,72 @@ export class AuthServiceMethods {
     }    
 
     async new_Password_New_Code(newPassword: string, code: string): Promise<Partial<Result>> {
-        // проверяем есть ли пользователь с таким кодом для востановления пароля
-        const user = await this.usersServiceMethods.get_User_By_confirmationCode({confirmationCode: code});
-        if(!user) {
-            return {
-                status: ResultStatus.BadRequest,
-                errorsMessages: 'code is not valid', 
-                extensions: [{message: 'code is not valid or expired', field: 'recoveryCode'}], 
-            }
-        }
-
-        // если код совпадает то меняем пароль
-        const result = await this.usersServiceMethods.new_Password_From_Code(newPassword, code);
-
-        if(result) {
+        // возвращаем строку с ошибкой или строку о успехе
+        const result = await this.usersServiceMethods.check_And_Update_Password(newPassword, code);
+        
+        if(result === 'password was successfully updated') {
             return {
                 status: ResultStatus.NoContent, 
                 data: null, 
             }
-        } else {
+        }
+        
+        if(result === 'code is not valid' || result === 'code is expired') {
             return {
                 status: ResultStatus.BadRequest, 
-                errorsMessages: 'something went wrong, please try again', 
-                extensions: [{message: 'not found code or expired', field: 'DB'}], 
+                errorsMessages: result, 
+                extensions: [{message: result, field: 'recoveryCode'}], 
+                data: null, 
             }
         }
+
+        if(result === 'new password can not be the same as old') {
+            return {
+                status: ResultStatus.BadRequest, 
+                errorsMessages: result, 
+                extensions: [{message: result, field: 'newPassword'}], 
+            }
+        } 
+
+        if(result === 'error when generating hash or salt') {
+            return {
+                status: ResultStatus.ServerError,
+                errorsMessages: result,
+                extensions: [{message: result, field: 'newPassword'}],
+            }
+        }
+
+        return {
+            status: ResultStatus.ServerError, 
+            errorsMessages: 'something went wrong, please try again',
+        }
+        
+
+        // проверяем есть ли пользователь с таким кодом для востановления пароля
+        // const hasCode = await this.usersServiceMethods.get_User_By_confirmationCode({confirmationCode: code});
+        // if(!hasCode) {
+        //     return {
+        //         status: ResultStatus.BadRequest,
+        //         errorsMessages: 'code is not valid', 
+        //         extensions: [{message: 'code is not valid or expired', field: 'recoveryCode'}], 
+        //     }
+        // }
+
+        // если код совпадает то меняем пароль
+        // const result = await this.usersServiceMethods.new_Password_From_Code(newPassword, code);
+
+        // if(result) {
+        //     return {
+        //         status: ResultStatus.NoContent, 
+        //         data: null, 
+        //     }
+        // } else {
+        //     return {
+        //         status: ResultStatus.BadRequest, 
+        //         errorsMessages: 'something went wrong, please try again', 
+        //         extensions: [{message: 'not found code or expired', field: 'DB'}], 
+        //     }
+        // }
 
     }
 

@@ -96,11 +96,9 @@ export const queryUserRepositories = {
         
     },
 
-    async find_By_Filter(filter: {confirmationCode: string}): Promise<boolean> {
+    async find_By_ConfirmationCode(filter: {confirmationCode: string}): Promise<WithId<UserViewModelDB> | null> {
         const transformFilter = {'emailConfirmation.confirmationCode': filter.confirmationCode}
-        const result =  await usersCollection.findOne(transformFilter);
-        if(result) return true
-        return false
+        return  await usersCollection.findOne(transformFilter);
     }
 };
 

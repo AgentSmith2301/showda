@@ -24,6 +24,11 @@ export class UsersServiceMethods {
         return await bcrypt.hash(pass, salt)
     }
 
+    async checkHash(pass: string, hash: string): Promise<boolean> {
+        // сравнение пароля и хеша
+        return await bcrypt.compare(pass, hash) 
+    }
+
     async authentication(data: LoginInputModel): Promise<boolean> {
         // проверка на существование пользователя с логином или почтой
         const result = await this.usersRepoMethods.checkAuthentication(data.loginOrEmail)
@@ -167,22 +172,49 @@ export class UsersServiceMethods {
         return await queryUserRepositories.search_From_Field(field);
     }
 
-    async get_User_By_confirmationCode(filter: {confirmationCode: string}): Promise<boolean> {
-        return await queryUserRepositories.find_By_Filter(filter);
+    async check_And_Update_Password(password: string, code: string): Promise<string> {
+        const result = await queryUserRepositories.find_By_ConfirmationCode({confirmationCode: code});
+        if(!result) {
+            return 'code is not valid'
+        }
+
+        if(result.emailConfirmation!.expirationDate < new Date()) {
+            return 'code is expired'
+        }
+
+        let isHashConfirmed: boolean = await this.checkHash(password, result.hash)
+
+        if(isHashConfirmed) {
+            return 'new password can not be the same as old'
+        }
+
+        const newHash = await this._generateHash(password, await bcrypt.genSalt(10));
+        
+        const updateResult = await this.usersRepoMethods.new_Password_With_Code(newHash, code);
+        if(updateResult) {
+            return 'password was successfully updated'
+        } else {
+            return 'something went wrong'
+        }
+
     }
 
-    async new_Password_From_Code(password: string, code: string): Promise<Partial<boolean>> {
-        // проверить код на существоование и протухание
-        const isExpired = await queryUserRepositories.confirm_Code(code);
-        if(!isExpired) return false
-        if(isExpired.expirationDate < new Date()) {
-            return false
-        }
+    // async get_User_By_confirmationCode(filter: {confirmationCode: string}): Promise<boolean> {
+    //     return await queryUserRepositories.find_By_Filter(filter);
+    // }
+
+    // async new_Password_From_Code(password: string, code: string): Promise<Partial<boolean>> {
+    //     // проверить код на существоование и протухание
+    //     const isExpired = await queryUserRepositories.confirm_Code(code);
+    //     if(!isExpired) return false
+    //     if(isExpired.expirationDate < new Date()) {
+    //         return false
+    //     }
         
-        // приобразовать пароль в хэш и записать в базу
-        const hash = await this._generateHash(password, await bcrypt.genSalt(10))
-        return await this.usersRepoMethods.new_Password_With_Code(hash, code);
-    }
+    //     // приобразовать пароль в хэш и записать в базу
+    //     const hash = await this._generateHash(password, await bcrypt.genSalt(10))
+    //     return await this.usersRepoMethods.new_Password_With_Code(hash, code);
+    // }
 
 }
 

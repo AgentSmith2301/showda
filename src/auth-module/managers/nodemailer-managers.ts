@@ -31,9 +31,9 @@ export const nodemailer_Managers = {
     recovery_Path(host: string, code: string): string {
         const baseUrl = host.split(':');
         if(baseUrl[0] === 'localhost' || baseUrl[0] === '127.0.0.1') { // host === 'localhost:3003'
-            return `http://localhost:3003/password-recovery?recoveryCode=${code}`;
+            return `http://localhost:3003/auth/frontend/password-recovery?recoveryCode=${code}`;
         } else {          
-            return `https://showda.vercel.app/password-recovery?recoveryCode=${code}`; 
+            return `https://showda.vercel.app/auth/frontend/password-recovery?recoveryCode=${code}`; 
         }
     },
 }
