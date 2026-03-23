@@ -323,7 +323,7 @@ export class AuthController {
         function callFetch() {
             const newPassword = document.querySelector('#newPassword')?.value;
 
-            fetch('/auth/new-password', {
+            fetch('./auth/new-password', {
                 method: 'post',
                 headers:{'Content-Type': 'application/json'},
                 body: JSON.stringify({newPassword, recoveryCode: "${recoveryCode}"}), 
