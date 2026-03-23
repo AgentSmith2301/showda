@@ -33,7 +33,9 @@ export const nodemailer_Managers = {
         if(baseUrl[0] === 'localhost' || baseUrl[0] === '127.0.0.1') { // host === 'localhost:3003'
             return `http://localhost:3003/auth/frontend/password-recovery?recoveryCode=${code}`;
         } else {          
-            return `https://showda.vercel.app/auth/frontend/password-recovery?recoveryCode=${code}`; 
+            // return `https://showda.vercel.app/auth/frontend/password-recovery?recoveryCode=${code}`; 
+            // TODO удалить и раскоментировать верхнюю строку после проверки фронта
+            return `https://showda.vercel.app/auth/frontend/check-email?code=${code}`; 
         }
     },
 }
