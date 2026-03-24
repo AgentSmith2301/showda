@@ -199,23 +199,6 @@ export class UsersServiceMethods {
 
     }
 
-    // async get_User_By_confirmationCode(filter: {confirmationCode: string}): Promise<boolean> {
-    //     return await queryUserRepositories.find_By_Filter(filter);
-    // }
-
-    // async new_Password_From_Code(password: string, code: string): Promise<Partial<boolean>> {
-    //     // проверить код на существоование и протухание
-    //     const isExpired = await queryUserRepositories.confirm_Code(code);
-    //     if(!isExpired) return false
-    //     if(isExpired.expirationDate < new Date()) {
-    //         return false
-    //     }
-        
-    //     // приобразовать пароль в хэш и записать в базу
-    //     const hash = await this._generateHash(password, await bcrypt.genSalt(10))
-    //     return await this.usersRepoMethods.new_Password_With_Code(hash, code);
-    // }
-
 }
 
 
