@@ -373,7 +373,7 @@ export class AuthServiceMethods {
         const user = await this.usersServiceMethods.get_User_By_Field({email});
         if(!user) {
             return {
-                // положительный ответ , даже кога пользователь не найден , 
+                // положительный ответ , даже когда пользователь не найден , 
                 // что бы не давать информацию о том есть ли пользователь с таким email или нет
                 status: ResultStatus.NoContent,
                 
@@ -389,33 +389,23 @@ export class AuthServiceMethods {
             }
         }
 
-        const emailDTO = {confirmationCode: newCode, email, host}
+        //TODO возможно лучше взять email не тот что отправлен клиентом , а тот на который учетная запись клиента
+        const emailDTO = {confirmationCode: newCode, email, host}  
         const information = await nodemailer_Managers.recoveryPassword(emailDTO);
 
         // TODO для прохождения тестов сделаем костыль (вернуть код для прода)
-        // if('response' in information) {
-        //     return {
-        //         status: ResultStatus.NoContent, 
-        //         data: null, 
-        //     }
-        // } else {
-        //     return {
-        //         status: ResultStatus.ServerError, 
-        //         errorsMessages: `${information.errorsMessages}` , 
-        //     }
-        // }
-
-        if(typeof information === 'string') {
+        if('response' in information) {
             return {
-                status: ResultStatus.NoContent,
-                data: null,
+                status: ResultStatus.NoContent, 
+                data: null, 
             }
         } else {
             return {
-                status: ResultStatus.ServerError,
-                errorsMessages: `${information.errorsMessages}` ,
+                status: ResultStatus.ServerError, 
+                errorsMessages: `${information.errorsMessages}` , 
             }
         }
+
 
     }    
 

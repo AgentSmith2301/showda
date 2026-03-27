@@ -219,7 +219,6 @@ export class AuthController {
         switch(result.status) {
             case ResultStatus.NoContent :
                 res.sendStatus(HttpStatusCode.NoContent_204)
-                // res.status(204).send('no content').end()
                 break
             
             case ResultStatus.ServerError :
