@@ -375,9 +375,7 @@ export class AuthServiceMethods {
             return {
                 // положительный ответ , даже когда пользователь не найден , 
                 // что бы не давать информацию о том есть ли пользователь с таким email или нет
-                // status: ResultStatus.NoContent,
-                status: ResultStatus.NotFound,
-
+                status: ResultStatus.NoContent,
                 
             }
         }

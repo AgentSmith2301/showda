@@ -217,10 +217,6 @@ export class AuthController {
 
         const result = await this.authServiceMethods.passwordRecovery(req.body.email, req.headers.host!)
         switch(result.status) {
-            case ResultStatus.NotFound :
-                res.sendStatus(HttpStatusCode.NotFound_404)
-                break
-            
             case ResultStatus.NoContent :
                 res.sendStatus(HttpStatusCode.NoContent_204)
                 break
