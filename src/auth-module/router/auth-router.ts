@@ -26,7 +26,7 @@ authRouter.post('/new-password', rateLimiteMiddleware, objectValidateMetods.newP
 
 // =========================== (маршрут для проверки фронта) ===========================
 authRouter.get('/frontend/check-email', authController.frontend_Side_Registration.bind(authController))
-authRouter.get('/frontend/password-recovery', authController.frontend_Side_Get_Password.bind(authController))
+// authRouter.get('/frontend/password-recovery', authController.frontend_Side_Get_Password.bind(authController))
 
 
 
