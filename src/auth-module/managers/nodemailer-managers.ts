@@ -29,8 +29,7 @@ export const nodemailer_Managers = {
         // `;
 
         // let textEmail = `<a href='https://somesite.com/password-recovery?recoveryCode=${emailConfirmation!.confirmationCode}'>recovery password</a>`
-        let textEmail = '<a href="https://somesite.com/password-recovery?recoveryCode=' + emailConfirmation!.confirmationCode + '"' + '>recovery password</a>'
-
+        let textEmail = '<a href="https://somesite.com/password-recovery?recoveryCode=' + emailConfirmation!.confirmationCode + '"' + '>recovery password</a>';
 
         return await sendEmail(emailConfirmation.email, 'PASSWORD RECOVERY', textEmail);
 

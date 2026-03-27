@@ -215,10 +215,11 @@ export class AuthController {
             return
         } 
 
-        const result = await this.authServiceMethods.passwordRecovery(req.body.email, req.headers.host!)
+        const result = await this.authServiceMethods.passwordRecovery(req.body.email, req.headers.host!);
+        console.log(req.body.email, '<=== email in controller str 219');
         switch(result.status) {
             case ResultStatus.NoContent :
-                res.status(HttpStatusCode.NoContent_204).send('no content');
+                res.status(HttpStatusCode.NoContent_204);
                 break
             
             case ResultStatus.ServerError :
