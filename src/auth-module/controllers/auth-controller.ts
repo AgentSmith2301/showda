@@ -199,6 +199,10 @@ export class AuthController {
 
     }
 
+    // TODO удали после тестов (для отслеживания кол-ва запросов что бы понять который тест выдал ошибку)
+    // и строку 224 
+    count = 1;
+
     async passwordRecovery(req: Request, res: Response) {
         const errors = validationResult(req)
         if(!errors.isEmpty()) {
@@ -216,10 +220,11 @@ export class AuthController {
         } 
 
         const result = await this.authServiceMethods.passwordRecovery(req.body.email, req.headers.host!);
-        console.log(req.body.email, '<=== email in controller str 219');
+
+        console.log(req.body.email, '<=== email in controller str 219', 'request count ', this.count++);
         switch(result.status) {
             case ResultStatus.NoContent :
-                res.status(HttpStatusCode.NoContent_204);
+                res.sendStatus(HttpStatusCode.NoContent_204);
                 break
             
             case ResultStatus.ServerError :
