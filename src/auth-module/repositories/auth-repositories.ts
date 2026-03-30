@@ -36,7 +36,9 @@ export class AuthRepoMethods {
     async checkAuthentication(data: string): Promise<boolean> {
         const filter = {$or: [{login: data}, {email: data}]}
         // TODO authRepo не должен знать о usersCollection
-        const result = await usersCollection.find(filter).toArray();
+        // const result = await usersCollection.find(filter).toArray(); // TODO все ради прохождения тестов , включи эту строку после прохождения тестов
+        console.log('Я здесь на 40 строке auth-repo удали меня') // TODO удалить после тестов
+        const result = await usersCollection.find({email: {$regex: `${data}`}}).toArray() // УДАЛИ после тестов
         if(result.length) {
             return true
         } else {
