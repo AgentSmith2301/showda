@@ -43,6 +43,13 @@ export class AuthController {
         const refreshTokenJwt: string | undefined = req.cookies.refreshtoken;
         const ip = req.ip ?? 'not info';
 
+        // TODO удалить после тестов , для просмотра что прислал тест
+        console.log('я в auth-контроллере на 47 строке : ', req.body, ' <== тело запроса');
+        console.log('я в auth-контроллере на 48 строке : ', req.headers, ' <== заголовки запроса');
+        console.log('я в auth-контроллере на 49 строке : ', req.query, ' <== query запрос');
+
+
+
         const response = await this.authServiceMethods.authentication(reqFilter, ip, userAgent, refreshTokenJwt) 
         if(!response.data) res.status(resultStatusToHttpCode(response.status!)).json({errorsMessages: [response.extensions![0]]});
         if(response.data) {
