@@ -49,6 +49,10 @@ export class UsersServiceMethods {
         const checkMail = await this.usersRepoMethods.checkAuthentication(data.email);
         if(checkLogin || checkMail) return false;
 
+        // TODO удалить после тестов , отследить что присылает 
+        console.log('я в юзер-сервисе на 53 строке : ', data, ' <== тело запроса');
+
+
         const createdAt = new Date().toISOString();
         let salt;
         let hash;
