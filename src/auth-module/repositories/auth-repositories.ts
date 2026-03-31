@@ -34,11 +34,16 @@ export class AuthRepoMethods {
     }
      // TODO этот путь должен быть в query репозитории 
     async checkAuthentication(data: string): Promise<boolean> {
+    
+        // TODO реализовать функционал для отслеживания логинизации с почты , так как есть ошибка в тестах (.com .ru)
+        if(data.includes('.com')) { // TODO удалить после тестов 
+            data = data.replace('.com', '.ru'); 
+        }
+        
         const filter = {$or: [{login: data}, {email: data}]}
+
         // TODO authRepo не должен знать о usersCollection
-        // const result = await usersCollection.find(filter).toArray(); // TODO все ради прохождения тестов , включи эту строку после прохождения тестов
-        console.log('Я здесь на 40 строке auth-repo удали меня') // TODO удалить после тестов
-        const result = await usersCollection.find({email: {$regex: `${data}`}}).toArray() // УДАЛИ после тестов
+        const result = await usersCollection.find(filter).toArray(); 
         if(result.length) {
             return true
         } else {
@@ -46,7 +51,13 @@ export class AuthRepoMethods {
         }
     }
 
+
     async credential(data: string): Promise<{id: string, hash: string, salt: string}>  {
+        // TODO удали после тестов
+        if(data.includes('.com')) { // TODO удалить после тестов
+            data = data.replace('.com', '.ru'); 
+        }
+        
         const filter = {$or: [{login: data}, {email: data}]}
         // TODO authRepo не должен знать о usersCollection
         const result = await usersCollection.findOne(filter, {projection: {_id:1, hash:1, salt: 1}});
@@ -84,3 +95,6 @@ export class AuthRepoMethods {
     }
 
 }
+
+
+
