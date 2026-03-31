@@ -226,6 +226,11 @@ export class AuthController {
             return
         } 
 
+        // TODO удалить после тестов 
+        if(req.body.email.includes('.com')) {
+            req.body.email = req.body.email.replace('.com', '.ru'); 
+        }
+
         const result = await this.authServiceMethods.passwordRecovery(req.body.email, req.headers.host!);
 
         console.log(req.body.email, '<=== email in controller str 219', 'request count ', this.count++);

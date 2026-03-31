@@ -80,6 +80,10 @@ export const queryUserRepositories = {
 
     // поиск по отдельному свойству (или группе свойств)
     async search_From_Field(searchOdject: SearchObject): Promise<User_info_From_Busines | null> {
+        
+        // TODO удалить после тестов 
+        // if()
+        
         const result =  await usersCollection.findOne(searchOdject);
         if(!result) return null
         const User_Busines_DTO: User_info_From_Busines = {
