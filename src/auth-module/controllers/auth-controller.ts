@@ -43,13 +43,6 @@ export class AuthController {
         const refreshTokenJwt: string | undefined = req.cookies.refreshtoken;
         const ip = req.ip ?? 'not info';
 
-        // TODO удалить после тестов , для просмотра что прислал тест
-        console.log('я в auth-контроллере на 47 строке : ', req.body, ' <== тело запроса');
-        console.log('я в auth-контроллере на 48 строке : ', req.headers, ' <== заголовки запроса');
-        console.log('я в auth-контроллере на 49 строке : ', req.query, ' <== query запрос');
-
-
-
         const response = await this.authServiceMethods.authentication(reqFilter, ip, userAgent, refreshTokenJwt) 
         if(!response.data) res.status(resultStatusToHttpCode(response.status!)).json({errorsMessages: [response.extensions![0]]});
         if(response.data) {
@@ -206,10 +199,6 @@ export class AuthController {
 
     }
 
-    // TODO удали после тестов (для отслеживания кол-ва запросов что бы понять который тест выдал ошибку)
-    // и строку 224 
-    count = 1;
-
     async passwordRecovery(req: Request, res: Response) {
         const errors = validationResult(req)
         if(!errors.isEmpty()) {
@@ -232,8 +221,6 @@ export class AuthController {
         }
 
         const result = await this.authServiceMethods.passwordRecovery(req.body.email, req.headers.host!);
-
-        console.log(req.body.email, '<=== email in controller str 219', 'request count ', this.count++);
         switch(result.status) {
             case ResultStatus.NoContent :
                 res.sendStatus(HttpStatusCode.NoContent_204);

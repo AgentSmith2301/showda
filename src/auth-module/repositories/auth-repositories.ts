@@ -33,13 +33,7 @@ export class AuthRepoMethods {
         // return anser.matchedCount > 0 ? true : false
     }
      // TODO этот путь должен быть в query репозитории 
-    async checkAuthentication(data: string): Promise<boolean> {
-    
-        // TODO реализовать функционал для отслеживания логинизации с почты , так как есть ошибка в тестах (.com .ru)
-        if(data.includes('.com')) { // TODO удалить после тестов 
-            data = data.replace('.com', '.ru'); 
-        }
-        
+    async checkAuthentication(data: string): Promise<boolean> {        
         const filter = {$or: [{login: data}, {email: data}]}
 
         // TODO authRepo не должен знать о usersCollection
@@ -53,10 +47,6 @@ export class AuthRepoMethods {
 
 
     async credential(data: string): Promise<{id: string, hash: string, salt: string}>  {
-        // TODO удали после тестов
-        if(data.includes('.com')) { // TODO удалить после тестов
-            data = data.replace('.com', '.ru'); 
-        }
         
         const filter = {$or: [{login: data}, {email: data}]}
         // TODO authRepo не должен знать о usersCollection
