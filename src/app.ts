@@ -12,7 +12,7 @@ import {container} from './composition-root';
 import {UsersRepoMethods} from './users-module/repositories/users-repositories';
 import { authRouter } from './auth-module/router/auth-router'
 import {commentsRouter} from './comments-module/routers/comments-router'
-import { commentsRepositories } from './comments-module/repositories/comments-repository';
+import { CommentsRepositories } from './comments-module/repositories/comments-repository';
 import cookieParser from 'cookie-parser';
 import {securityRouter} from './securityDevices/router/securityDevicesRouter';
 import { AuthRepoMethods } from './auth-module/repositories/auth-repositories';
@@ -39,7 +39,7 @@ app.delete(SETTINGS.PATH.DELETEALL, async(req: Request, res: Response) => {
     container.get(MetodsPostsDB).deleteAll();
     container.get(AuthRepoMethods).deleteAll();
     container.get(UsersRepoMethods).deleteAll();
-    commentsRepositories.deleteAll();
+    container.get(CommentsRepositories).deleteAll();
     res.sendStatus(204);
 })
 

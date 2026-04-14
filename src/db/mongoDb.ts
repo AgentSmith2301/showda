@@ -5,6 +5,7 @@ import {PostViewModel} from '../posts-module/types/dbType';
 import { UserViewModelDB, UserInputModel} from '../users-module/types/users-type';
 import {CommentPostModel, CommentViewModel} from '../comments-module/types/comments-type';
 import {Sessions_Info, API_Info} from '../auth-module/types/auth-type'
+// import mongoose from "mongoose";
 
 let client: MongoClient;
 

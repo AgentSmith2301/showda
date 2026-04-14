@@ -1,7 +1,8 @@
 import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../types/dbType';
 import {postsCollection} from '../../db/mongoDb'
 import { PostsControllerststs } from '../controllers/postsControllers';
-import { queryCommentsRepositories } from '../../comments-module/repositories/comments-query-repository';
+import { QueryCommentsRepositories } from '../../comments-module/repositories/comments-query-repository';
+import {injectable, inject } from 'inversify';
 
 const projection = {
     _id: 0, 
@@ -14,7 +15,11 @@ const projection = {
     createdAt: 1,
 }
 
-export const getPostsMetodsDb = {
+@injectable()
+export class GetPostsMetodsDb {
+    
+    constructor(public queryCommentsRepositories: QueryCommentsRepositories) {}
+    
     async getAll(filter: GetQueryPosts): Promise<PaginatorPostViewModel> { 
         const totalCaunt = await postsCollection.countDocuments({});
         let searchItems = await postsCollection
@@ -33,10 +38,11 @@ export const getPostsMetodsDb = {
         };
         return result;
 
-    },
+    }
+
     async getPost(id: string) {
         return await postsCollection.findOne({id}, { projection: projection })
-    },
+    }
 
     async getAllPostsForBlog(id: string, filter: GetQueryPosts): Promise<PaginatorPostViewModel> {
         let searchItems = await postsCollection.find({blogId:id}, { projection: projection })
@@ -55,10 +61,10 @@ export const getPostsMetodsDb = {
             items: searchItems
         };
         return result;
-    },
+    }
 
     async getAllCommentsByPostId(postId: string, filter: GetQueryPosts) {
-        const result = await queryCommentsRepositories.getAllComments(postId, filter)
+        const result = await this.queryCommentsRepositories.getAllComments(postId, filter)
         return result;
     }
 

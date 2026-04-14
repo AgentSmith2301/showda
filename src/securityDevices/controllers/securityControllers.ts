@@ -19,7 +19,7 @@ export const securityControllers = {
     },
 
     async closeSession(req:Request, res:Response) {
-        const response = await securityService.closeSession(req.tokenPayload.userId, req.params.deviceId);
+        const response = await securityService.closeSession(req.tokenPayload.userId, req.params.deviceId as string);
         if(response.status === ResultStatus.NotFound) res.sendStatus(HttpStatusCode.NotFound_404)
         if(response.status === ResultStatus.Forbidden) res.sendStatus(HttpStatusCode.Forbidden_403)
         if(response.status === ResultStatus.NoContent) res.sendStatus(HttpStatusCode.NoContent_204)

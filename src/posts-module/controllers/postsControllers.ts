@@ -1,9 +1,9 @@
 import {Response, Request, NextFunction} from 'express';
 import {castomError} from '../../errors/castomErrorsFromValidate'
 import {ServicePostsMethods} from '../service/posts-service';
-import { getPostsMetodsDb } from '../repositories/posts-query-repository'
+import {GetPostsMetodsDb} from '../repositories/posts-query-repository'
 import {validationResult} from 'express-validator'
-import { GetQueryPosts } from '../types/dbType';
+import {GetQueryPosts} from '../types/dbType';
 import {jwtService} from '../../auth-module/application/jwt-service'
 import {BlogsService} from '../../blogs-module/service/blogs-service';
 
@@ -14,7 +14,8 @@ export class PostsControllerststs {
     
     constructor(
         @inject(ServicePostsMethods) public servicePostsMethods: ServicePostsMethods,
-        @inject(BlogsService) public blogsService: BlogsService
+        @inject(BlogsService) public blogsService: BlogsService,
+        @inject(GetPostsMetodsDb) public getPostsMetodsDb: GetPostsMetodsDb
     ) {}
 
     async getAllpostsController(req: Request, res: Response) {
@@ -30,13 +31,13 @@ export class PostsControllerststs {
 
         let filter: GetQueryPosts = {pageNumber, pageSize, sortBy, sortDirection}
         
-        const result = await getPostsMetodsDb.getAll(filter);
+        const result = await this.getPostsMetodsDb.getAll(filter);
         res.status(200).send(result)
 
     }
 
     async getPostByIdController(req: Request, res: Response) {
-        const result = await getPostsMetodsDb.getPost(req.params.id);
+        const result = await this.getPostsMetodsDb.getPost(req.params.id as string);
         if(result) {
             res.send(result)
         } else {
@@ -45,7 +46,7 @@ export class PostsControllerststs {
     }
 
     async deletePostByIdController(req: Request, res: Response) {
-        let result =  await this.servicePostsMethods.deletePost(req.params.id);
+        let result: boolean =  await this.servicePostsMethods.deletePost(req.params.id as string);
         if(result) {
             res.sendStatus(204);
         }else {
@@ -85,7 +86,7 @@ export class PostsControllerststs {
     }
 
     async changePostById(req: Request, res: Response) {
-        const result = await this.servicePostsMethods.updatePost(req.params.id, req.body);
+        const result = await this.servicePostsMethods.updatePost(req.params.id as string, req.body);
 
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
@@ -121,7 +122,7 @@ export class PostsControllerststs {
             return
         } 
         // проверка на существование поста
-        const result = await getPostsMetodsDb.getPost(req.params.postId);
+        const result = await this.getPostsMetodsDb.getPost(req.params.postId as string);
         if(result === null) {
             res.sendStatus(404)
             return
@@ -130,7 +131,7 @@ export class PostsControllerststs {
         const token = req.headers.authorization?.split(' ')
         // верификация токена и получение id
         const userId = await jwtService.getIdByToken(token![1])
-        const responseData =  await this.servicePostsMethods.commentsFromPost(req.params.postId, req.body.content, userId!)
+        const responseData =  await this.servicePostsMethods.commentsFromPost(req.params.postId as string, req.body.content, userId!)
         if(!responseData) res.status(500).send("something wrong with the server")
         res.status(201).send(responseData)
     }
@@ -150,7 +151,7 @@ export class PostsControllerststs {
             return
         } 
         // проверка на существование поста
-        const result = await getPostsMetodsDb.getPost(req.params.postId);
+        const result = await this.getPostsMetodsDb.getPost(req.params.postId as string);
         if(result === null) {
             res.sendStatus(404)
             return
@@ -170,7 +171,7 @@ export class PostsControllerststs {
             sortDirection: sortDirection
         }
         
-        const comments = await getPostsMetodsDb.getAllCommentsByPostId(req.params.postId, filter)
+        const comments = await this.getPostsMetodsDb.getAllCommentsByPostId(req.params.postId as string, filter)
         res.status(200).send(comments)
         
 

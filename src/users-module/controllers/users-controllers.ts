@@ -85,7 +85,7 @@ export class UsersController {
             return
         } 
         
-        const result: boolean = await this.usersServiceMethods.deleteUserById(req.params.id);
+        const result: boolean = await this.usersServiceMethods.deleteUserById(req.params.id as string);
         if(result === true) {
             res.sendStatus(204)
         } else {

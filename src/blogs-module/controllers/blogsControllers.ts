@@ -1,7 +1,7 @@
 import {Response, Request, NextFunction} from 'express';
 import {castomError} from '../../errors/castomErrorsFromValidate'
 import {BlogsService} from '../service/blogs-service';
-import {getBlogMethods} from '../repositories/blogs-query-repository'
+import {GetBlogMethods} from '../repositories/blogs-query-repository'
 import {validationResult} from 'express-validator'
 import { BlogPostInputModel, GetQueryBlogs} from '../types/dbType';
 // import {GetQueryPosts} from '../../posts-module/types/dbType';
@@ -13,7 +13,11 @@ import {injectable, inject } from 'inversify';
 @injectable()
 export class BlogsControllers {
 
-    constructor(@inject(BlogsService) public blogsService: BlogsService) {}
+    constructor(
+        @inject(BlogsService) public blogsService: BlogsService,
+        @inject(GetBlogMethods) public getBlogMethods: GetBlogMethods
+    
+    ) {}
 
     async createBlogController(req: Request, res: Response) {
         const errors = validationResult(req);
@@ -49,37 +53,37 @@ export class BlogsControllers {
             castomError.errorsMessages = []; // очистка ошибок
             return 
         } else {
-            let checkId = req.params.blogId;
+            let checkId : string = req.params.blogId as string;
             let filter: BlogPostInputModel = {
                 title: req.body.title,
                 shortDescription: req.body.shortDescription,
                 content: req.body.content
             };
             // сообщением что блог с таким id не существует
-            let isTrue = await this.blogsService.checkId(checkId)
+            let isTrue = await this.blogsService.checkId(checkId);
             if(isTrue === false) {
                 res.status(404).send('not faund blogId');
                 return
             }
             let result = await this.blogsService.createPostForBlogWithId(checkId, filter)
             res.status(201).send(result)
-            return 
+            return
         }
     }
 
     async deleteBlogController(req: Request, res: Response) {
-        const checkId = await this.blogsService.checkId(req.params.id);
+        const checkId: boolean = await this.blogsService.checkId(req.params.id as string);
         if(checkId === false) {
             res.sendStatus(404)
         }
-        const result = await this.blogsService.deleteBlog(req.params.id);
+        const result = await this.blogsService.deleteBlog(req.params.id as string);
         if(result) {
             res.sendStatus(204)
         } 
     }
 
     async changeBlogController(req: Request, res: Response) {
-        const checkId = await this.blogsService.checkId(req.params.id);
+        const checkId = await this.blogsService.checkId(req.params.id as string);
         if(checkId === false) {
             res.sendStatus(404)
             return
@@ -98,7 +102,7 @@ export class BlogsControllers {
             return
         } 
         
-        let result = await this.blogsService.updateBlog(req.params.id, req.body);
+        let result = await this.blogsService.updateBlog(req.params.id as string, req.body);
         if(result) {
             res.sendStatus(204)
         } else {
@@ -107,7 +111,7 @@ export class BlogsControllers {
     }
 
     async getBlogFromIdController(req: Request, res: Response) {
-        const result = await getBlogMethods.getBlog(req.params.id)
+        const result = await this.getBlogMethods.getBlog(req.params.id as string)
         if(result) {
             res.status(200).send(result)
         } else {
@@ -141,7 +145,7 @@ export class BlogsControllers {
         filter.pageNumber = req.query.pageNumber ? +req.query.pageNumber : 1
         filter.pageSize = req.query.pageSize ? +req.query.pageSize : 10
 
-        const result =  await getBlogMethods.getAll(filter);
+        const result =  await this.getBlogMethods.getAll(filter);
         res.status(200).send(result)
     }
 
@@ -164,7 +168,7 @@ export class BlogsControllers {
         let pageSize: number = +req.query.pageSize!;
         let sortBy: string = req.query.sortBy!.toString();
         let sortDirection: 1 | -1 = req.query.sortDirection === 'asc' ? 1 : -1; 
-        let blogId: string = req.params.blogId;
+        let blogId: string = req.params.blogId as string;
 
         let filter = {pageNumber, pageSize, sortBy, sortDirection};
 
@@ -174,7 +178,7 @@ export class BlogsControllers {
             return
         }
 
-        let result = await getBlogMethods.getAllPostsFromBlogId(blogId, filter);
+        let result = await this.getBlogMethods.getAllPostsFromBlogId(blogId, filter);
         
         res.status(200).send(result);
         return

@@ -1,6 +1,7 @@
 import { BlogInputModel, BlogViewModel, GetQueryBlogs, PaginatorBlogViewModel } from '../types/dbType';
 import {blogsCollection} from '../../db/mongoDb';
-import {getPostsMetodsDb} from '../../posts-module/repositories/posts-query-repository';
+import {GetPostsMetodsDb} from '../../posts-module/repositories/posts-query-repository';
+import {injectable} from 'inversify';
 
 // фильтр для возвращаемых свойтв
 const projection = {
@@ -13,7 +14,10 @@ const projection = {
     isMembership: 1,
 }
 
-export const getBlogMethods = {
+@injectable()
+export class GetBlogMethods {
+
+    constructor(public getPostsMetodsDb: GetPostsMetodsDb) {}
 
     async getAll(query: GetQueryBlogs ):Promise<PaginatorBlogViewModel> {
         let generateQuery: any = {};
@@ -39,15 +43,14 @@ export const getBlogMethods = {
         };
 
         return responseObject
-    },
+    }
 
     async getBlog(id: string): Promise<BlogViewModel | null> {
         return await blogsCollection.findOne({ id },{ projection: projection })
-    },
-
+    }
 
     async getAllPostsFromBlogId(blogId: string, filter: any) {
-        let result = await getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
+        let result = await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
         return result;
     }
 

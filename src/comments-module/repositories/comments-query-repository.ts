@@ -1,9 +1,12 @@
 import {commentsCollection} from '../../db/mongoDb'
-import { GetQueryPosts } from '../../posts-module/types/dbType';
-import { CommentViewModel, PaginatorCommentViewModel } from '../types/comments-type';
-import {ObjectId} from 'mongodb'
+import {GetQueryPosts} from '../../posts-module/types/dbType';
+import {CommentViewModel, PaginatorCommentViewModel } from '../types/comments-type';
+import {ObjectId} from 'mongodb';
+import { injectable } from "inversify";
 
-export const queryCommentsRepositories = {
+@injectable()
+export class QueryCommentsRepositories {
+    
     async getCommentByIdRepositories(id: string): Promise<CommentViewModel | null> {
     
         if(!ObjectId.isValid(id)) {
@@ -28,7 +31,7 @@ export const queryCommentsRepositories = {
             return null
         }
         
-    },
+    }
 
     async getAllComments(postId: string, filter: GetQueryPosts) { 
         // кол-во комментариев к этому посту
@@ -54,6 +57,6 @@ export const queryCommentsRepositories = {
         };
 
         return result;
-    },
+    }
 
 }

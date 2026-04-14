@@ -2,7 +2,7 @@ import { BlogInputModel, BlogPostInputModel, BlogViewModel } from '../types/dbTy
 import { PostViewModel } from '../../posts-module/types/dbType';
 import {blogsCollection} from '../../db/mongoDb'
 import {BlogsRepositories} from '../repositories/blogsRepositories';
-import {getBlogMethods} from '../repositories/blogs-query-repository'
+import {GetBlogMethods} from '../repositories/blogs-query-repository'
 // import { servicePostsMethods } from '../../posts-module/service/posts-service';
 import {injectable, inject } from 'inversify';  
 import { ServicePostsMethods } from '../../posts-module/service/posts-service';
@@ -12,7 +12,8 @@ export class BlogsService {
     
     constructor(
         @inject(BlogsRepositories) public blogsRepositories: BlogsRepositories,
-        @inject(ServicePostsMethods) public servicePostsMethods: ServicePostsMethods
+        @inject(ServicePostsMethods) public servicePostsMethods: ServicePostsMethods,
+        @inject(GetBlogMethods) public getBlogMethods: GetBlogMethods
     ) {}
 
     async checkId(id: string): Promise<boolean> {
@@ -54,7 +55,7 @@ export class BlogsService {
         const result = await this.blogsRepositories.createBlog(data);
         let metodResponse = null;
         if(result.acknowledged === true) {
-            metodResponse =  getBlogMethods.getBlog(id)
+            metodResponse =  this.getBlogMethods.getBlog(id)
         } 
         return metodResponse
         

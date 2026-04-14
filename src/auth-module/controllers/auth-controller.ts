@@ -6,11 +6,10 @@ import {castomError} from '../../errors/castomErrorsFromValidate';
 import {jwtService} from '../application/jwt-service'
 import {HttpStatusCode} from '../../types/httpStatus-enum'
 import {resultStatusToHttpCode} from '../../helpers/resultStatusToHttpCode'
-import { ResultStatus } from "../../types/resultStatus-enum";
+import {ResultStatus} from "../../types/resultStatus-enum";
 import {CastomErrors} from '../../errors/castomErrorsObject';
-import { cookiesGuard } from "../helpers/refreshTokenTypeGuard";
-import { Refresh_Session_Token } from "../../types/refreshTokenType";
-// import {CastomRequest} from '../types/auth-type'
+import {cookiesGuard} from "../helpers/refreshTokenTypeGuard";
+import {Refresh_Session_Token} from "../../types/refreshTokenType";
 import {injectable, inject} from "inversify";
 
 @injectable()
@@ -216,9 +215,9 @@ export class AuthController {
         } 
 
         // TODO удалить после тестов 
-        if(req.body.email.includes('.com')) {
-            req.body.email = req.body.email.replace('.com', '.ru'); 
-        }
+        // if(req.body.email.includes('.com')) {
+        //     req.body.email = req.body.email.replace('.com', '.ru'); 
+        // }
 
         const result = await this.authServiceMethods.passwordRecovery(req.body.email, req.headers.host!);
         switch(result.status) {

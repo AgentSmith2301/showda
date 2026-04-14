@@ -1,10 +1,10 @@
 import { PostInputModel, PostViewModel } from '../types/dbType';
-import { getBlogMethods } from '../../blogs-module/repositories/blogs-query-repository';
+import { GetBlogMethods } from '../../blogs-module/repositories/blogs-query-repository';
 import { MetodsPostsDB } from '../repositories/postsRepositories';
-import { getPostsMetodsDb } from '../repositories/posts-query-repository'
+import { GetPostsMetodsDb } from '../repositories/posts-query-repository'
 import { CommentViewModel } from '../../comments-module/types/comments-type';
 import { AuthRepoMethods } from '../../auth-module/repositories/auth-repositories';
-import {serviceComments} from '../../comments-module/service/comments-service'
+import {ServiceComments} from '../../comments-module/service/comments-service'
 import {injectable, inject } from 'inversify'; 
 
 @injectable()
@@ -12,14 +12,17 @@ export class ServicePostsMethods {
 
     constructor(
         @inject(MetodsPostsDB) public metodsPostsDB: MetodsPostsDB,
-        @inject(AuthRepoMethods) public authRepoMethods: AuthRepoMethods
+        @inject(AuthRepoMethods) public authRepoMethods: AuthRepoMethods,
+        @inject(GetBlogMethods) public getBlogMethods: GetBlogMethods,
+        @inject(GetPostsMetodsDb) public getPostsMetodsDb: GetPostsMetodsDb,
+        @inject(ServiceComments) public serviceComments: ServiceComments
     ) {} // неявное внедрение класса
     
     async createPost(post: PostInputModel): Promise<PostViewModel | null> {
         let id = Date.now().toString();
         const createdAt = new Date().toISOString();
         let blogName: string;
-        const findBlogs = await getBlogMethods.getBlog(post.blogId)
+        const findBlogs = await this.getBlogMethods.getBlog(post.blogId)
         if(findBlogs !== null) {
             blogName = findBlogs.name
             const baseUpdate = {
@@ -35,7 +38,7 @@ export class ServicePostsMethods {
         } else {
             blogName = 'NOT FIND'
         }
-        return getPostsMetodsDb.getPost(id)
+        return this.getPostsMetodsDb.getPost(id)
     }
 
     async updatePost(id: string, body: PostInputModel) {
@@ -68,7 +71,7 @@ export class ServicePostsMethods {
         }
 
         // создать коммент по посту
-        return await serviceComments.createComment(comentData)
+        return await this.serviceComments.createComment(comentData)
         
     }
 
