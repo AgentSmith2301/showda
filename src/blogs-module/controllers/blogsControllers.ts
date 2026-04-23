@@ -33,8 +33,13 @@ export class BlogsControllers {
             castomError.errorsMessages = []; // очистка ошибок
             return 
         } else {
-            const reult = await this.blogsService.createBlog(req.body);
-            res.status(201).send(reult)
+            try {
+                const result = await this.blogsService.createBlog(req.body);
+                res.status(201).send(result)
+            } catch (error) {
+                console.error('❌ Controller error creating blog:', error);
+                res.status(500).send({ error: 'Failed to create blog' });
+            }
             return 
         }
     }

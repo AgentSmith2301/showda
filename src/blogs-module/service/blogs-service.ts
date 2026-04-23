@@ -1,6 +1,5 @@
 import { BlogInputModel, BlogPostInputModel, BlogViewModel } from '../types/dbType';
 import { PostViewModel } from '../../posts-module/types/dbType';
-import {blogsCollection} from '../../db/mongoDb'
 import {BlogsRepositories} from '../repositories/blogsRepositories';
 import {GetBlogMethods} from '../repositories/blogs-query-repository'
 // import { servicePostsMethods } from '../../posts-module/service/posts-service';
@@ -26,7 +25,7 @@ export class BlogsService {
     }
 
     async deleteAll(): Promise<void> {
-        await blogsCollection.deleteMany({})
+        await this.blogsRepositories.deleteAll()
         
     }
 
@@ -52,12 +51,7 @@ export class BlogsService {
             createdAt,
             isMembership: false,
         }
-        const result = await this.blogsRepositories.createBlog(data);
-        let metodResponse = null;
-        if(result.acknowledged === true) {
-            metodResponse =  this.getBlogMethods.getBlog(id)
-        } 
-        return metodResponse
+        return await this.blogsRepositories.createBlog(data);
         
     }
 

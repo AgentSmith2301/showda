@@ -17,6 +17,9 @@ export const SETTINGS = {
     MONGO_URL: process.env.MONGO_URL || 'mongodb://0.0.0.0:27017',
     DB_NAME: process.env.DB_NAME || '',
     JWT_SECRET: process.env.JWT_SECRET || '321',
-    EMAIL_SEND_FROM: 'tamerlan346_95@mail.ru'
+    EMAIL_SEND_FROM: 'tamerlan346_95@mail.ru',
+    TYPES: {
+        blogsModel: Symbol.for('blogsModel'),
+    }
 }
 

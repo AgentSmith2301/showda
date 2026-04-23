@@ -2,6 +2,7 @@ import {BlogsRepositories} from './blogs-module/repositories/blogsRepositories';
 import {BlogsService} from './blogs-module/service/blogs-service';
 import {BlogsControllers} from './blogs-module/controllers/blogsControllers';
 import {GetBlogMethods} from './blogs-module/repositories/blogs-query-repository';
+import {Blogs} from './blogs-module/infrastructure/model/blogs-model'
 
 import {PostsControllerststs} from './posts-module/controllers/postsControllers';
 import {ServicePostsMethods} from './posts-module/service/posts-service';
@@ -21,6 +22,7 @@ import {ServiceComments} from './comments-module/service/comments-service';
 import {CommentsController} from './comments-module/controllers/comments-controller';
 import {QueryCommentsRepositories} from './comments-module/repositories/comments-query-repository';
 
+import {SETTINGS} from './settings'
 import {Container} from 'inversify';  
 
 export const container = new Container();
@@ -34,6 +36,7 @@ container.bind(BlogsControllers).toSelf();
 container.bind(BlogsService).toSelf();
 container.bind(GetBlogMethods).toSelf();
 container.bind(BlogsRepositories).toSelf();
+container.bind(SETTINGS.TYPES.blogsModel).toConstantValue(Blogs);
 
 container.bind(PostsControllerststs).toSelf()
 container.bind(ServicePostsMethods).toSelf()

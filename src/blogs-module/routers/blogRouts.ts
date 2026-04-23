@@ -8,13 +8,13 @@ const blogsControllers = container.get(BlogsControllers); // получаем э
 
 export const blogRouter = Router();
 
-// создать блог
+// создать блог (/blogs)
 blogRouter.post('/', checkAuthorization, objectValidateMetods.postAndPutReqvestbodyValBlogs, blogsControllers.createBlogController.bind(blogsControllers))
 
-// создать к конкретному блогу пост
+// создать к конкретному блогу пост 
 blogRouter.post('/:blogId/posts', checkAuthorization, objectValidateMetods.postFromBlogWithId, blogsControllers.createPostFromBlogWithIdController.bind(blogsControllers))
 
-// получить все блоги
+// получить все блоги (/blogs)
 blogRouter.get('/', objectValidateMetods.blogsQueryValidation , blogsControllers.getAllBlogsController.bind(blogsControllers))
 
 // получить блог по id
@@ -28,5 +28,4 @@ blogRouter.put('/:id', checkAuthorization, objectValidateMetods.postAndPutReqves
 
 // удалить блог
 blogRouter.delete('/:id', checkAuthorization, blogsControllers.deleteBlogController.bind(blogsControllers))
-
 

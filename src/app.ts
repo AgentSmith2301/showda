@@ -24,7 +24,7 @@ import { BlogsControllers } from './blogs-module/controllers/blogsControllers';
 export const app = express();
 app.use(cookieParser());
 app.use(express.json());
-app.set('trust proxy', true);
+app.set('trust proxy', true); 
 
 
 app.get('/', (req, res) => {

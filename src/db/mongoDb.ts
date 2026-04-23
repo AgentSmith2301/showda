@@ -5,24 +5,28 @@ import {PostViewModel} from '../posts-module/types/dbType';
 import { UserViewModelDB, UserInputModel} from '../users-module/types/users-type';
 import {CommentPostModel, CommentViewModel} from '../comments-module/types/comments-type';
 import {Sessions_Info, API_Info} from '../auth-module/types/auth-type'
-// import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 let client: MongoClient;
 
 let postsCollection: Collection<PostViewModel> ;
-let blogsCollection: Collection<BlogViewModel> ; 
+// let blogsCollection: Collection<BlogViewModel> ; 
 let usersCollection: Collection<UserViewModelDB> ; 
 let commentsCollection: Collection<CommentPostModel> ; 
 let sessionsCollection: Collection<Sessions_Info>;
 let apiRequestsCollection: Collection<API_Info>;
 
 async function runFromDB(url = SETTINGS.MONGO_URL) {
-    client = new MongoClient(url)
+    client = new MongoClient(url); // TODO delete this line
     try{
-        await client.connect();
-        await client.db("noNameNewDB").command({ping:1});
+        await mongoose.connect(url, { dbName: SETTINGS.DB_NAME }); // подключаемся к базе данных через mongoose
+        // await client.connect(); // TODO delete this line
+        // await client.db("noNameNewDB").command({ping:1}); // TODO delete this line
+
+        // TODO перенести все схемы в отдельные файлы и импортировать их сюда (infrastructure) 
+
         postsCollection = client.db(SETTINGS.DB_NAME).collection<PostViewModel>("posts"); 
-        blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogViewModel>("blogs"); 
+        // blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogViewModel>("blogs"); 
         usersCollection = client.db(SETTINGS.DB_NAME).collection<UserViewModelDB>("users");
         commentsCollection = client.db(SETTINGS.DB_NAME).collection<CommentPostModel>("comments"); 
         sessionsCollection = client.db(SETTINGS.DB_NAME).collection<Sessions_Info>('sessions');
@@ -35,10 +39,12 @@ async function runFromDB(url = SETTINGS.MONGO_URL) {
 
     } catch(error) {
         console.log(error);
-        await client.close();
+        // await client.close(); // TODO delete this line
+        await mongoose.disconnect(); // отключаемся от базы данных через mongoose
         return false; // для функции которая экспортирует эту функцию , что бы она обработала
     } 
 }
 
-export {postsCollection, blogsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
+// export {postsCollection, blogsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
+export {postsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
 
