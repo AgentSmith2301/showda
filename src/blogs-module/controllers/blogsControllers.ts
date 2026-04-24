@@ -1,7 +1,7 @@
 import {Response, Request, NextFunction} from 'express';
 import {castomError} from '../../errors/castomErrorsFromValidate'
 import {BlogsService} from '../service/blogs-service';
-import {GetBlogMethods} from '../repositories/blogs-query-repository'
+import {GetBlogMethods} from '../infrastructure/repositories/blogs-query-repository'
 import {validationResult} from 'express-validator'
 import { BlogPostInputModel, GetQueryBlogs} from '../types/dbType';
 // import {GetQueryPosts} from '../../posts-module/types/dbType';

@@ -1,7 +1,7 @@
-import {BlogsRepositories} from './blogs-module/repositories/blogsRepositories';
+import {BlogsRepositories} from './blogs-module/infrastructure/repositories/blogsRepositories';
 import {BlogsService} from './blogs-module/service/blogs-service';
 import {BlogsControllers} from './blogs-module/controllers/blogsControllers';
-import {GetBlogMethods} from './blogs-module/repositories/blogs-query-repository';
+import {GetBlogMethods} from './blogs-module/infrastructure/repositories/blogs-query-repository';
 import {Blogs} from './blogs-module/infrastructure/model/blogs-model'
 
 import {PostsControllerststs} from './posts-module/controllers/postsControllers';

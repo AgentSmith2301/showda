@@ -1,8 +1,8 @@
-import { BlogInputModel, BlogViewModel, GetQueryBlogs, PaginatorBlogViewModel } from '../types/dbType';
-import {Blogs} from '../infrastructure/model/blogs-model';
-import {GetPostsMetodsDb} from '../../posts-module/repositories/posts-query-repository';
+import { BlogInputModel, BlogViewModel, GetQueryBlogs, PaginatorBlogViewModel } from '../../types/dbType';
+import {Blogs} from '../model/blogs-model';
+import {GetPostsMetodsDb} from '../../../posts-module/repositories/posts-query-repository';
 import {injectable, inject} from 'inversify';
-import {SETTINGS} from '../../settings'
+import {SETTINGS} from '../../../settings'
 
 // фильтр для возвращаемых свойтв
 const projection = {
@@ -55,4 +55,6 @@ export class GetBlogMethods {
         return result;
     }
 }
+
+
 

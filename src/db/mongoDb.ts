@@ -20,13 +20,10 @@ async function runFromDB(url = SETTINGS.MONGO_URL) {
     client = new MongoClient(url); // TODO delete this line
     try{
         await mongoose.connect(url, { dbName: SETTINGS.DB_NAME }); // подключаемся к базе данных через mongoose
-        // await client.connect(); // TODO delete this line
-        // await client.db("noNameNewDB").command({ping:1}); // TODO delete this line
-
+        
         // TODO перенести все схемы в отдельные файлы и импортировать их сюда (infrastructure) 
-
         postsCollection = client.db(SETTINGS.DB_NAME).collection<PostViewModel>("posts"); 
-        // blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogViewModel>("blogs"); 
+        
         usersCollection = client.db(SETTINGS.DB_NAME).collection<UserViewModelDB>("users");
         commentsCollection = client.db(SETTINGS.DB_NAME).collection<CommentPostModel>("comments"); 
         sessionsCollection = client.db(SETTINGS.DB_NAME).collection<Sessions_Info>('sessions');
@@ -39,12 +36,12 @@ async function runFromDB(url = SETTINGS.MONGO_URL) {
 
     } catch(error) {
         console.log(error);
-        // await client.close(); // TODO delete this line
+        await client.close(); // TODO delete this line
         await mongoose.disconnect(); // отключаемся от базы данных через mongoose
         return false; // для функции которая экспортирует эту функцию , что бы она обработала
     } 
 }
 
-// export {postsCollection, blogsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
 export {postsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
+
 

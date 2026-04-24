@@ -1,6 +1,6 @@
-import { BlogInputModel, BlogViewModel } from '../types/dbType';
+import { BlogInputModel, BlogViewModel } from '../../types/dbType';
 // import {blogsCollection} from '../../db/mongoDb'
-import {Blogs} from '../infrastructure/model/blogs-model'
+import {Blogs} from '../model/blogs-model'
 import {injectable, inject } from 'inversify'; 
 
 @injectable() // помечаем класс как injectable, чтобы его можно было внедрить в другие классы
@@ -44,3 +44,6 @@ export class BlogsRepositories {
         return result
     }
 }
+
+
+

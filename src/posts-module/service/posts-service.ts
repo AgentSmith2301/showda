@@ -1,5 +1,5 @@
 import { PostInputModel, PostViewModel } from '../types/dbType';
-import { GetBlogMethods } from '../../blogs-module/repositories/blogs-query-repository';
+import { GetBlogMethods } from '../../blogs-module/infrastructure/repositories/blogs-query-repository';
 import { MetodsPostsDB } from '../repositories/postsRepositories';
 import { GetPostsMetodsDb } from '../repositories/posts-query-repository'
 import { CommentViewModel } from '../../comments-module/types/comments-type';

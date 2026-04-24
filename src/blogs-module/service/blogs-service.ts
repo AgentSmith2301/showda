@@ -1,7 +1,7 @@
 import { BlogInputModel, BlogPostInputModel, BlogViewModel } from '../types/dbType';
 import { PostViewModel } from '../../posts-module/types/dbType';
-import {BlogsRepositories} from '../repositories/blogsRepositories';
-import {GetBlogMethods} from '../repositories/blogs-query-repository'
+import {BlogsRepositories} from '../infrastructure/repositories/blogsRepositories';
+import {GetBlogMethods} from '../infrastructure/repositories/blogs-query-repository'
 // import { servicePostsMethods } from '../../posts-module/service/posts-service';
 import {injectable, inject } from 'inversify';  
 import { ServicePostsMethods } from '../../posts-module/service/posts-service';
