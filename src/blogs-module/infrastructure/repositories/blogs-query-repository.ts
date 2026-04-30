@@ -15,14 +15,13 @@ const projection = {
     isMembership: 1,
 }
 
-
-
 @injectable()
 export class GetBlogMethods {
 
     constructor(
-        public getPostsMetodsDb: GetPostsMetodsDb,  // TODO нужено внедрить Модуль для постов
-        @inject(SETTINGS.TYPES.blogsModel) public blogModel : typeof Blogs) {}
+        // public getPostsMetodsDb: GetPostsMetodsDb,  // TODO нужено внедрить Модуль для постов
+        @inject(SETTINGS.TYPES.blogsModel) public blogModel : typeof Blogs
+    ) {}
 
     async getAll(query: GetQueryBlogs ):Promise<PaginatorBlogViewModel> {
         let generateQuery: any = {};
@@ -56,9 +55,9 @@ export class GetBlogMethods {
 
     }
 
-    async getAllPostsFromBlogId(blogId: string, filter: any) {
-        return await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
-    }
+    // async getAllPostsFromBlogId(blogId: string, filter: any) {
+    //     return await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
+    // }
 }
 
 

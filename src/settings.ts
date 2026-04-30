@@ -20,6 +20,7 @@ export const SETTINGS = {
     EMAIL_SEND_FROM: 'tamerlan346_95@mail.ru',
     TYPES: {
         blogsModel: Symbol.for('blogsModel'),
+        postsModel: Symbol.for('postsModel'),
     }
 }
 

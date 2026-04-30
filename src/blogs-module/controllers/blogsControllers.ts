@@ -183,7 +183,10 @@ export class BlogsControllers {
             return
         }
 
-        let result = await this.getBlogMethods.getAllPostsFromBlogId(blogId, filter);
+        let result = await this.blogsService.getAllPostsFromBlogId(blogId, filter);
+
+        // TODO изменить запрос из блог-контроллера в посты , это нужно делать через сервис 
+        // let result = await this.getBlogMethods.getAllPostsFromBlogId(blogId, filter);
         
         res.status(200).send(result);
         return

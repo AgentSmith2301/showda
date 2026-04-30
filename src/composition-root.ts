@@ -2,7 +2,8 @@ import {BlogsRepositories} from './blogs-module/infrastructure/repositories/blog
 import {BlogsService} from './blogs-module/service/blogs-service';
 import {BlogsControllers} from './blogs-module/controllers/blogsControllers';
 import {GetBlogMethods} from './blogs-module/infrastructure/repositories/blogs-query-repository';
-import {Blogs} from './blogs-module/infrastructure/model/blogs-model'
+import {Blogs} from './blogs-module/infrastructure/model/blogs-model';
+import {Posts} from './posts-module/infrastructure/model/posts-module';
 
 import {PostsControllerststs} from './posts-module/controllers/postsControllers';
 import {ServicePostsMethods} from './posts-module/service/posts-service';
@@ -41,7 +42,8 @@ container.bind(SETTINGS.TYPES.blogsModel).toConstantValue(Blogs);
 container.bind(PostsControllerststs).toSelf()
 container.bind(ServicePostsMethods).toSelf()
 container.bind(MetodsPostsDB).toSelf()
-container.bind(GetPostsMetodsDb).toSelf()
+container.bind(GetPostsMetodsDb).toSelf();
+container.bind(SETTINGS.TYPES.postsModel).toConstantValue(Posts);
 
 container.bind(AuthController).toSelf()
 container.bind(AuthServiceMethods).toSelf()
@@ -50,7 +52,6 @@ container.bind(AuthRepoMethods).toSelf()
 container.bind(UsersController).toSelf()
 container.bind(UsersServiceMethods).toSelf()
 container.bind(UsersRepoMethods).toSelf()
-
 
 
 

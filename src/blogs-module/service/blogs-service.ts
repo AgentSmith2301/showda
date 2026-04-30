@@ -67,6 +67,10 @@ export class BlogsService {
         return result!
     }
 
+    async getAllPostsFromBlogId(blogId: string, filter: any) {
+        return await this.servicePostsMethods.all_Posts_From_BlogId(blogId, filter);
+    }
+
     async deleteBlog(id: string) {
         const result = await this.blogsRepositories.deleteBlog(id)
         return result.deletedCount === 1

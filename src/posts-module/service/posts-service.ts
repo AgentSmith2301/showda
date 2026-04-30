@@ -76,6 +76,10 @@ export class ServicePostsMethods {
         
     }
 
+    async all_Posts_From_BlogId(blogId: string, filter: any) {
+        return await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
+    }
+
     // async findBlogInBlogService(blogId) {
     //     await getBlogMethods
     // }

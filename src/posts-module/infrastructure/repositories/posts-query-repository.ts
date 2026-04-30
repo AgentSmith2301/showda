@@ -3,6 +3,7 @@ import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../../type
 import { PostsControllerststs } from '../../controllers/postsControllers';
 import {Posts} from '../model/posts-module';
 import { QueryCommentsRepositories } from '../../../comments-module/repositories/comments-query-repository';
+import {SETTINGS} from '../../../settings';
 import {injectable, inject } from 'inversify';
 
 const projection = {
@@ -19,11 +20,14 @@ const projection = {
 @injectable()
 export class GetPostsMetodsDb {
     
-    constructor(public queryCommentsRepositories: QueryCommentsRepositories) {}
+    constructor(
+        public queryCommentsRepositories: QueryCommentsRepositories, 
+        @inject(SETTINGS.TYPES.postsModel) public postModel: typeof Posts
+    ) {}
     
     async getAll(filter: GetQueryPosts): Promise<PaginatorPostViewModel> { 
-        const totalCaunt: number = await Posts.countDocuments({});
-        let searchItems = await Posts
+        const totalCaunt: number = await this.postModel.countDocuments({});
+        let searchItems = await this.postModel
         .find({})
         .select(projection)
         .sort([[filter.sortBy!, filter.sortDirection!]])
@@ -42,18 +46,18 @@ export class GetPostsMetodsDb {
     }
 
     async getPost(id: string) {
-        return await Posts.findOne({id}).select(projection).lean();
+        return await this.postModel.findOne({id}).select(projection).lean();
     }
 
     async getAllPostsForBlog(id: string, filter: GetQueryPosts): Promise<PaginatorPostViewModel> {
-        let searchItems = await Posts.find({blogId:id})
+        let searchItems = await this.postModel.find({blogId:id})
         .select(projection)
         .sort([[filter.sortBy!, filter.sortDirection!]])
         .skip((filter.pageNumber! - 1) * filter.pageSize!)
         .limit(filter.pageSize!)
         .lean();
 
-        const totalCaunt: number = await Posts.countDocuments({blogId:id});
+        const totalCaunt: number = await this.postModel.countDocuments({blogId:id});
 
         let result: PaginatorPostViewModel = {
             pagesCount: Math.ceil(totalCaunt/filter.pageSize!), // сколько всего страниц
