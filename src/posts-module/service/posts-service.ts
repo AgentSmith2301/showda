@@ -1,7 +1,7 @@
 import { PostInputModel, PostViewModel } from '../types/dbType';
 import { GetBlogMethods } from '../../blogs-module/infrastructure/repositories/blogs-query-repository';
-import { MetodsPostsDB } from '../repositories/postsRepositories';
-import { GetPostsMetodsDb } from '../repositories/posts-query-repository'
+import { MetodsPostsDB } from '../infrastructure/repositories/postsRepositories';
+import { GetPostsMetodsDb } from '../infrastructure/repositories/posts-query-repository'
 import { CommentViewModel } from '../../comments-module/types/comments-type';
 import { AuthRepoMethods } from '../../auth-module/repositories/auth-repositories';
 import {ServiceComments} from '../../comments-module/service/comments-service'
@@ -36,7 +36,8 @@ export class ServicePostsMethods {
             }
             await this.metodsPostsDB.createPost(baseUpdate)
         } else {
-            blogName = 'NOT FIND'
+            blogName = 'NOT FIND';
+            return null
         }
         return this.getPostsMetodsDb.getPost(id)
     }

@@ -5,7 +5,7 @@ import { postRouter } from './posts-module/routers/postRouts';
 import {usersRouter} from './users-module/routers/users-routers';
 import { SETTINGS } from './settings';
 import {methodsDB} from './videos-module/repositories/videosRepository'
-import {MetodsPostsDB} from './posts-module/repositories/postsRepositories'
+import {MetodsPostsDB} from './posts-module/infrastructure/repositories/postsRepositories'
 import {BlogsRepositories} from './blogs-module/infrastructure/repositories/blogsRepositories'
 import {container} from './composition-root';
 

@@ -1,7 +1,8 @@
-import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../types/dbType';
-import {postsCollection} from '../../db/mongoDb'
-import { PostsControllerststs } from '../controllers/postsControllers';
-import { QueryCommentsRepositories } from '../../comments-module/repositories/comments-query-repository';
+import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../../types/dbType';
+// import {postsCollection} from '../../../db/mongoDb'
+import { PostsControllerststs } from '../../controllers/postsControllers';
+import {Posts} from '../model/posts-module';
+import { QueryCommentsRepositories } from '../../../comments-module/repositories/comments-query-repository';
 import {injectable, inject } from 'inversify';
 
 const projection = {
@@ -21,13 +22,13 @@ export class GetPostsMetodsDb {
     constructor(public queryCommentsRepositories: QueryCommentsRepositories) {}
     
     async getAll(filter: GetQueryPosts): Promise<PaginatorPostViewModel> { 
-        const totalCaunt = await postsCollection.countDocuments({});
-        let searchItems = await postsCollection
-        .find({}, { projection: projection })
-        .sort([filter.sortBy!, filter.sortDirection!])
+        const totalCaunt: number = await Posts.countDocuments({});
+        let searchItems = await Posts
+        .find({})
+        .select(projection)
+        .sort([[filter.sortBy!, filter.sortDirection!]])
         .skip((filter.pageNumber! - 1) * filter.pageSize!)
         .limit(filter.pageSize!)
-        .toArray();
 
         let result: PaginatorPostViewModel = {
             pagesCount: Math.ceil(totalCaunt/filter.pageSize!), // сколько всего страниц
@@ -41,17 +42,18 @@ export class GetPostsMetodsDb {
     }
 
     async getPost(id: string) {
-        return await postsCollection.findOne({id}, { projection: projection })
+        return await Posts.findOne({id}).select(projection).lean();
     }
 
     async getAllPostsForBlog(id: string, filter: GetQueryPosts): Promise<PaginatorPostViewModel> {
-        let searchItems = await postsCollection.find({blogId:id}, { projection: projection })
-        .sort([filter.sortBy!, filter.sortDirection!])
+        let searchItems = await Posts.find({blogId:id})
+        .select(projection)
+        .sort([[filter.sortBy!, filter.sortDirection!]])
         .skip((filter.pageNumber! - 1) * filter.pageSize!)
         .limit(filter.pageSize!)
-        .toArray();
+        .lean();
 
-        const totalCaunt = await postsCollection.countDocuments({blogId:id});
+        const totalCaunt: number = await Posts.countDocuments({blogId:id});
 
         let result: PaginatorPostViewModel = {
             pagesCount: Math.ceil(totalCaunt/filter.pageSize!), // сколько всего страниц
@@ -64,8 +66,7 @@ export class GetPostsMetodsDb {
     }
 
     async getAllCommentsByPostId(postId: string, filter: GetQueryPosts) {
-        const result = await this.queryCommentsRepositories.getAllComments(postId, filter)
-        return result;
+        return await this.queryCommentsRepositories.getAllComments(postId, filter);
     }
 
 }

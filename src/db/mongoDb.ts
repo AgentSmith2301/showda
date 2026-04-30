@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 
 let client: MongoClient;
 
-let postsCollection: Collection<PostViewModel> ;
+// let postsCollection: Collection<PostViewModel> ;
 // let blogsCollection: Collection<BlogViewModel> ; 
 let usersCollection: Collection<UserViewModelDB> ; 
 let commentsCollection: Collection<CommentPostModel> ; 
@@ -22,7 +22,7 @@ async function runFromDB(url = SETTINGS.MONGO_URL) {
         await mongoose.connect(url, { dbName: SETTINGS.DB_NAME }); // подключаемся к базе данных через mongoose
         
         // TODO перенести все схемы в отдельные файлы и импортировать их сюда (infrastructure) 
-        postsCollection = client.db(SETTINGS.DB_NAME).collection<PostViewModel>("posts"); 
+        // postsCollection = client.db(SETTINGS.DB_NAME).collection<PostViewModel>("posts"); 
         
         usersCollection = client.db(SETTINGS.DB_NAME).collection<UserViewModelDB>("users");
         commentsCollection = client.db(SETTINGS.DB_NAME).collection<CommentPostModel>("comments"); 
@@ -42,6 +42,8 @@ async function runFromDB(url = SETTINGS.MONGO_URL) {
     } 
 }
 
-export {postsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
+// export {postsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
+export {usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
+
 
 

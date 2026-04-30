@@ -9,9 +9,9 @@ const postsControllers = container.get(PostsControllerststs); // получае�
 export const postRouter = Router();
 postRouter.get('/', objectValidateMetods.postsQueryValidation, postsControllers.getAllpostsController.bind(postsControllers))
 postRouter.get('/:id', postsControllers.getPostByIdController.bind(postsControllers))
-postRouter.delete('/:id', checkAuthorization, postsControllers.deletePostByIdController.bind(postsControllers))
 postRouter.post('/', checkAuthorization, objectValidateMetods.postReqvestbodyValPosts, postsControllers.createPostConrtoller.bind(postsControllers))
 postRouter.put('/:id', checkAuthorization, objectValidateMetods.postReqvestbodyValPosts, postsControllers.changePostById.bind(postsControllers))
+postRouter.delete('/:id', checkAuthorization, postsControllers.deletePostByIdController.bind(postsControllers))
 
 postRouter.post('/:postId/comments', bearerAuthorization, objectValidateMetods.postComments, postsControllers.postCommentsByPostId.bind(postsControllers))
 postRouter.get('/:postId/comments', objectValidateMetods.searchCommentsWithIdPosts, postsControllers.getAllCommentsByPostId.bind(postsControllers))

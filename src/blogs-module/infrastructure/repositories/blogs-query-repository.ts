@@ -1,6 +1,6 @@
 import { BlogInputModel, BlogViewModel, GetQueryBlogs, PaginatorBlogViewModel } from '../../types/dbType';
 import {Blogs} from '../model/blogs-model';
-import {GetPostsMetodsDb} from '../../../posts-module/repositories/posts-query-repository';
+import {GetPostsMetodsDb} from '../../../posts-module/infrastructure/repositories/posts-query-repository';
 import {injectable, inject} from 'inversify';
 import {SETTINGS} from '../../../settings'
 
@@ -15,10 +15,14 @@ const projection = {
     isMembership: 1,
 }
 
+
+
 @injectable()
 export class GetBlogMethods {
 
-    constructor(public getPostsMetodsDb: GetPostsMetodsDb,  @inject(SETTINGS.TYPES.blogsModel) public blogModel : typeof Blogs) {}
+    constructor(
+        public getPostsMetodsDb: GetPostsMetodsDb,  // TODO нужено внедрить Модуль для постов
+        @inject(SETTINGS.TYPES.blogsModel) public blogModel : typeof Blogs) {}
 
     async getAll(query: GetQueryBlogs ):Promise<PaginatorBlogViewModel> {
         let generateQuery: any = {};
@@ -27,10 +31,11 @@ export class GetBlogMethods {
         let sortDirection = query.sortDirection!;
 
         // кол-во документов по фильтру
-        const totalCount = await Blogs.countDocuments(generateQuery);
+        const totalCount = await this.blogModel.countDocuments(generateQuery);
 
-        let filter = await Blogs.find(generateQuery)
+        let filter = await this.blogModel.find(generateQuery)
             .select(projection)
+            // .select("-_id description id name websiteUrl createdAt isMembership")
             .sort({[sort]: sortDirection})
             .skip((query.pageNumber! - 1) * query.pageSize!)
             .limit(query.pageSize!)
@@ -47,12 +52,12 @@ export class GetBlogMethods {
     }
 
     async getBlog(id: string): Promise<BlogViewModel | null> {
-        return await this.blogModel.findOne({id}).select(projection)
+        return await this.blogModel.findOne({id}).select(projection).lean();
+
     }
 
     async getAllPostsFromBlogId(blogId: string, filter: any) {
-        let result = await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
-        return result;
+        return await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
     }
 }
 

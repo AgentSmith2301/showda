@@ -6,8 +6,8 @@ import {Blogs} from './blogs-module/infrastructure/model/blogs-model'
 
 import {PostsControllerststs} from './posts-module/controllers/postsControllers';
 import {ServicePostsMethods} from './posts-module/service/posts-service';
-import {MetodsPostsDB} from './posts-module/repositories/postsRepositories';
-import {GetPostsMetodsDb} from './posts-module/repositories/posts-query-repository';
+import {MetodsPostsDB} from './posts-module/infrastructure/repositories/postsRepositories';
+import {GetPostsMetodsDb} from './posts-module/infrastructure/repositories/posts-query-repository';
 
 import {AuthController} from './auth-module/controllers/auth-controller';
 import {AuthServiceMethods} from './auth-module/service/auth-service';

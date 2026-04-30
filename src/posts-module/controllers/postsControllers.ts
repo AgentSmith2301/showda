@@ -1,7 +1,7 @@
 import {Response, Request, NextFunction} from 'express';
 import {castomError} from '../../errors/castomErrorsFromValidate'
 import {ServicePostsMethods} from '../service/posts-service';
-import {GetPostsMetodsDb} from '../repositories/posts-query-repository'
+import {GetPostsMetodsDb} from '../infrastructure/repositories/posts-query-repository'
 import {validationResult} from 'express-validator'
 import {GetQueryPosts} from '../types/dbType';
 import {jwtService} from '../../auth-module/application/jwt-service'
@@ -71,7 +71,7 @@ export class PostsControllerststs {
         
         const checkIdBlog = await this.blogsService.checkId(req.body.blogId)
         if(checkIdBlog) {  // если id блогера найдено
-            const result = await this.servicePostsMethods.createPost(req.body);
+            const result = await this.servicePostsMethods.createPost(req.body); // lian() нужно попробовать 
             res.status(201).send(result)
             return
         } else { // если не нашли id блогера то ошибка
