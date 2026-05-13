@@ -1,8 +1,8 @@
-import {UsersRepoMethods} from '../repositories/users-repositories';
+import {UsersRepoMethods} from '../infrastructure/repositories/users-repositories';
 import { ConfirmationInfo, CreateUserData, Paginator, SearchTermUsers, UserByTerm, UserInputModel, UserViewModel, UserViewModelDB, SearchObject, User_info_From_Busines } from '../types/users-type';
 import {CastomErrors} from '../../errors/castomErrorsObject';
 import { InsertOneResult, WithId } from 'mongodb';
-import {queryUserRepositories} from '../repositories/query-Repositories';
+import {queryUserRepositories} from '../infrastructure/repositories/query-Repositories';
 import bcrypt from 'bcrypt';
 // import { LoginInputModel } from '../types/users-type';
 import { LoginInputModel } from '../../auth-module/types/auth-type';
@@ -83,12 +83,11 @@ export class UsersServiceMethods {
             }
         }
 
-        const result = await this.usersRepoMethods.createUser(newUserData);
-        if(result.acknowledged === true) {
-            const userById = await queryUserRepositories.getUsersById(result.insertedId.toString());
-            return userById
-        } else {
+        const result: UserViewModel | false  = await this.usersRepoMethods.createUser(newUserData);
+        if(result === false) {
             throw new Error(`{errorsMessages: [{message: 'something went wrong , this is a program error', field: '😡'}]}`)
+        } else {
+            return result
         }
     }
 
@@ -200,6 +199,8 @@ export class UsersServiceMethods {
     }
 
 }
+
+
 
 
 

@@ -1,7 +1,7 @@
-import { usersCollection } from "../../db/mongoDb";
+import { usersCollection } from "../../../db/mongoDb";
 import {ObjectId, WithId} from 'mongodb';
-import { ConfirmationInfo, SearchTermUsers, User_info_From_Busines, UserViewModel, UserViewModelDB } from "../types/users-type";
-import {SearchObject} from '../types/users-type'
+import { ConfirmationInfo, SearchTermUsers, User_info_From_Busines, UserViewModel, UserViewModelDB } from "../../types/users-type";
+import {SearchObject} from '../../types/users-type'
 
 export const queryUserRepositories = {
     

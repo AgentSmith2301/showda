@@ -8,12 +8,12 @@ import { auth_Query_RepoMethods } from '../repositories/auth-query-repositories'
 // import { randomUUID } from 'crypto';
 import {v4} from 'uuid'
 // import {addHours} from 'date-fns'
-import { UsersRepoMethods } from '../../users-module/repositories/users-repositories';
+import { UsersRepoMethods } from '../../users-module/infrastructure/repositories/users-repositories';
 import { CreateUserData, User_info_From_Busines } from '../../users-module/types/users-type';
 import { sendEmail } from '../adapters/nodemailer-adapter';
 import { SETTINGS } from '../../settings';
 import { UsersServiceMethods } from '../../users-module/service/users-service';
-import { queryUserRepositories } from '../../users-module/repositories/query-Repositories';
+import { queryUserRepositories } from '../../users-module/infrastructure/repositories/query-Repositories';
 import { nodemailer_Managers } from '../managers/nodemailer-managers';
 import {jwtService} from '../application/jwt-service'
 import { ObjectId } from 'mongodb';

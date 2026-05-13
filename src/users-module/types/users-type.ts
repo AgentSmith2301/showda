@@ -4,7 +4,6 @@ export interface UserInputModel {
     login: string;
     password: string;
     email: string;
-
 } 
 
 export interface UserViewModel {
@@ -21,7 +20,7 @@ export interface UserViewModelDB {
     email?: string;
     hash: string;
     salt: string;
-    createdAt?: string;
+    createdAt?: string; // data
     emailConfirmation?: {   
         confirmationCode: string; 
         expirationDate: Date; 

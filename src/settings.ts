@@ -21,6 +21,7 @@ export const SETTINGS = {
     TYPES: {
         blogsModel: Symbol.for('blogsModel'),
         postsModel: Symbol.for('postsModel'),
+        usersModel: Symbol.for('usersModel'),
     }
 }
 

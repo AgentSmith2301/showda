@@ -9,7 +9,7 @@ import {MetodsPostsDB} from './posts-module/infrastructure/repositories/postsRep
 import {BlogsRepositories} from './blogs-module/infrastructure/repositories/blogsRepositories'
 import {container} from './composition-root';
 
-import {UsersRepoMethods} from './users-module/repositories/users-repositories';
+import {UsersRepoMethods} from './users-module/infrastructure/repositories/users-repositories';
 import { authRouter } from './auth-module/router/auth-router'
 import {commentsRouter} from './comments-module/routers/comments-router'
 import { CommentsRepositories } from './comments-module/repositories/comments-repository';
