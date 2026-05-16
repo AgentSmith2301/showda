@@ -1,4 +1,3 @@
-import {usersCollection} from "../../../db/mongoDb";
 import {ObjectId, WithId} from 'mongodb';
 import { CreateUserData, UserInputModel, UserViewModel, UserViewModelDB } from "../../types/users-type";
 import {SETTINGS} from '../../../settings'

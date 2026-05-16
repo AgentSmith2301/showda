@@ -4,7 +4,7 @@ import {AuthRepoMethods} from '../repositories/auth-repositories'
 import bcrypt from 'bcrypt';
 import {Result} from '../../types/resultObject-type'
 import { ResultStatus } from '../../types/resultStatus-enum';
-import { auth_Query_RepoMethods } from '../repositories/auth-query-repositories';
+import { Auth_Query_RepoMethods } from '../repositories/auth-query-repositories';
 // import { randomUUID } from 'crypto';
 import {v4} from 'uuid'
 // import {addHours} from 'date-fns'
@@ -13,7 +13,7 @@ import { CreateUserData, User_info_From_Busines } from '../../users-module/types
 import { sendEmail } from '../adapters/nodemailer-adapter';
 import { SETTINGS } from '../../settings';
 import { UsersServiceMethods } from '../../users-module/service/users-service';
-import { queryUserRepositories } from '../../users-module/infrastructure/repositories/query-Repositories';
+import { QueryUserRepositories } from '../../users-module/infrastructure/repositories/query-Repositories';
 import { nodemailer_Managers } from '../managers/nodemailer-managers';
 import {jwtService} from '../application/jwt-service'
 import { ObjectId } from 'mongodb';
@@ -30,8 +30,10 @@ export class AuthServiceMethods {
     
     constructor(
         @inject(AuthRepoMethods) public authRepoMethods: AuthRepoMethods,
+        @inject(Auth_Query_RepoMethods) public authQueryRepoMethods: Auth_Query_RepoMethods,
         @inject(UsersServiceMethods) public usersServiceMethods: UsersServiceMethods,
-        @inject(UsersRepoMethods) public usersRepoMethods: UsersRepoMethods
+        @inject(UsersRepoMethods) public usersRepoMethods: UsersRepoMethods,
+        @inject(QueryUserRepositories) public queryUserRepositories: QueryUserRepositories
 
     ) {}
 

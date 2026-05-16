@@ -11,7 +11,7 @@ let client: MongoClient;
 
 // let postsCollection: Collection<PostViewModel> ;
 // let blogsCollection: Collection<BlogViewModel> ; 
-let usersCollection: Collection<UserViewModelDB> ; 
+// let usersCollection: Collection<UserViewModelDB> ; 
 let commentsCollection: Collection<CommentPostModel> ; 
 let sessionsCollection: Collection<Sessions_Info>;
 let apiRequestsCollection: Collection<API_Info>;
@@ -24,12 +24,12 @@ async function runFromDB(url = SETTINGS.MONGO_URL) {
         // TODO перенести все схемы в отдельные файлы и импортировать их сюда (infrastructure) 
         // postsCollection = client.db(SETTINGS.DB_NAME).collection<PostViewModel>("posts"); 
         
-        usersCollection = client.db(SETTINGS.DB_NAME).collection<UserViewModelDB>("users");
+        // usersCollection = client.db(SETTINGS.DB_NAME).collection<UserViewModelDB>("users");
         commentsCollection = client.db(SETTINGS.DB_NAME).collection<CommentPostModel>("comments"); 
         sessionsCollection = client.db(SETTINGS.DB_NAME).collection<Sessions_Info>('sessions');
         apiRequestsCollection = client.db(SETTINGS.DB_NAME).collection<API_Info>('apiRequests');
 
-        await apiRequestsCollection.createIndex({date:1}, {expireAfterSeconds: 600})
+        await apiRequestsCollection.createIndex({date:1}, {expireAfterSeconds: 600}) // 600
         await sessionsCollection.createIndex({revokedAt: 1}, {expireAfterSeconds: 0})
         console.log('🫵  ты подключился к базе данных');
         return true; // для функции которая экспортирует эту функцию , что бы она обработала 
@@ -43,7 +43,7 @@ async function runFromDB(url = SETTINGS.MONGO_URL) {
 }
 
 // export {postsCollection, usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
-export {usersCollection, commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
+export {commentsCollection, runFromDB, client, sessionsCollection, apiRequestsCollection} 
 
 
 

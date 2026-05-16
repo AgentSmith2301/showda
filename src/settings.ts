@@ -22,6 +22,7 @@ export const SETTINGS = {
         blogsModel: Symbol.for('blogsModel'),
         postsModel: Symbol.for('postsModel'),
         usersModel: Symbol.for('usersModel'),
+        commentsModel: Symbol.for('commentsModel'),
     }
 }
 

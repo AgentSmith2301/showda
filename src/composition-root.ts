@@ -15,6 +15,7 @@ import {GetPostsMetodsDb} from './posts-module/infrastructure/repositories/posts
 import {AuthController} from './auth-module/controllers/auth-controller';
 import {AuthServiceMethods} from './auth-module/service/auth-service';
 import {AuthRepoMethods} from './auth-module/repositories/auth-repositories';
+import {Auth_Query_RepoMethods} from './auth-module/repositories/auth-query-repositories';
 
 import {UsersController} from './users-module/controllers/users-controllers';
 import {UsersServiceMethods} from './users-module/service/users-service';
@@ -27,6 +28,8 @@ import {QueryCommentsRepositories} from './comments-module/repositories/comments
 
 import {SETTINGS} from './settings'
 import {Container} from 'inversify';  
+import { QueryUserRepositories } from './users-module/infrastructure/repositories/query-Repositories';
+
 
 export const container = new Container();
 
@@ -34,6 +37,7 @@ container.bind(CommentsController).toSelf();
 container.bind(ServiceComments).toSelf();
 container.bind(CommentsRepositories).toSelf();
 container.bind(QueryCommentsRepositories).toSelf();
+container.bind(SETTINGS.TYPES.commentsModel).toConstantValue(Users); 
 
 container.bind(BlogsControllers).toSelf();
 container.bind(BlogsService).toSelf();
@@ -49,11 +53,13 @@ container.bind(SETTINGS.TYPES.postsModel).toConstantValue(Posts);
 
 container.bind(AuthController).toSelf()
 container.bind(AuthServiceMethods).toSelf()
+container.bind(Auth_Query_RepoMethods).toSelf()
 container.bind(AuthRepoMethods).toSelf()
 
 container.bind(UsersController).toSelf()
 container.bind(UsersServiceMethods).toSelf()
 container.bind(UsersRepoMethods).toSelf()
+container.bind(QueryUserRepositories).toSelf();
 container.bind(SETTINGS.TYPES.usersModel).toConstantValue(Users);
 
 

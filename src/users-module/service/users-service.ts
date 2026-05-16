@@ -2,7 +2,7 @@ import {UsersRepoMethods} from '../infrastructure/repositories/users-repositorie
 import { ConfirmationInfo, CreateUserData, Paginator, SearchTermUsers, UserByTerm, UserInputModel, UserViewModel, UserViewModelDB, SearchObject, User_info_From_Busines } from '../types/users-type';
 import {CastomErrors} from '../../errors/castomErrorsObject';
 import { InsertOneResult, WithId } from 'mongodb';
-import {queryUserRepositories} from '../infrastructure/repositories/query-Repositories';
+import {QueryUserRepositories} from '../infrastructure/repositories/query-Repositories';
 import bcrypt from 'bcrypt';
 // import { LoginInputModel } from '../types/users-type';
 import { LoginInputModel } from '../../auth-module/types/auth-type';
@@ -13,7 +13,10 @@ import { injectable, inject } from 'inversify';
 
 @injectable()
 export class UsersServiceMethods {
-    constructor(@inject(UsersRepoMethods) public usersRepoMethods: UsersRepoMethods) {}
+    constructor(
+        @inject(UsersRepoMethods) public usersRepoMethods: UsersRepoMethods,
+        @inject(QueryUserRepositories) public queryUserRepositories: QueryUserRepositories
+    ) {}
 
     async deleteAllUsers(): Promise<void> {
         await this.usersRepoMethods.deleteAll()
@@ -93,7 +96,7 @@ export class UsersServiceMethods {
 
     async deleteUserById(id: string): Promise<boolean> {
 
-        const findId = await queryUserRepositories.checkUserById(id);
+        const findId = await this.queryUserRepositories.checkUserById(id);
 
         if(!findId) return false
         const result =  await this.usersRepoMethods.deleteUserById(id);
@@ -105,8 +108,8 @@ export class UsersServiceMethods {
     }
     
     async getUsersByTerm(filter: SearchTermUsers): Promise<UserByTerm> {
-        const cauntDocument = await queryUserRepositories.countDocuments(filter.searchLoginTerm, filter.searchEmailTerm)
-        const result = await queryUserRepositories.getUsersByTerm(filter)
+        const cauntDocument = await this.queryUserRepositories.countDocuments(filter.searchLoginTerm, filter.searchEmailTerm)
+        const result = await this.queryUserRepositories.getUsersByTerm(filter)
         let mapingData: UserViewModel[] = [];
 
         
@@ -131,7 +134,7 @@ export class UsersServiceMethods {
     }
 
     async trustedCode(code: string):Promise<ConfirmationInfo | null> {
-        return await queryUserRepositories.confirm_Code(code);
+        return await this.queryUserRepositories.confirm_Code(code);
     }
 
     async confirmedDane(code: string): Promise<boolean> {
@@ -145,7 +148,7 @@ export class UsersServiceMethods {
     }
 
     async getUserById(id: string): Promise<{confirmationCode: string; email: string} | null> {
-        const anser: WithId<UserViewModelDB> | null = await queryUserRepositories.checkUserById(id);
+        const anser: WithId<UserViewModelDB> | null = await this.queryUserRepositories.checkUserById(id);
         
         if(!anser) {
             return null
@@ -168,11 +171,11 @@ export class UsersServiceMethods {
     }
 
     async get_User_By_Field(field: SearchObject): Promise<User_info_From_Busines | null> {
-        return await queryUserRepositories.search_From_Field(field);
+        return await this.queryUserRepositories.search_From_Field(field);
     }
 
     async check_And_Update_Password(password: string, code: string): Promise<string> {
-        const result = await queryUserRepositories.find_By_ConfirmationCode({confirmationCode: code});
+        const result = await this.queryUserRepositories.find_By_ConfirmationCode({confirmationCode: code});
         if(!result) {
             return 'code is not valid'
         }
