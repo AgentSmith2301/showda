@@ -1,4 +1,4 @@
-import mongoose, {HydratedDocument} from 'mongoose'
+import mongoose from 'mongoose'
 import {blogsForSchema} from './blogs-schema'
 import { BlogViewModel } from '../../types/dbType';
 

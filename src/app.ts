@@ -12,7 +12,7 @@ import {container} from './composition-root';
 import {UsersRepoMethods} from './users-module/infrastructure/repositories/users-repositories';
 import { authRouter } from './auth-module/router/auth-router'
 import {commentsRouter} from './comments-module/routers/comments-router'
-import { CommentsRepositories } from './comments-module/repositories/comments-repository';
+import { CommentsRepositories } from './comments-module/infrastructure/repositories/comments-repository';
 import cookieParser from 'cookie-parser';
 import {securityRouter} from './securityDevices/router/securityDevicesRouter';
 import { AuthRepoMethods } from './auth-module/repositories/auth-repositories';

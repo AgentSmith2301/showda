@@ -1,5 +1,5 @@
-import { QueryCommentsRepositories } from "../repositories/comments-query-repository";
-import { CommentsRepositories } from "../repositories/comments-repository";
+import { QueryCommentsRepositories } from "../infrastructure/repositories/comments-query-repository";
+import { CommentsRepositories } from "../infrastructure/repositories/comments-repository";
 import { CommentPostModel, CommentViewModel } from "../types/comments-type";
 import {Result} from '../../types/resultObject-type'
 import { ResultStatus } from "../../types/resultStatus-enum";
@@ -16,8 +16,8 @@ export class ServiceComments {
     async createComment(data: CommentPostModel): Promise<CommentViewModel | null>  {
         const result = await this.commentsRepositories.createComment(data);
         let answer: null | CommentViewModel ;
-        if(result.acknowledged) {
-            answer = await this.queryCommentsRepositories.getCommentByIdRepositories(result.insertedId.toString())
+        if(result) {
+            answer = await this.queryCommentsRepositories.getCommentByIdRepositories(result._id!.toString())
             
         } else {
             answer = null

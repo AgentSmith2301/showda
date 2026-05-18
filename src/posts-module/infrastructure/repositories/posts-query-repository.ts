@@ -2,7 +2,7 @@ import { GetQueryPosts, PaginatorPostViewModel, PostViewModel } from '../../type
 // import {postsCollection} from '../../../db/mongoDb'
 import { PostsControllerststs } from '../../controllers/postsControllers';
 import {Posts} from '../model/posts-module';
-import { QueryCommentsRepositories } from '../../../comments-module/repositories/comments-query-repository';
+import { QueryCommentsRepositories } from '../../../comments-module/infrastructure/repositories/comments-query-repository';
 import {SETTINGS} from '../../../settings';
 import {injectable, inject } from 'inversify';
 

@@ -1,8 +1,8 @@
 import {Response, Request} from 'express'
-import { QueryCommentsRepositories } from '../repositories/comments-query-repository'
+import { QueryCommentsRepositories } from '../infrastructure/repositories/comments-query-repository'
 import { ObjectId } from 'mongodb'
 import { CommentViewModel } from '../types/comments-type' // CastomRequest
-import { CommentsRepositories } from '../repositories/comments-repository'
+import { CommentsRepositories } from '../infrastructure/repositories/comments-repository'
 import { ServiceComments } from '../service/comments-service'
 import { jwtService } from '../../auth-module/application/jwt-service'
 import { validationResult } from 'express-validator'

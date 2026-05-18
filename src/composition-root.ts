@@ -6,6 +6,7 @@ import {GetBlogMethods} from './blogs-module/infrastructure/repositories/blogs-q
 import {Blogs} from './blogs-module/infrastructure/model/blogs-model';
 import {Posts} from './posts-module/infrastructure/model/posts-module';
 import {Users} from './users-module/infrastructure/model/users-model';
+import {Comments} from './comments-module/infrastructure/model/comments-model';
 
 import {PostsControllerststs} from './posts-module/controllers/postsControllers';
 import {ServicePostsMethods} from './posts-module/service/posts-service';
@@ -21,10 +22,10 @@ import {UsersController} from './users-module/controllers/users-controllers';
 import {UsersServiceMethods} from './users-module/service/users-service';
 import {UsersRepoMethods} from './users-module/infrastructure/repositories/users-repositories';
 
-import {CommentsRepositories} from './comments-module/repositories/comments-repository';
+import {CommentsRepositories} from './comments-module/infrastructure/repositories/comments-repository';
 import {ServiceComments} from './comments-module/service/comments-service';
 import {CommentsController} from './comments-module/controllers/comments-controller';
-import {QueryCommentsRepositories} from './comments-module/repositories/comments-query-repository';
+import {QueryCommentsRepositories} from './comments-module/infrastructure/repositories/comments-query-repository';
 
 import {SETTINGS} from './settings'
 import {Container} from 'inversify';  
@@ -37,7 +38,7 @@ container.bind(CommentsController).toSelf();
 container.bind(ServiceComments).toSelf();
 container.bind(CommentsRepositories).toSelf();
 container.bind(QueryCommentsRepositories).toSelf();
-container.bind(SETTINGS.TYPES.commentsModel).toConstantValue(Users); 
+container.bind(SETTINGS.TYPES.commentsModel).toConstantValue(Comments); 
 
 container.bind(BlogsControllers).toSelf();
 container.bind(BlogsService).toSelf();
