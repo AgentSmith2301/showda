@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import {rateLimiteRepositories} from '../repositories/rateLimiteRepositories' ;
+import {rateLimiteRepositories} from '../infrastructure/repositories/rateLimiteRepositories' ;
 
 export async function rateLimiteMiddleware(req: Request, res: Response, next: NextFunction) {
     let ip ;

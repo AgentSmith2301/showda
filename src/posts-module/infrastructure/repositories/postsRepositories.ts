@@ -1,7 +1,5 @@
 import { PostInputModel, PostViewModel } from '../../types/dbType';
-import {commentsCollection} from '../../../db/mongoDb' // postsCollection
 import {Posts} from '../model/posts-module';
-import { CommentPostModel, CommentViewModel } from '../../../comments-module/types/comments-type';
 import { injectable } from 'inversify';
 
 

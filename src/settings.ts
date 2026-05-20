@@ -23,6 +23,8 @@ export const SETTINGS = {
         postsModel: Symbol.for('postsModel'),
         usersModel: Symbol.for('usersModel'),
         commentsModel: Symbol.for('commentsModel'),
+        sessionsModel: Symbol.for('sessionsModel'),
+        apiRequestsModel: Symbol.for('apiRequestsModel')
     }
 }
 

@@ -3,7 +3,7 @@ import { GetBlogMethods } from '../../blogs-module/infrastructure/repositories/b
 import { MetodsPostsDB } from '../infrastructure/repositories/postsRepositories';
 import { GetPostsMetodsDb } from '../infrastructure/repositories/posts-query-repository'
 import { CommentViewModel } from '../../comments-module/types/comments-type';
-import { AuthRepoMethods } from '../../auth-module/repositories/auth-repositories';
+import { AuthRepoMethods } from '../../auth-module/infrastructure/repositories/auth-repositories';
 import {ServiceComments} from '../../comments-module/service/comments-service'
 import {injectable, inject } from 'inversify'; 
 

@@ -15,7 +15,7 @@ import {commentsRouter} from './comments-module/routers/comments-router'
 import { CommentsRepositories } from './comments-module/infrastructure/repositories/comments-repository';
 import cookieParser from 'cookie-parser';
 import {securityRouter} from './securityDevices/router/securityDevicesRouter';
-import { AuthRepoMethods } from './auth-module/repositories/auth-repositories';
+import { AuthRepoMethods } from './auth-module/infrastructure/repositories/auth-repositories';
 import 'reflect-metadata';
 import { BlogsControllers } from './blogs-module/controllers/blogsControllers';
 

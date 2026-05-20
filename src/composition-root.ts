@@ -15,8 +15,9 @@ import {GetPostsMetodsDb} from './posts-module/infrastructure/repositories/posts
 
 import {AuthController} from './auth-module/controllers/auth-controller';
 import {AuthServiceMethods} from './auth-module/service/auth-service';
-import {AuthRepoMethods} from './auth-module/repositories/auth-repositories';
-import {Auth_Query_RepoMethods} from './auth-module/repositories/auth-query-repositories';
+import {AuthRepoMethods} from './auth-module/infrastructure/repositories/auth-repositories';
+import {Auth_Query_RepoMethods} from './auth-module/infrastructure/repositories/auth-query-repositories';
+import { api_Requests_Model } from './auth-module/infrastructure/model/api-RequestsModel';
 
 import {UsersController} from './users-module/controllers/users-controllers';
 import {UsersServiceMethods} from './users-module/service/users-service';
@@ -56,6 +57,7 @@ container.bind(AuthController).toSelf()
 container.bind(AuthServiceMethods).toSelf()
 container.bind(Auth_Query_RepoMethods).toSelf()
 container.bind(AuthRepoMethods).toSelf()
+container.bind(SETTINGS.TYPES.apiRequestsModel).toConstantValue(api_Requests_Model);
 
 container.bind(UsersController).toSelf()
 container.bind(UsersServiceMethods).toSelf()

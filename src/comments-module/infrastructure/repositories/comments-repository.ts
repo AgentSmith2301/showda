@@ -1,5 +1,3 @@
-// import { ObjectId, WithId } from 'mongodb';
-// import {commentsCollection} from '../../../db/mongoDb'
 import { CommentPostModel } from "../../types/comments-type";
 import mongoose from 'mongoose';
 import { SETTINGS } from '../../../settings';

@@ -1,8 +1,8 @@
-import {sessionsCollection } from "../../db/mongoDb"; //TODO доступ к коллекции usersCollection должн происходить через userService
-import {MeViewModel, Sessions_Info} from '../types/auth-type'
+import {sessionsCollection } from "../../../db/mongoDb"; //TODO доступ к коллекции usersCollection должн происходить через userService
+import {MeViewModel, Sessions_Info} from '../../types/auth-type'
 import { injectable, inject } from "inversify";
-import { SETTINGS } from "../../settings";
-import { Users } from "../../users-module/infrastructure/model/users-model";
+import { SETTINGS } from "../../../settings";
+import { Users } from "../../../users-module/infrastructure/model/users-model";
 import mongoose from 'mongoose';
 
 

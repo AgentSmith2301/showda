@@ -1,10 +1,10 @@
 import {APIErrorResult, CookieWithRefreshToken, LoginInputModel, MailInfo, MeViewModel, Sessions_Info, PayloadFromToken, LoginSuccessViewModel} from '../types/auth-type'
 import {Refresh_Session_Token} from '../../types/refreshTokenType'
-import {AuthRepoMethods} from '../repositories/auth-repositories'
+import {AuthRepoMethods} from '../infrastructure/repositories/auth-repositories'
 import bcrypt from 'bcrypt';
 import {Result} from '../../types/resultObject-type'
 import { ResultStatus } from '../../types/resultStatus-enum';
-import { Auth_Query_RepoMethods } from '../repositories/auth-query-repositories';
+import { Auth_Query_RepoMethods } from '../infrastructure/repositories/auth-query-repositories';
 // import { randomUUID } from 'crypto';
 import {v4} from 'uuid'
 // import {addHours} from 'date-fns'

@@ -1,8 +1,8 @@
-import { MeViewModel } from "../types/auth-type";
+import { MeViewModel } from "../../types/auth-type";
 import mongoose from 'mongoose';
-import {Users} from "../../users-module/infrastructure/model/users-model";
+import {Users} from "../../../users-module/infrastructure/model/users-model";
 import { injectable, inject } from "inversify";
-import {SETTINGS} from "../../settings";
+import {SETTINGS} from "../../../settings";
 
 @injectable()
 export class Auth_Query_RepoMethods {

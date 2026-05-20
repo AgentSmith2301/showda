@@ -1,10 +1,9 @@
-import {apiRequestsCollection } from "../../db/mongoDb";
-import { API_Info } from "../types/auth-type";
+import { api_Requests_Model } from "../../infrastructure/model/api-RequestsModel";
+import { API_Info } from "../../types/auth-type";
 
 export const rateLimiteRepositories = {
     async create_Url_Info(ip: string, url: string, dateTime: Date, body: any): Promise<void> {  //TODO  delete body
-        // TODO заменить коллекцию на монгус
-        await apiRequestsCollection.insertOne({IP: ip, URL: url, date: dateTime, body: body}) //TODO  delete body
+        await api_Requests_Model.create({IP: ip, URL: url, date: dateTime, body: body}) //TODO  delete body
 
     },
 
@@ -13,8 +12,7 @@ export const rateLimiteRepositories = {
         //                      👇 считаем ТОЛЬКО ЭТО
         // ────────────────┆════════════════╗
         //                -10s               NOW
-        // TODO заменить коллекцию на монгус
-        return await apiRequestsCollection.countDocuments({IP:ip, URL:url, date: {$gte: checkDate}}) 
+        return await api_Requests_Model.countDocuments({IP:ip, URL:url, date: {$gte: checkDate}}) 
     },
 };
 
