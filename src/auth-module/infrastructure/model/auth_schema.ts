@@ -9,10 +9,9 @@ export const schema_For_Sessions = {
     userId: { type: String, required: true },
     deviceId: { type: String, required: true },
     iat: { type: Date, required: true },
-    exp: { type: Date, required: true },
+    exp: { type: Date, required: true, expires: 0 }, // expires: 0 - удаление документа сразу после истечения срока действия
     deviceName: { type: String, required: true },
     ip: { type: String, required: true }
 }
-
 
 
