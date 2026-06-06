@@ -297,7 +297,7 @@ const likeStatusValidator = [
     body('likeStatus')
         .notEmpty().withMessage('likeStatus can not to by empty')
         .isString().withMessage('likeStatus not a string')
-        .isIn(["LIKE", "DISLIKE", "NONE"]).withMessage('likeStatus is a not a valid value')
+        .isIn(["Like", "Dislike", "None"]).withMessage('likeStatus is a not a valid value')
 ];
 
 export const objectValidateMetods = {

@@ -6,9 +6,9 @@ export interface LikesInfoViewModel {
 };
 
 export enum LikeStatus {
-    LIKE = "LIKE",
-    DISLIKE = "DISLIKE",
-    NONE = "NONE"
+    LIKE = "Like",
+    DISLIKE = "Dislike",
+    NONE = "None"
 }
 
 export interface LikeInputModel {
