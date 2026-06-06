@@ -1,16 +1,17 @@
 import mongoose from 'mongoose';
 import {GetQueryPosts} from '../../../posts-module/types/dbType';
-import {CommentViewModel, PaginatorCommentViewModel } from '../../types/comments-type';
+import {CommentPostModel, CommentViewModel, PaginatorCommentViewModel } from '../../types/comments-type';
 import {Comments} from '../model/comments-model';
 import { injectable, inject } from "inversify";
 import { SETTINGS } from '../../../settings';
+import { LikeStatus } from '../../../like-module/type/like-types';
 
 @injectable()
 export class QueryCommentsRepositories {
     
     constructor(@inject(SETTINGS.TYPES.commentsModel) public commentsModel: typeof Comments) {}
 
-    async getCommentByIdRepositories(id: string): Promise<CommentViewModel | null> {
+    async getCommentByIdRepositories(id: string): Promise<CommentPostModel | null> {
     
         if(!mongoose.Types.ObjectId.isValid(id)) {
             return null
@@ -20,23 +21,14 @@ export class QueryCommentsRepositories {
         let result = await this.commentsModel.findOne({_id: objectId});
 
         if(result) {
-            let maping = {
-                id: result!._id.toString() ,
-                content: result!.content,
-                commentatorInfo: {
-                    userId: result!.commentatorInfo.userId,
-                    userLogin: result!.commentatorInfo.userLogin
-                },
-                createdAt: result!.createdAt
-            }
-            return maping
+            return result.toObject();
         } else {
             return null
         }
         
     }
 
-    async getAllComments(postId: string, filter: GetQueryPosts) { 
+    async getAllComments(postId: string, filter: GetQueryPosts): Promise<PaginatorCommentViewModel> { 
         // кол-во комментариев к этому посту
         const totalCaunt = await this.commentsModel.countDocuments({postId: postId});
         let searchDocument = await this.commentsModel.find({postId: postId}, {projection: {postId: 0}})
@@ -46,7 +38,17 @@ export class QueryCommentsRepositories {
 
         let mapedDocument: CommentViewModel[] = [];
         searchDocument.forEach((item) => {
-            let filter = {id: item._id.toString(), content: item.content , commentatorInfo: item.commentatorInfo , createdAt: item.createdAt }
+            let filter = {
+                id: item._id.toString(),
+                content: item.content , 
+                commentatorInfo: item.commentatorInfo , 
+                createdAt: item.createdAt,
+                likesInfo: {
+                    likesCount: item.likesCount,
+                    dislikesCount: item.dislikesCount, 
+                    myStatus: LikeStatus.NONE // заглушка 
+                }
+            }
             mapedDocument.push(filter)
         })
 
@@ -55,7 +57,8 @@ export class QueryCommentsRepositories {
             page: filter.pageNumber!, // какая страница
             pageSize: filter.pageSize!,
             totalCount: totalCaunt,
-            items: mapedDocument
+            items: mapedDocument,
+
         };
 
         return result;

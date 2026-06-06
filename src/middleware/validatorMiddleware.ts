@@ -293,6 +293,13 @@ const newPassword = [
         .isString().withMessage('recoveryCode is not a string')
 ];
 
+const likeStatusValidator = [
+    body('likeStatus')
+        .notEmpty().withMessage('likeStatus can not to by empty')
+        .isString().withMessage('likeStatus not a string')
+        .isIn(["LIKE", "DISLIKE", "NONE"]).withMessage('likeStatus is a not a valid value')
+];
+
 export const objectValidateMetods = {
     postReqvestbodyValPosts,
     postAndPutReqvestbodyValBlogs,
@@ -311,6 +318,7 @@ export const objectValidateMetods = {
     confirmationCOde,
     emailResending,
     emailRecovery,
-    newPassword
+    newPassword,
+    likeStatusValidator
 }
 

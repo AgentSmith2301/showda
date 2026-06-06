@@ -27,16 +27,22 @@ import {CommentsRepositories} from './comments-module/infrastructure/repositorie
 import {ServiceComments} from './comments-module/service/comments-service';
 import {CommentsController} from './comments-module/controllers/comments-controller';
 import {QueryCommentsRepositories} from './comments-module/infrastructure/repositories/comments-query-repository';
+import { CommentQyeryService } from './comments-module/service/comment-query-service';
 
 import {SETTINGS} from './settings'
 import {Container} from 'inversify';  
 import { QueryUserRepositories } from './users-module/infrastructure/repositories/query-Repositories';
+
+import { LikeModel } from './like-module/infrastructure/model/like-model';
+import { LikeService } from './like-module/service/like-service';
+import { LikeReppositories } from './like-module/infrastructure/repositories/like-repositories';
 
 
 export const container = new Container();
 
 container.bind(CommentsController).toSelf();
 container.bind(ServiceComments).toSelf();
+container.bind(CommentQyeryService).toSelf();
 container.bind(CommentsRepositories).toSelf();
 container.bind(QueryCommentsRepositories).toSelf();
 container.bind(SETTINGS.TYPES.commentsModel).toConstantValue(Comments); 
@@ -66,6 +72,8 @@ container.bind(UsersRepoMethods).toSelf()
 container.bind(QueryUserRepositories).toSelf();
 container.bind(SETTINGS.TYPES.usersModel).toConstantValue(Users);
 
-
+container.bind(LikeService).toSelf();
+container.bind(LikeReppositories).toSelf();
+container.bind(SETTINGS.TYPES.likeModel).toConstantValue(LikeModel)
 
 

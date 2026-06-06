@@ -6,9 +6,9 @@ import {container} from '../../composition-root';
 const commentsController = container.get(CommentsController); // получаем экземпляр CommentsController из контейнера Inversify
 
 export const commentsRouter = Router();
-commentsRouter.put('/:comeentId', bearerAuthorization, objectValidateMetods.updateCommentsValidator, commentsController.updateCommentController.bind(commentsController))
+commentsRouter.put('/:commentId', bearerAuthorization, objectValidateMetods.updateCommentsValidator, commentsController.updateCommentController.bind(commentsController))
 commentsRouter.get('/:id', commentsController.getCommentByIdController.bind(commentsController))
-commentsRouter.delete('/:comeentId', bearerAuthorization, commentsController.deleteCommentByIdController.bind(commentsController))
-
+commentsRouter.delete('/:commentId', bearerAuthorization, commentsController.deleteCommentByIdController.bind(commentsController))
+commentsRouter.put('/:commentId/like-status', bearerAuthorization, objectValidateMetods.likeStatusValidator, commentsController.likeUnlikeCommentController.bind(commentsController))
 
 

@@ -2,7 +2,7 @@ import { PostInputModel, PostViewModel } from '../types/dbType';
 import { GetBlogMethods } from '../../blogs-module/infrastructure/repositories/blogs-query-repository';
 import { MetodsPostsDB } from '../infrastructure/repositories/postsRepositories';
 import { GetPostsMetodsDb } from '../infrastructure/repositories/posts-query-repository'
-import { CommentViewModel } from '../../comments-module/types/comments-type';
+import { CommentPostModel, CommentViewModel } from '../../comments-module/types/comments-type';
 import { AuthRepoMethods } from '../../auth-module/infrastructure/repositories/auth-repositories';
 import {ServiceComments} from '../../comments-module/service/comments-service'
 import {injectable, inject } from 'inversify'; 
@@ -60,7 +60,7 @@ export class ServicePostsMethods {
         const userData = await this.authRepoMethods.getUserById(userId);
         if(!userData) return null
 
-        const comentData =  {
+        const comentData: CommentPostModel =  {
             postId,
             content,
             commentatorInfo: 
@@ -68,7 +68,9 @@ export class ServicePostsMethods {
                     userId, 
                     userLogin: userData.login ,
                 },
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            likesCount: 0,
+            dislikesCount: 0
         }
 
         // создать коммент по посту

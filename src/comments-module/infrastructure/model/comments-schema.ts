@@ -5,7 +5,9 @@ export const comments_Schema = {
         userId: {type: String, required: true},
         userLogin: {type: String, required: true}
     },
-    createdAt: {type: String, required: true}
+    createdAt: {type: String, required: true},
+    likesCount: {type: Number, default: 0, required: true},
+    dislikesCount: {type: Number, default: 0, required: true}
 }
 
 

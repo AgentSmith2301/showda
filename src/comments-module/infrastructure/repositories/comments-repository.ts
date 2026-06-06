@@ -1,4 +1,4 @@
-import { CommentPostModel } from "../../types/comments-type";
+import { CommentPostModel, incrementLikeCountForComment } from "../../types/comments-type";
 import mongoose from 'mongoose';
 import { SETTINGS } from '../../../settings';
 import { Comments } from '../model/comments-model';
@@ -39,5 +39,31 @@ export class CommentsRepositories {
         const objectId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
         return await this.commentsModel.updateOne({_id: objectId}, {$set: {content: content}})
     }
+
+    async incrementLikeCount(id: string, likeStatus: incrementLikeCountForComment): Promise<boolean> {
+        const objectId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
+        const serchFild: string[] = Object.keys(likeStatus);
+        const firsFild: string = serchFild[0];
+        const data = await this.commentsModel.updateOne({_id: objectId}, {$inc: likeStatus})        
+        if(data.modifiedCount === 1 || data.acknowledged === true) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    async chengeLikeAndDislikeCount(id: string, likeStatus: incrementLikeCountForComment) {
+        const objectId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
+        const serchFild: string[] = Object.keys(likeStatus);
+        const firsFild: string = serchFild[0];
+        const lastFild: string = serchFild[1];
+        const data = await this.commentsModel.updateOne({_id: objectId, [firsFild] : { $gte: 0 }, [lastFild] : { $gte: 0 }}, {$inc: likeStatus})        
+        if(data.modifiedCount === 1 || data.acknowledged === true) {
+            return true
+        } else {
+            return false
+        }
+    }
+
 }
 
