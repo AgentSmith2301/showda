@@ -22,6 +22,7 @@ export class ServiceComments {
             answer = null
             
         } else {
+
             answer = {
                 id: result!._id.toString() ,
                 content: result!.content,
@@ -36,7 +37,8 @@ export class ServiceComments {
                     myStatus: LikeStatus.NONE
                 }
             }
-
+            // после создания ответа создаем вокумент лайка по дефолту
+            await this.likeService.likeOrDislikeCreaterService(result!.commentatorInfo.userId, answer.id)
         }
         return answer   
     }

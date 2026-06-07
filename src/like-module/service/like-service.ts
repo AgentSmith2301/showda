@@ -8,7 +8,7 @@ export class LikeService {
         @inject(LikeReppositories) public likeRepositories: LikeReppositories
     ) {}
 
-    async likeOrDislikeCreaterService(userId: string, commentId: string, likeStatus: string): Promise<LikeDB | null> {
+    async likeOrDislikeCreaterService(userId: string, commentId: string, likeStatus: string = 'None'): Promise<LikeDB | null> {
         return await this.likeRepositories.likeOrDislikeCreaterRepositories(userId, commentId, likeStatus);
         
     }
