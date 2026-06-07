@@ -87,13 +87,14 @@ export class ServiceComments {
         let directionCount: incrementLikeCountForComment = likeStatus === LikeStatus.LIKE ? {likesCount: 1} : {dislikesCount: 1}; 
         
         // если в базе DISLIKE/LIKE и пришел DISLIKE/LIKE (то же значение) , установить NONE , и уменьшить счетчик
-        if(likeInfoDB && likeInfoDB.myStatus === likeStatus) {
-            directionCount = likeStatus === LikeStatus.LIKE ? {likesCount: -1} : {dislikesCount: -1}
-            commentRepo = await this.commentsRepositories.incrementLikeCount(commentId, directionCount);
-            likeStatus = LikeStatus.NONE
-            likeService = await this.likeService.chengeLikeStatusService(userId, commentId, likeStatus)
+        // if(likeInfoDB && likeInfoDB.myStatus === likeStatus) {
+        //     directionCount = likeStatus === LikeStatus.LIKE ? {likesCount: -1} : {dislikesCount: -1}
+        //     commentRepo = await this.commentsRepositories.incrementLikeCount(commentId, directionCount);
+        //     likeStatus = LikeStatus.NONE
+        //     likeService = await this.likeService.chengeLikeStatusService(userId, commentId, likeStatus)
             
-        } else if (likeInfoDB && likeInfoDB.myStatus !== LikeStatus.NONE && likeInfoDB.myStatus !== likeStatus && likeStatus !== LikeStatus.NONE) {
+        // } else 
+        if (likeInfoDB && likeInfoDB.myStatus !== LikeStatus.NONE && likeInfoDB.myStatus !== likeStatus && likeStatus !== LikeStatus.NONE) {
             // если был DISLIKE/LIKE и ставим DISLIKE/LIKE , то нужно понизить счетчик по старому статусу и повысить по новому статусу
             directionCount = likeStatus === LikeStatus.LIKE ? {likesCount: 1, dislikesCount: -1} : {likesCount: -1, dislikesCount: 1}
             likeService = await this.likeService.chengeLikeStatusService(userId, commentId, likeStatus);
