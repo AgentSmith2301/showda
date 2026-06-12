@@ -6,6 +6,7 @@ import { CommentPostModel, CommentViewModel } from '../../comments-module/types/
 import { AuthRepoMethods } from '../../auth-module/infrastructure/repositories/auth-repositories';
 import {ServiceComments} from '../../comments-module/service/comments-service'
 import {injectable, inject } from 'inversify'; 
+import { CommentQyeryService } from '../../comments-module/service/comment-query-service';
 
 @injectable()
 export class ServicePostsMethods {
@@ -15,7 +16,8 @@ export class ServicePostsMethods {
         @inject(AuthRepoMethods) public authRepoMethods: AuthRepoMethods,
         @inject(GetBlogMethods) public getBlogMethods: GetBlogMethods,
         @inject(GetPostsMetodsDb) public getPostsMetodsDb: GetPostsMetodsDb,
-        @inject(ServiceComments) public serviceComments: ServiceComments
+        @inject(ServiceComments) public serviceComments: ServiceComments,
+        @inject(CommentQyeryService) public commentQueryService: CommentQyeryService
     ) {} // неявное внедрение класса
     
     async createPost(post: PostInputModel): Promise<PostViewModel | null> {
@@ -82,8 +84,8 @@ export class ServicePostsMethods {
         return await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
     }
 
-    // async findBlogInBlogService(blogId) {
-    //     await getBlogMethods
-    // }
+    async all_Comments_From_PostId(postId: string, filter: any) {
+        return await this.commentQueryService.getAllComments(postId, filter);
+    }
 
 }

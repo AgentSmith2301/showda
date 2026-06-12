@@ -8,6 +8,7 @@ import {jwtService} from '../../auth-module/application/jwt-service'
 import {BlogsService} from '../../blogs-module/service/blogs-service';
 
 import { injectable, inject } from 'inversify';
+import { PaginatorCommentViewModel } from '../../comments-module/types/comments-type';
 
 @injectable()
 export class PostsControllerststs {
@@ -170,11 +171,12 @@ export class PostsControllerststs {
             sortBy: req.query.sortBy!.toString() ,
             sortDirection: sortDirection
         }
+
+        const comments = await this.servicePostsMethods.all_Comments_From_PostId(req.params.postId as string, filter)
         
-        const comments = await this.getPostsMetodsDb.getAllCommentsByPostId(req.params.postId as string, filter)
+        // const comments: PaginatorCommentViewModel = await this.getPostsMetodsDb.getAllCommentsByPostId(req.params.postId as string, filter)
         res.status(200).send(comments)
         
-
     }
 
 }

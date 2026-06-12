@@ -91,7 +91,7 @@ export class CommentsController {
         const likeStatus: string = req.body.likeStatus;
         const commentId: string = req.params.commentId as string;
         const userId: string = req.userId!;
-        const result: Partial<Result> = await this.serviceComments.likeUnlike(userId, commentId, likeStatus);
+        const result: Partial<Result> = await this.serviceComments.likeOrDislikeService(userId, commentId, likeStatus);
 
         if(result.status === ResultStatus.NoContent) {
             res.sendStatus(resultStatusToHttpCode(ResultStatus.NoContent)) // 204

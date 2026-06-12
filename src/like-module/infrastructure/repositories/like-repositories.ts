@@ -27,6 +27,15 @@ export class LikeReppositories {
         }
     }    
 
+    async deleteDocumentRepositories(userId: string, commentId: string): Promise<boolean> {
+        const result: mongoose.mongo.DeleteResult = await this.likeModel.deleteOne({commentId: commentId, userId: userId});
+        if(result.deletedCount === 1) {
+            return true
+        } else {
+            return false
+        }
+    }
+
 }
 
 

@@ -21,6 +21,9 @@ export class LikeService {
         return await this.likeRepositories.chengeLikeStatusRepositories(userId, commentId, likeStatus);
     }
 
+    async deleteDocumentService(userId: string, commentId: string): Promise<boolean> {
+        return await this.likeRepositories.deleteDocumentRepositories(userId, commentId)
+    }
 
 }
 

@@ -21,7 +21,7 @@ export class CommentQyeryService {
             return null
         } else {
             const userId = comment.commentatorInfo.userId;
-            const likeUnlire: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(userId, id);
+            const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(userId, id);
             return {
                 id: comment._id!.toString(),
                 content: comment.content,
@@ -30,14 +30,46 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: comment.likesCount,
                     dislikesCount: comment.dislikesCount,
-                    myStatus: likeUnlire?.myStatus || LikeStatus.NONE
+                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE
                 }
             }
         }
     }
 
     async getAllComments(postId: string, filter: GetQueryPosts): Promise<PaginatorCommentViewModel> {
-        return await this.queryCommentsRepositories.getAllComments(postId, filter);
+        const commentsInfoDb: {totalCaunt: number, searchDocument: CommentPostModel[]} = await this.queryCommentsRepositories.getAllComments(postId, filter);
+
+        // после того как map пройдет по всем комментариям  и будет дожидаться завершения await на каждой итерации ,
+        // нужно исполььзовать Promise.all и передать ему массив промисов , который вернет map, 
+        // тогда мы будем уверены что все промисы завершены и получим массив с результатами всех промисов
+        const mapedDocument = await Promise.all(commentsInfoDb.searchDocument.map(async(item) => {
+            const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(item.commentatorInfo.userId, item._id!.toString());
+            
+            let filter = {
+                id: item._id!.toString(),
+                content: item.content , 
+                commentatorInfo: item.commentatorInfo , 
+                createdAt: item.createdAt,
+                likesInfo: {
+                    likesCount: item.likesCount,
+                    dislikesCount: item.dislikesCount, 
+                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE // заглушка 
+                }
+            }
+            return filter
+        }))
+
+        let result: PaginatorCommentViewModel = {
+            pagesCount: Math.ceil(commentsInfoDb.totalCaunt/filter.pageSize!), // сколько всего страниц
+            page: filter.pageNumber!, // какая страница
+            pageSize: filter.pageSize!,
+            totalCount: commentsInfoDb.totalCaunt,
+            items: mapedDocument,
+
+        };
+
+        return result;
+
     }
 
 }

@@ -28,40 +28,14 @@ export class QueryCommentsRepositories {
         
     }
 
-    async getAllComments(postId: string, filter: GetQueryPosts): Promise<PaginatorCommentViewModel> { 
+    async getAllComments(postId: string, filter: GetQueryPosts): Promise<{totalCaunt: number, searchDocument: CommentPostModel[]}> { 
         // кол-во комментариев к этому посту
-        const totalCaunt = await this.commentsModel.countDocuments({postId: postId});
+        const totalCaunt: number = await this.commentsModel.countDocuments({postId: postId});
         let searchDocument = await this.commentsModel.find({postId: postId}, {projection: {postId: 0}})
         .sort([[filter.sortBy!, filter.sortDirection!]])
         .skip((filter.pageNumber! - 1) * filter.pageSize!)
-        .limit(filter.pageSize!);
+        .limit(filter.pageSize!).lean();
 
-        let mapedDocument: CommentViewModel[] = [];
-        searchDocument.forEach((item) => {
-            let filter = {
-                id: item._id.toString(),
-                content: item.content , 
-                commentatorInfo: item.commentatorInfo , 
-                createdAt: item.createdAt,
-                likesInfo: {
-                    likesCount: item.likesCount,
-                    dislikesCount: item.dislikesCount, 
-                    myStatus: LikeStatus.NONE // заглушка 
-                }
-            }
-            mapedDocument.push(filter)
-        })
-
-        let result: PaginatorCommentViewModel = {
-            pagesCount: Math.ceil(totalCaunt/filter.pageSize!), // сколько всего страниц
-            page: filter.pageNumber!, // какая страница
-            pageSize: filter.pageSize!,
-            totalCount: totalCaunt,
-            items: mapedDocument,
-
-        };
-
-        return result;
+        return {totalCaunt, searchDocument}
     }
-
 }

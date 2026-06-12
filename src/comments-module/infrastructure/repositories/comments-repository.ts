@@ -53,16 +53,12 @@ export class CommentsRepositories {
     }
 
     async chengeLikeAndDislikeCount(id: string, likeStatus: incrementLikeCountForComment) {
-        const objectId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id);
-        const serchFild: string[] = Object.keys(likeStatus);
-        const firsFild: string = serchFild[0];
-        const lastFild: string = serchFild[1];
-        const data = await this.commentsModel.updateOne({_id: objectId, [firsFild] : { $gte: 0 }, [lastFild] : { $gte: 0 }}, {$inc: likeStatus})        
-        if(data.modifiedCount === 1 || data.acknowledged === true) {
-            return true
-        } else {
-            return false
-        }
+        const objectId = new mongoose.Types.ObjectId(id);
+        const data = await this.commentsModel.updateOne(
+            { _id: objectId },
+            { $inc: likeStatus }
+        )
+        return data.modifiedCount === 1 || data.acknowledged === true;
     }
 
 }
