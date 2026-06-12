@@ -30,7 +30,7 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: comment.likesCount,
                     dislikesCount: comment.dislikesCount,
-                    myStatus: LikeStatus.NONE // || likeUnlike?.myStatus 
+                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE
                 }
             }
         }
