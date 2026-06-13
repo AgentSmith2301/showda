@@ -53,7 +53,7 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: item.likesCount,
                     dislikesCount: item.dislikesCount, 
-                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE // заглушка 
+                    myStatus: LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
                 }
             }
             return filter
