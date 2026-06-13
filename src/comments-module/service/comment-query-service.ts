@@ -30,7 +30,7 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: comment.likesCount,
                     dislikesCount: comment.dislikesCount,
-                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
+                    myStatus: LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
                 }
             }
         }
@@ -53,7 +53,7 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: item.likesCount,
                     dislikesCount: item.dislikesCount, 
-                    myStatus: LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
+                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
                 }
             }
             return filter
