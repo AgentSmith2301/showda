@@ -69,7 +69,7 @@ export class CommentsController {
             return
         }
         
-        const result: Partial<Result> = await this.serviceComments.updateComment(req.userId!, req.params.comeentId as string, req.body.content);
+        const result: Partial<Result> = await this.serviceComments.updateComment(req.userId!, req.params.commentId as string, req.body.content);
         res.status(resultStatusToHttpCode(result.status!)).end()
     }
 
