@@ -20,8 +20,8 @@ export class CommentQyeryService {
         if(!comment) {
             return null
         } else {
-            // const userId = comment.commentatorInfo.userId;
-            // const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(userId, id);
+            const userId = comment.commentatorInfo.userId;
+            const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(userId, id);
             return {
                 id: comment._id!.toString(),
                 content: comment.content,
@@ -30,7 +30,7 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: comment.likesCount,
                     dislikesCount: comment.dislikesCount,
-                    myStatus: LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
+                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
                 }
             }
         }
