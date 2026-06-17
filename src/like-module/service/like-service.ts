@@ -14,7 +14,7 @@ export class LikeService {
     }
 
     async findLikeInfoService(userId: string, commentId: string): Promise<LikeDB | null> {
-        return await this.likeRepositories.findLikeInfoRepositories(userId, commentId);
+        return await this.likeRepositories.findLikeInfoRepositories(commentId, userId);
     }
 
     async chengeLikeStatusService(userId: string, commentId: string, likeStatus: string): Promise<boolean> {

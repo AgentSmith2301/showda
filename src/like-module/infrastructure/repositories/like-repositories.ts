@@ -13,7 +13,7 @@ export class LikeReppositories {
         return likeInfo.toObject();
     }
 
-    async findLikeInfoRepositories(userId: string, commentId: string): Promise<LikeDB | null> {
+    async findLikeInfoRepositories(commentId: string, userId: string): Promise<LikeDB | null> {
         const likeStatus: LikeDB | null = await this.likeModel.findOne({commentId: commentId, userId: userId}).select('-_id -__v').lean();
         return likeStatus
     }

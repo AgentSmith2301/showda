@@ -14,15 +14,13 @@ export class CommentQyeryService {
         @inject(LikeReppositories) public likeRepositories: LikeReppositories
     ) {}
 
-    async getCommentByIdService(id: string): Promise<CommentViewModel | null> {
-        const comment = await this.queryCommentsRepositories.getCommentByIdRepositories(id);
-
+    async getCommentByIdService(userId: string | null, id: string): Promise<CommentViewModel | null> {
+        const comment: CommentPostModel | null = await this.queryCommentsRepositories.getCommentByIdRepositories(id);
         if(!comment) {
             return null
         } else {
-            const userId = comment.commentatorInfo.userId;
-            const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(userId, id);
-            return {
+            
+            let filter = {
                 id: comment._id!.toString(),
                 content: comment.content,
                 commentatorInfo: comment.commentatorInfo,
@@ -30,11 +28,22 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: comment.likesCount,
                     dislikesCount: comment.dislikesCount,
-                    myStatus: likeUnlike?.myStatus || LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
+                    myStatus: LikeStatus.NONE 
                 }
             }
+
+            if(!userId) return filter;
+            if(userId) {
+
+                const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(id, userId);
+                filter.likesInfo.myStatus = likeUnlike?.myStatus ? likeUnlike.myStatus : LikeStatus.NONE
+                
+            }
+
+            return filter
         }
     }
+
 
     async getAllComments(postId: string, filter: GetQueryPosts): Promise<PaginatorCommentViewModel> {
         const commentsInfoDb: {totalCaunt: number, searchDocument: CommentPostModel[]} = await this.queryCommentsRepositories.getAllComments(postId, filter);
@@ -53,7 +62,7 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: item.likesCount,
                     dislikesCount: item.dislikesCount, 
-                    myStatus: LikeStatus.NONE // заглушка likeUnlike?.myStatus ||
+                    myStatus: LikeStatus.NONE 
                 }
             }
             return filter
@@ -73,7 +82,6 @@ export class CommentQyeryService {
     }
 
 }
-
 
 
 

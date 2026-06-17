@@ -22,7 +22,8 @@ export class CommentsController {
     ) {}
 
     async getCommentByIdController(req: Request, res: Response) {
-        const result = await this.commentQueryService.getCommentByIdService(req.params.id as string);
+        const userId = req.userId;
+        const result = await this.commentQueryService.getCommentByIdService(userId, req.params.id as string);
 
         if(result) {
             res.status(200).send(result)

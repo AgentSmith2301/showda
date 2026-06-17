@@ -13,7 +13,7 @@ export const checkAuthorization = (req: Request, res: Response, next: NextFuncti
     }
 }
 
-export const  bearerAuthorization = async(req: Request, res: Response, next: NextFunction) => { 
+export const bearerAuthorization = async(req: Request, res: Response, next: NextFunction) => { 
     if(!req.headers.authorization) {
         res.sendStatus(401)
         return
