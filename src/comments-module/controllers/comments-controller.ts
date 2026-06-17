@@ -100,6 +100,8 @@ export class CommentsController {
             res.status(resultStatusToHttpCode(ResultStatus.ServerError)).send(result.errorsMessages) // 500 
         } else if(result.status === ResultStatus.NotFound) {
             res.status(resultStatusToHttpCode(ResultStatus.NotFound)).send(result.errorsMessages) // 404
+        } else {
+            res.status(resultStatusToHttpCode(ResultStatus.BadRequest)).send(result.errorsMessages) // 400
         }
         
     }
