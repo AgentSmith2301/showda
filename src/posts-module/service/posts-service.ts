@@ -84,8 +84,8 @@ export class ServicePostsMethods {
         return await this.getPostsMetodsDb.getAllPostsForBlog(blogId, filter);
     }
 
-    async all_Comments_From_PostId(postId: string, filter: any) {
-        return await this.commentQueryService.getAllComments(postId, filter);
+    async all_Comments_From_PostId(userId: string | null, postId: string, filter: any) {
+        return await this.commentQueryService.getAllComments(userId, postId, filter);
     }
 
 }

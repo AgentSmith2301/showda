@@ -172,9 +172,9 @@ export class PostsControllerststs {
             sortDirection: sortDirection
         }
 
-        const comments = await this.servicePostsMethods.all_Comments_From_PostId(req.params.postId as string, filter)
+        const userId: string | null = req.userId; // получаем userId из middleware
+        const comments = await this.servicePostsMethods.all_Comments_From_PostId(userId, req.params.postId as string, filter)
         
-        // const comments: PaginatorCommentViewModel = await this.getPostsMetodsDb.getAllCommentsByPostId(req.params.postId as string, filter)
         res.status(200).send(comments)
         
     }

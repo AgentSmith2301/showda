@@ -13,9 +13,14 @@ export class LikeReppositories {
         return likeInfo.toObject();
     }
 
-    async findLikeInfoRepositories(commentId: string, userId: string): Promise<LikeDB | null> {
-        const likeStatus: LikeDB | null = await this.likeModel.findOne({commentId: commentId, userId: userId}).select('-_id -__v').lean();
-        return likeStatus
+    async findLikeInfoRepositories(commentId: string, userId: string | null): Promise<LikeDB | null> {
+        if(!userId) {
+            return await this.likeModel.findOne({commentId: commentId}).select('-_id -__v').lean();
+        } else {
+            return await this.likeModel.findOne({commentId: commentId, userId: userId}).select('-_id -__v').lean();
+        }
+        // const likeStatus: LikeDB | null = await this.likeModel.findOne({commentId: commentId, userId: userId}).select('-_id -__v').lean();
+        // return likeStatus
     }
 
     async chengeLikeStatusRepositories(userId: string, commentId: string, likeStatus: string): Promise<boolean> {
