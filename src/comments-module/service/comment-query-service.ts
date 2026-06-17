@@ -44,16 +44,23 @@ export class CommentQyeryService {
         }
     }
 
-
-    async getAllComments(postId: string, filter: GetQueryPosts): Promise<PaginatorCommentViewModel> {
+    // TODO нужно передать userId в функцию и поставить первым параметром в функцию findLikeInfoRepositories
+    async getAllComments(userId: string | null,postId: string, filter: GetQueryPosts): Promise<PaginatorCommentViewModel> {
         const commentsInfoDb: {totalCaunt: number, searchDocument: CommentPostModel[]} = await this.queryCommentsRepositories.getAllComments(postId, filter);
 
         // после того как map пройдет по всем комментариям  и будет дожидаться завершения await на каждой итерации ,
         // нужно исполььзовать Promise.all и передать ему массив промисов , который вернет map, 
         // тогда мы будем уверены что все промисы завершены и получим массив с результатами всех промисов
         const mapedDocument = await Promise.all(commentsInfoDb.searchDocument.map(async(item) => {
-            const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(item.commentatorInfo.userId, item._id!.toString());
+            const likeUnlike: LikeDB | null = await this.likeRepositories.findLikeInfoRepositories(item._id!.toString(), userId);
             
+            let infoMyStatus: LikeStatus
+            if(userId && likeUnlike) {
+                infoMyStatus = likeUnlike.myStatus
+            } else {
+                infoMyStatus = LikeStatus.NONE
+            }
+
             let filter = {
                 id: item._id!.toString(),
                 content: item.content , 
@@ -62,7 +69,7 @@ export class CommentQyeryService {
                 likesInfo: {
                     likesCount: item.likesCount,
                     dislikesCount: item.dislikesCount, 
-                    myStatus: LikeStatus.NONE 
+                    myStatus:  infoMyStatus
                 }
             }
             return filter
